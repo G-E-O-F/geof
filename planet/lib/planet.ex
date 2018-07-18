@@ -1,6 +1,6 @@
-defmodule GEOF do
+defmodule PLANET do
   @moduledoc """
-  Documentation for GEOF.
+  Documentation for PLANET.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule GEOF do
 
   ## Examples
 
-      iex> GEOF.hello
+      iex> PLANET.hello
       :world
 
   """

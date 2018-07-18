@@ -1,9 +1,9 @@
-defmodule GEOF.MixProject do
+defmodule PLANET.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :geof,
+      app: :planet,
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
