@@ -1,14 +1,14 @@
 # The directory Mix writes compiled artifacts to
-/_build/
+_build
 
 # Coverage assets ("mix test --cover")
-/cover/
+cover
 
 # Dependencies
-/deps/
+deps
 
 # Generated docs output
-/doc/
+doc
 
 # Crashdump
 erl_crash.dump
@@ -17,7 +17,7 @@ erl_crash.dump
 *.ez
 
 # Package tarball ("mix hex.build")
-geof-*.tar
+*.tar
 
 # JetBrains
 *.iml
