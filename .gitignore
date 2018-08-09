@@ -18,7 +18,3 @@ erl_crash.dump
 
 # Package tarball ("mix hex.build")
 *.tar
-
-# JetBrains
-*.iml
-.idea
