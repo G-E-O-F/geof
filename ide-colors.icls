@@ -1,9 +1,9 @@
 <scheme name="Alchemist" version="142" parent_scheme="Darcula">
   <metaInfo>
-    <property name="created">2018-08-09T22:44:43</property>
+    <property name="created">2018-08-09T23:04:07</property>
     <property name="ide">idea</property>
     <property name="ideVersion">2018.2.1.0.0</property>
-    <property name="modified">2018-08-09T22:44:48</property>
+    <property name="modified">2018-08-09T23:04:13</property>
     <property name="originalScheme">Alchemist</property>
   </metaInfo>
   <colors>
@@ -586,6 +586,11 @@
         <option name="FOREGROUND" value="6a84ff" />
       </value>
     </option>
+    <option name="ELIXIR_BRACES">
+      <value>
+        <option name="FOREGROUND" value="49e6e6" />
+      </value>
+    </option>
     <option name="ELIXIR_CHAR_LIST">
       <value>
         <option name="FOREGROUND" value="d5f1a5" />
@@ -598,12 +603,12 @@
     </option>
     <option name="ELIXIR_DOCUMENTATION_MODULE_ATTRIBUTE">
       <value>
-        <option name="FOREGROUND" value="70849c" />
+        <option name="FOREGROUND" value="8299b5" />
       </value>
     </option>
     <option name="ELIXIR_DOCUMENTATION_TEXT">
       <value>
-        <option name="FOREGROUND" value="638cc3" />
+        <option name="FOREGROUND" value="8bf0ce" />
       </value>
     </option>
     <option name="ELIXIR_DOT">
