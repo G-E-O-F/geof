@@ -1,9 +1,9 @@
 <scheme name="Alchemist" version="142" parent_scheme="Darcula">
   <metaInfo>
-    <property name="created">2018-08-09T22:24:54</property>
+    <property name="created">2018-08-09T22:44:43</property>
     <property name="ide">idea</property>
     <property name="ideVersion">2018.2.1.0.0</property>
-    <property name="modified">2018-08-09T22:25:02</property>
+    <property name="modified">2018-08-09T22:44:48</property>
     <property name="originalScheme">Alchemist</property>
   </metaInfo>
   <colors>
@@ -575,9 +575,20 @@
         <option name="BACKGROUND" value="30322b" />
       </value>
     </option>
+    <option name="ELIXIR_ATOM">
+      <value>
+        <option name="FOREGROUND" value="fb986b" />
+        <option name="FONT_TYPE" value="1" />
+      </value>
+    </option>
+    <option name="ELIXIR_BIT">
+      <value>
+        <option name="FOREGROUND" value="6a84ff" />
+      </value>
+    </option>
     <option name="ELIXIR_CHAR_LIST">
       <value>
-        <option name="FOREGROUND" value="bdf19e" />
+        <option name="FOREGROUND" value="d5f1a5" />
       </value>
     </option>
     <option name="ELIXIR_COMMENT">
@@ -595,9 +606,30 @@
         <option name="FOREGROUND" value="638cc3" />
       </value>
     </option>
-    <option name="ELIXIR_MACRO_CALL">
+    <option name="ELIXIR_DOT">
       <value>
+        <option name="FOREGROUND" value="d6adff" />
+      </value>
+    </option>
+    <option name="ELIXIR_EXPRESSION_SUBSTITUTION_MARK">
+      <value>
+        <option name="FOREGROUND" value="fb986b" />
+      </value>
+    </option>
+    <option name="ELIXIR_FUNCTION_CALL">
+      <value>
+        <option name="FOREGROUND" value="6af1e1" />
         <option name="FONT_TYPE" value="2" />
+      </value>
+    </option>
+    <option name="ELIXIR_MAP">
+      <value>
+        <option name="FOREGROUND" value="4faff" />
+      </value>
+    </option>
+    <option name="ELIXIR_OPERATION_SIGN">
+      <value>
+        <option name="FOREGROUND" value="e8ebfa" />
       </value>
     </option>
     <option name="ELIXIR_PARAMETER">
@@ -611,6 +643,11 @@
         <option name="EFFECT_TYPE" value="1" />
       </value>
     </option>
+    <option name="ELIXIR_STRING">
+      <value>
+        <option name="FOREGROUND" value="a5f38a" />
+      </value>
+    </option>
     <option name="ELIXIR_VALID_ESCAPE_SEQUENCE">
       <value>
         <option name="FOREGROUND" value="aa57c9" />
@@ -619,7 +656,7 @@
     </option>
     <option name="ELIXIR_VARIABLE">
       <value>
-        <option name="FOREGROUND" value="759cff" />
+        <option name="FOREGROUND" value="78adff" />
       </value>
     </option>
     <option name="ENUM_CONST">
