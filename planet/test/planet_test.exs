@@ -1,8 +1,8 @@
-defmodule PLANETTest do
+defmodule PLANET.PlanetTest do
   use ExUnit.Case
-  doctest PLANET
+  doctest PLANET.Planet
 
   test "greets the world" do
-    assert PLANET.hello() == :world
+    assert PLANET.Planet.hello() == :world
   end
 end

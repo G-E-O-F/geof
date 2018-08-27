@@ -1,6 +1,6 @@
-defmodule PLANET do
+defmodule PLANET.Planet do
   @moduledoc """
-  Documentation for PLANET.
+  Documentation for PLANET.Planet.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule PLANET do
 
   ## Examples
 
-      iex> PLANET.hello
+      iex> PLANET.Planet.hello
       :world
 
   """
