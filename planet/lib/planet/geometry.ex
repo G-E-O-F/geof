@@ -13,7 +13,12 @@ defmodule PLANET.Geometry do
   @l acos(sqrt(5) / 5)
   def l, do: @l
 
+  @type position :: {:pos, float, float}
+  @type course :: {:course, float, float}
+
   @doc "Returns the arclength between two points on the sphere"
+  @spec distance(position, position) :: float
+
   def distance({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon}) do
     2 *
       asin(
@@ -22,5 +27,17 @@ defmodule PLANET.Geometry do
             cos(f1_lat) * cos(f2_lat) * pow(sin((f1_lon - f2_lon) / 2), 2)
         )
       )
+  end
+
+  @doc "Returns the heading and distance from the first position to the second position"
+  @spec course(position, position) :: course
+
+  def course({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon}) do
+    d = distance({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon})
+    a_relative = acos((sin(f2_lat) - sin(f1_lat) * cos(d)) / (sin(d) * cos(f1_lat)))
+
+    a = if sin(f2_lon - f1_lon) < 0, do: a_relative, else: 2 * pi() - a_relative
+
+    {:course, a, d}
   end
 end
