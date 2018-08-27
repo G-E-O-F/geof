@@ -13,7 +13,7 @@ defmodule PLANET.Geometry do
   @l acos(sqrt(5) / 5)
   def l, do: @l
 
-  @doc "Computes the distance between two points on the sphere"
+  @doc "Returns the arclength between two points on the sphere"
   def distance({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon}) do
     2 *
       asin(
