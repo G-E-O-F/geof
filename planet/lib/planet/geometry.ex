@@ -12,10 +12,14 @@ defmodule PLANET.Geometry do
   @l acos(sqrt(5) / 5)
   def l, do: @l
 
+  @pi pi()
+
   # Types
 
   @type position :: {:pos, float, float}
   @type course :: {:course, float, float}
+  @type field :: :north | :south | {:sxy, integer, integer, integer}
+  @type sphere :: %{field => position}
 
   # Functions
 
@@ -63,5 +67,50 @@ defmodule PLANET.Geometry do
     lon = atan2(z, x)
 
     into.(i, {:pos, lat, lon}, acc)
+  end
+
+  @doc """
+    Creates a Map between fields as <S,X,Y>|north|south and their centroids as the `sphere` type.
+    The resolution of the sphere is determined by `divisions` supplied as the only argument.
+  """
+  @spec centroids(number) :: sphere
+
+  def centroids(divisions) do
+    d = divisions
+    max_x = 2 * d - 1
+
+    # Initialize the result map with polar fields
+    centroids = %{
+      north: {:pos, @pi / 2, 0},
+      south: {:pos, @pi / -2, 0}
+    }
+
+    # Determine position for tropical fields using only arithmetic.
+    centroids =
+      Enum.reduce(
+        0..4,
+        centroids,
+        fn s, sphere ->
+          set_on_sphere(
+            sphere,
+            s,
+            d - 1,
+            0,
+            @pi / 2 - @l,
+            s * 2 / 5 * @pi
+          )
+          |> set_on_sphere(
+            s,
+            max_x,
+            0,
+            @pi / -2 + @l,
+            s * 2 / 5 * @pi + @pi / 5
+          )
+        end
+      )
+  end
+
+  defp set_on_sphere(sphere, s, x, y, lat, lon) do
+    Map.put(sphere, {:sxy, s, x, y}, {:pos, lat, lon})
   end
 end

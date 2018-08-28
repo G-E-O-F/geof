@@ -24,6 +24,7 @@ defmodule PLANET.GeometryTest do
     assert_in_delta distance(ref_first, ref_second), l(), tolerance
   end
 
+  # TODO: test actual functionality
   test "calls interpolate function as expected" do
     north = {:pos, pi() / 2 + 1.0e-15, 1.0e-15}
     ref_first = {:pos, pi() / 2 - l(), 0}
@@ -40,5 +41,10 @@ defmodule PLANET.GeometryTest do
       )
 
     assert {:ok, _} = Map.fetch(results, 1)
+  end
+
+  test "creates centroid maps" do
+    sphere = centroids(2)
+    assert {:ok, _} = Map.fetch(sphere, {:sxy, 3, 3, 0})
   end
 end
