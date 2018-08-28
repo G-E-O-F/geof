@@ -30,13 +30,13 @@ defmodule PLANET.GeometryTest do
 
     results =
       interpolate(
+        Map.new(),
+        2,
         north,
         ref_first,
-        2,
-        fn i, pos, acc ->
+        fn acc, i, pos ->
           Map.put(acc, i, pos)
-        end,
-        Map.new()
+        end
       )
 
     assert {:ok, {:pos, middle_lat, middle_lon}} = Map.fetch(results, 1)
@@ -45,6 +45,8 @@ defmodule PLANET.GeometryTest do
 
   test "creates centroid maps" do
     sphere = centroids(2)
+
+    IO.inspect(sphere)
 
     assert {:ok, {:pos, north_lat, 0}} = Map.fetch(sphere, :north)
     assert_in_delta north_lat, pi() / 2, @tolerance

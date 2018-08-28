@@ -14,6 +14,8 @@ defmodule PLANET.Geometry do
 
   @pi pi()
 
+  @sections 0..4
+
   # Types
 
   @type position :: {:pos, float, float}
@@ -41,15 +43,16 @@ defmodule PLANET.Geometry do
     point spaced evenly between two points on the sphere, and reduces the
     `init_acc` into a final value.
   """
-  @spec interpolate(position, position, number, fun, any) :: {:ok}
+  @spec interpolate(any, integer, position, position, fun) :: {:ok}
 
-  def interpolate(pos_1, pos_2, divisions, into, init_acc) do
+  def interpolate(init_acc, divisions, pos_1, pos_2, into)
+      when is_integer(divisions) and divisions > 1 do
     Enum.reduce(1..(divisions - 1), init_acc, fn i, acc ->
-      interpolate_step(pos_1, pos_2, i, divisions, into, acc)
+      interpolate_step(acc, divisions, pos_1, pos_2, into, i)
     end)
   end
 
-  defp interpolate_step(pos_1, pos_2, i, divisions, into, acc) do
+  defp interpolate_step(acc, divisions, pos_1, pos_2, into, i) do
     {:pos, f1_lat, f1_lon} = pos_1
     {:pos, f2_lat, f2_lon} = pos_2
 
@@ -66,16 +69,16 @@ defmodule PLANET.Geometry do
     lat = atan2(y, sqrt(pow(x, 2) + pow(z, 2)))
     lon = atan2(z, x)
 
-    into.(i, {:pos, lat, lon}, acc)
+    into.(acc, i, {:pos, lat, lon})
   end
 
   @doc """
     Creates a Map between fields as <S,X,Y>|north|south and their centroids as the `sphere` type.
     The resolution of the sphere is determined by `divisions` supplied as the only argument.
   """
-  @spec centroids(number) :: sphere
+  @spec centroids(integer) :: sphere
 
-  def centroids(divisions) do
+  def centroids(divisions) when is_integer(divisions) and divisions > 1 do
     d = divisions
     max_x = 2 * d - 1
 
@@ -86,25 +89,55 @@ defmodule PLANET.Geometry do
     }
 
     # Set positions for tropical fields
-    centroids =
-      Enum.reduce(
-        0..4,
-        centroids,
-        fn s, sphere ->
-          set_on_sphere(
-            sphere,
-            {:sxy, s, d - 1, 0},
-            {:pos, @pi / 2 - @l, s * 2 / 5 * @pi}
-          )
-          |> set_on_sphere(
-            {:sxy, s, max_x, 0},
-            {:pos, @pi / -2 + @l, s * 2 / 5 * @pi + @pi / 5}
-          )
+    for_sections(
+      centroids,
+      fn sphere, s ->
+        set_position(
+          sphere,
+          {:sxy, s, d - 1, 0},
+          {:pos, @pi / 2 - @l, s * 2 / 5 * @pi}
+        )
+        |> set_position(
+          {:sxy, s, max_x, 0},
+          {:pos, @pi / -2 + @l, s * 2 / 5 * @pi + @pi / 5}
+        )
+      end
+    )
+    |> for_sections(fn sphere, s ->
+      p = rem(s + 4, 5)
+
+      snP = :north
+      ssP = :south
+      cnT = {:sxy, s, d - 1, 0}
+      pnT = {:sxy, p, d - 1, 0}
+      csT = {:sxy, s, max_x, 0}
+      psT = {:sxy, p, max_x, 0}
+
+      # Set positions for fields from north pole to current north tropical pentagon
+
+      interpolate(
+        sphere,
+        d,
+        Map.get(sphere, snP),
+        Map.get(sphere, cnT),
+        fn sphere, i, position ->
+          set_position(sphere, {:sxy, s, i - 1, 0}, position)
         end
       )
+    end)
   end
 
-  defp set_on_sphere(sphere, {:sxy, s, x, y}, {:pos, lat, lon}) do
+  defp set_position(sphere, {:sxy, s, x, y}, {:pos, lat, lon}) do
     Map.put(sphere, {:sxy, s, x, y}, {:pos, lat, lon})
+  end
+
+  defp for_sections(sphere, each) do
+    Enum.reduce(
+      @sections,
+      sphere,
+      fn s, sphere ->
+        each.(sphere, s)
+      end
+    )
   end
 end
