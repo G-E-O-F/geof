@@ -23,4 +23,22 @@ defmodule PLANET.GeometryTest do
     assert_in_delta distance(north, ref_second), l(), tolerance
     assert_in_delta distance(ref_first, ref_second), l(), tolerance
   end
+
+  test "calls interpolate function as expected" do
+    north = {:pos, pi() / 2 + 1.0e-15, 1.0e-15}
+    ref_first = {:pos, pi() / 2 - l(), 0}
+
+    results =
+      interpolate(
+        north,
+        ref_first,
+        2,
+        fn i, pos, acc ->
+          Map.put(acc, i, pos)
+        end,
+        Map.new()
+      )
+
+    assert {:ok, _} = Map.fetch(results, 1)
+  end
 end
