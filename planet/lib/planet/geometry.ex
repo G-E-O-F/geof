@@ -6,7 +6,7 @@ defmodule PLANET.Geometry do
     compute the positional information for a Planet's Fields.
   """
 
-  # Attributes
+  ### Attributes
 
   @doc "The arclength of an edge of an icosahedron."
   @l acos(sqrt(5) / 5)
@@ -16,14 +16,14 @@ defmodule PLANET.Geometry do
 
   @sections 0..4
 
-  # Types
+  ### Types
 
   @type position :: {:pos, float, float}
   @type course :: {:course, float, float}
   @type field :: :north | :south | {:sxy, integer, integer, integer}
   @type sphere :: %{field => position}
 
-  # Functions
+  ### Functions
 
   @doc "Returns the arclength between two points on the sphere."
   @spec distance(position, position) :: float
@@ -84,8 +84,8 @@ defmodule PLANET.Geometry do
 
     # Initialize the result map with positions for polar fields
     centroids = %{
-      north: {:pos, @pi / 2, 0},
-      south: {:pos, @pi / -2, 0}
+      north: {:pos, @pi / 2, 0.0},
+      south: {:pos, @pi / -2, 0.0}
     }
 
     # Set positions for tropical fields
@@ -103,25 +103,83 @@ defmodule PLANET.Geometry do
         )
       end
     )
+    # Set positions for fields between polar fields and tropical fields
     |> for_sections(fn sphere, s ->
       p = rem(s + 4, 5)
 
-      snP = :north
-      ssP = :south
-      cnT = {:sxy, s, d - 1, 0}
-      pnT = {:sxy, p, d - 1, 0}
-      csT = {:sxy, s, max_x, 0}
-      psT = {:sxy, p, max_x, 0}
+      snP = Map.get(sphere, :north)
+      ssP = Map.get(sphere, :south)
+      cnT = Map.get(sphere, {:sxy, s, d - 1, 0})
+      pnT = Map.get(sphere, {:sxy, p, d - 1, 0})
+      csT = Map.get(sphere, {:sxy, s, max_x, 0})
+      psT = Map.get(sphere, {:sxy, p, max_x, 0})
 
-      # Set positions for fields from north pole to current north tropical pentagon
+      ## Set position for fields...
+
+      # ...from north pole to current north tropical pentagon
 
       interpolate(
         sphere,
         d,
-        Map.get(sphere, snP),
-        Map.get(sphere, cnT),
+        snP,
+        cnT,
         fn sphere, i, position ->
           set_position(sphere, {:sxy, s, i - 1, 0}, position)
+        end
+      )
+
+      # ...from current north tropical pentagon to previous north tropical pentagon
+
+      |> interpolate(
+        d,
+        cnT,
+        pnT,
+        fn sphere, i, position ->
+          set_position(sphere, {:sxy, s, d - 1 - i, i}, position)
+        end
+      )
+
+      # ...from current north tropical pentagon to previous south tropical pentagon
+
+      |> interpolate(
+        d,
+        cnT,
+        psT,
+        fn sphere, i, position ->
+          set_position(sphere, {:sxy, s, d - 1, i}, position)
+        end
+      )
+
+      # ...from current north tropical pentagon to current south tropical pentagon
+
+      |> interpolate(
+        d,
+        cnT,
+        csT,
+        fn sphere, i, position ->
+          set_position(sphere, {:sxy, s, d - 1 + i, 0}, position)
+        end
+      )
+
+      # ...from current south tropical pentagon to previous south tropical pentagon
+
+      |> interpolate(
+        d,
+        csT,
+        psT,
+        fn sphere, i, position ->
+          set_position(sphere, {:sxy, s, max_x - i, i}, position)
+        end
+      )
+
+      # ...from current south tropical pentagon to south pole
+
+      |> interpolate(
+        d,
+        csT,
+        ssP,
+        fn sphere, i, position ->
+          set_position(sphere, {:sxy, s, max_x, i}, position)
         end
       )
     end)
