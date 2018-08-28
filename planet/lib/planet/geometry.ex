@@ -79,13 +79,13 @@ defmodule PLANET.Geometry do
     d = divisions
     max_x = 2 * d - 1
 
-    # Initialize the result map with polar fields
+    # Initialize the result map with positions for polar fields
     centroids = %{
       north: {:pos, @pi / 2, 0},
       south: {:pos, @pi / -2, 0}
     }
 
-    # Determine position for tropical fields using only arithmetic.
+    # Set positions for tropical fields
     centroids =
       Enum.reduce(
         0..4,
@@ -93,24 +93,18 @@ defmodule PLANET.Geometry do
         fn s, sphere ->
           set_on_sphere(
             sphere,
-            s,
-            d - 1,
-            0,
-            @pi / 2 - @l,
-            s * 2 / 5 * @pi
+            {:sxy, s, d - 1, 0},
+            {:pos, @pi / 2 - @l, s * 2 / 5 * @pi}
           )
           |> set_on_sphere(
-            s,
-            max_x,
-            0,
-            @pi / -2 + @l,
-            s * 2 / 5 * @pi + @pi / 5
+            {:sxy, s, max_x, 0},
+            {:pos, @pi / -2 + @l, s * 2 / 5 * @pi + @pi / 5}
           )
         end
       )
   end
 
-  defp set_on_sphere(sphere, s, x, y, lat, lon) do
+  defp set_on_sphere(sphere, {:sxy, s, x, y}, {:pos, lat, lon}) do
     Map.put(sphere, {:sxy, s, x, y}, {:pos, lat, lon})
   end
 end
