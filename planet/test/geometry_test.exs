@@ -48,10 +48,10 @@ defmodule PLANET.GeometryTest do
 
     IO.inspect(sphere)
 
-    assert {:ok, {:pos, north_lat, 0}} = Map.fetch(sphere, :north)
+    assert {:ok, {:pos, north_lat, 0.0}} = Map.fetch(sphere, :north)
     assert_in_delta north_lat, pi() / 2, @tolerance
 
-    assert {:ok, {:pos, south_lat, 0}} = Map.fetch(sphere, :south)
+    assert {:ok, {:pos, south_lat, 0.0}} = Map.fetch(sphere, :south)
     assert_in_delta south_lat, pi() / -2, @tolerance
 
     # TODO: test other fields more robustly
