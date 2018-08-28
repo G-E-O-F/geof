@@ -43,18 +43,33 @@ defmodule PLANET.GeometryTest do
     assert_in_delta middle_lat, pi() / 2 - l() / 2, @tolerance
   end
 
-  test "creates centroid maps" do
-    sphere = centroids(2)
+  test "creates centroid maps for an icosahedron" do
+    icosahedron = centroids(1)
 
-    IO.inspect(sphere)
+    #    IO.puts("[icosahedron]")
+    #    IO.inspect(icosahedron)
 
-    assert {:ok, {:pos, north_lat, 0.0}} = Map.fetch(sphere, :north)
+    # Confirm polar field centroid accuracy
+    assert {:ok, {:pos, north_lat, 0.0}} = Map.fetch(icosahedron, :north)
     assert_in_delta north_lat, pi() / 2, @tolerance
 
-    assert {:ok, {:pos, south_lat, 0.0}} = Map.fetch(sphere, :south)
+    assert {:ok, {:pos, south_lat, 0.0}} = Map.fetch(icosahedron, :south)
     assert_in_delta south_lat, pi() / -2, @tolerance
 
-    # TODO: test other fields more robustly
+    # TODO: test tropical fields
+    assert {:ok, _} = Map.fetch(icosahedron, {:sxy, 3, 1, 0})
+
+    # There should not be fields that would be out of bounds for an icosahedron
+    assert :error = Map.fetch(icosahedron, {:sxy, 3, 2, 0})
+  end
+
+  test "creates centroid maps for an icosahedron with one subdivision" do
+    sphere = centroids(2)
+
+    #    IO.puts("[sphere]")
+    #    IO.inspect(sphere)
+
+    # TODO: test edge fields
     assert {:ok, _} = Map.fetch(sphere, {:sxy, 3, 3, 0})
   end
 end

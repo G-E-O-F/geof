@@ -78,7 +78,7 @@ defmodule PLANET.Geometry do
   """
   @spec centroids(integer) :: sphere
 
-  def centroids(divisions) when is_integer(divisions) and divisions > 1 do
+  def centroids(divisions) when is_integer(divisions) and divisions > 0 do
     d = divisions
     max_x = 2 * d - 1
 
@@ -104,7 +104,13 @@ defmodule PLANET.Geometry do
       end
     )
     # Set positions for fields between polar fields and tropical fields
-    |> for_sections(fn sphere, s ->
+    |> centroids_at_edge_fields(d)
+  end
+
+  defp centroids_at_edge_fields(sphere, d) when is_integer(d) and d > 1 do
+    max_x = 2 * d - 1
+
+    for_sections(sphere, fn sphere, s ->
       p = rem(s + 4, 5)
 
       snP = Map.get(sphere, :north)
@@ -183,6 +189,10 @@ defmodule PLANET.Geometry do
         end
       )
     end)
+  end
+
+  defp centroids_at_edge_fields(sphere, d) when is_integer(d) and d == 1 do
+    sphere
   end
 
   defp set_position(sphere, {:sxy, s, x, y}, {:pos, lat, lon}) do
