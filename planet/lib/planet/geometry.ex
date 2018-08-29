@@ -6,7 +6,11 @@ defmodule PLANET.Geometry do
     compute the positional information for a Planet's Fields.
   """
 
-  ### Attributes
+  ###
+  #
+  # ATTRIBUTES
+  #
+  ###
 
   @doc "The arclength of an edge of an icosahedron."
   @l acos(sqrt(5) / 5)
@@ -16,14 +20,25 @@ defmodule PLANET.Geometry do
 
   @sections 0..4
 
-  ### Types
+  ###
+  #
+  # TYPES
+  #
+  ###
 
   @type position :: {:pos, float, float}
   @type course :: {:course, float, float}
-  @type field :: :north | :south | {:sxy, integer, integer, integer}
-  @type sphere :: %{field => position}
+  @type sphere :: %{PLANET.Field.index() => position}
 
-  ### Functions
+  ###
+  #
+  # FUNCTIONS
+  #
+  ###
+
+  ##
+  # Basic spherical geometry
+  ##
 
   @doc "Returns the arclength between two points on the sphere."
   @spec distance(position, position) :: float
@@ -46,7 +61,7 @@ defmodule PLANET.Geometry do
   @spec interpolate(any, integer, position, position, fun) :: {:ok}
 
   def interpolate(init_acc, divisions, pos_1, pos_2, into)
-      when is_integer(divisions) and divisions > 1 do
+      when is_integer(divisions) do
     Enum.reduce(1..(divisions - 1), init_acc, fn i, acc ->
       interpolate_step(acc, divisions, pos_1, pos_2, into, i)
     end)
@@ -71,6 +86,40 @@ defmodule PLANET.Geometry do
 
     into.(acc, i, {:pos, lat, lon})
   end
+
+  ##
+  # Utility functions
+  ##
+
+  defp set_position(sphere, {:sxy, s, x, y}, {:pos, lat, lon}) do
+    Map.put(sphere, {:sxy, s, x, y}, {:pos, lat, lon})
+  end
+
+  defp for_sections(sphere, each) do
+    Enum.reduce(
+      @sections,
+      sphere,
+      fn s, sphere ->
+        each.(sphere, s)
+      end
+    )
+  end
+
+  defp for_columns(sphere, d, each) do
+    Enum.reduce(
+      0..(d * 2 - 1),
+      sphere,
+      fn x, sphere ->
+        each.(sphere, x)
+      end
+    )
+  end
+
+  ##
+  #
+  # Centroid sphere computation
+  #
+  ##
 
   @doc """
     Creates a Map between fields as <S,X,Y>|north|south and their centroids as the `sphere` type.
@@ -105,7 +154,12 @@ defmodule PLANET.Geometry do
     )
     # Set positions for fields between polar fields and tropical fields
     |> centroids_at_edge_fields(d)
+    |> centroids_between_edges(d)
   end
+
+  ##
+  # Centroids at edges
+  ##
 
   defp centroids_at_edge_fields(sphere, d) when is_integer(d) and d > 1 do
     max_x = 2 * d - 1
@@ -191,21 +245,55 @@ defmodule PLANET.Geometry do
     end)
   end
 
-  defp centroids_at_edge_fields(sphere, d) when is_integer(d) and d == 1 do
+  defp centroids_at_edge_fields(sphere, d) when is_integer(d) and d <= 1 do
     sphere
   end
 
-  defp set_position(sphere, {:sxy, s, x, y}, {:pos, lat, lon}) do
-    Map.put(sphere, {:sxy, s, x, y}, {:pos, lat, lon})
+  ##
+  # Centroids between edges
+  ##
+
+  defp centroids_between_edges(sphere, d) when is_integer(d) and d > 2 do
+    for_sections(sphere, fn sphere, s ->
+      for_columns(sphere, d, fn sphere, x ->
+        set_positions_between_edges(sphere, d, s, x)
+      end)
+    end)
   end
 
-  defp for_sections(sphere, each) do
-    Enum.reduce(
-      @sections,
+  defp centroids_between_edges(sphere, d) when is_integer(d) and d <= 2 do
+    sphere
+  end
+
+  defp set_positions_between_edges(sphere, d, s, x) when rem(x + 1, d) > 0 do
+    j = d - rem(x + 1, d)
+    n1 = j - 1
+    n2 = d - 1 - j
+    f1 = Map.get(sphere, {:sxy, s, x, 0})
+    f2 = Map.get(sphere, {:sxy, s, x, j})
+    f3_index = Map.get(PLANET.Field.adjacents({:sxy, s, x, d - 1}, d), :sw)
+    f3 = Map.get(sphere, f3_index)
+
+    interpolate(
       sphere,
-      fn s, sphere ->
-        each.(sphere, s)
+      n1 + 1,
+      f1,
+      f2,
+      fn sphere, i, position ->
+        set_position(sphere, {:sxy, s, x, i}, position)
       end
     )
+    |> interpolate(
+      n2 + 1,
+      f2,
+      f3,
+      fn sphere, i, position ->
+        set_position(sphere, {:sxy, s, x, i + j}, position)
+      end
+    )
+  end
+
+  defp set_positions_between_edges(sphere, _, _, _) do
+    sphere
   end
 end
