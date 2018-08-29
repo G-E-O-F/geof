@@ -61,10 +61,14 @@ defmodule PLANET.Geometry do
   @spec interpolate(any, integer, position, position, fun) :: {:ok}
 
   def interpolate(init_acc, divisions, pos_1, pos_2, into)
-      when is_integer(divisions) do
+      when is_integer(divisions) and divisions > 1 do
     Enum.reduce(1..(divisions - 1), init_acc, fn i, acc ->
       interpolate_step(acc, divisions, pos_1, pos_2, into, i)
     end)
+  end
+
+  def interpolate(init_acc, _, _, _, _) do
+    init_acc
   end
 
   defp interpolate_step(acc, divisions, pos_1, pos_2, into, i) do
