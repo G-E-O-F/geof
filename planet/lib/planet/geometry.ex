@@ -53,6 +53,18 @@ defmodule PLANET.Geometry do
       )
   end
 
+  @doc "Returns the heading and distance from the first position to the second position"
+  @spec course(position, position) :: course
+
+  def course({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon}) do
+    d = distance({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon})
+    a_relative = acos((sin(f2_lat) - sin(f1_lat) * cos(d)) / (sin(d) * cos(f1_lat)))
+
+    a = if sin(f2_lon - f1_lon) < 0, do: a_relative, else: 2 * pi() - a_relative
+
+    {:course, a, d}
+  end
+
   @doc """
     Calls the `into` callback function `divisions`-1 times, once for each
     point spaced evenly between two points on the sphere, and reduces the
