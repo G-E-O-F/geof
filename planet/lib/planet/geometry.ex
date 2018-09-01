@@ -36,6 +36,8 @@ defmodule PLANET.Geometry do
   #
   ###
 
+  # Note: `divisions` is abbreviated as `d` in private functions.
+
   ##
   # Basic spherical geometry
   ##
@@ -83,11 +85,11 @@ defmodule PLANET.Geometry do
     init_acc
   end
 
-  defp interpolate_step(acc, divisions, pos_1, pos_2, into, i) do
+  defp interpolate_step(acc, d, pos_1, pos_2, into, i) do
     {:pos, f1_lat, f1_lon} = pos_1
     {:pos, f2_lat, f2_lon} = pos_2
 
-    f = i / divisions
+    f = i / d
     d = distance(pos_1, pos_2)
 
     a = sin((1 - f) * d) / sin(d)
@@ -168,8 +170,9 @@ defmodule PLANET.Geometry do
         )
       end
     )
-    # Set positions for fields between polar fields and tropical fields
+    # Set positions for fields between polar fields and tropical fields (d > 1)
     |> centroids_at_edge_fields(d)
+    # Set positions for all other fields (d > 2)
     |> centroids_between_edges(d)
   end
 

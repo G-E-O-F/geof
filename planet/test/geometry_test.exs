@@ -7,7 +7,7 @@ defmodule PLANET.GeometryTest do
   doctest PLANET.Geometry
 
   # It appears Elixir is able to compute these values
-  # more precicesly than JS (whose delta is 1.0e-12)
+  # much more precisely than JS (whose delta is 1.0e-10)
   @tolerance 1.111e-15
 
   test "computes distance correctly" do
