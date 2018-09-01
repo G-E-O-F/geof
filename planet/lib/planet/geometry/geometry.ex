@@ -112,10 +112,7 @@ defmodule PLANET.Geometry do
     if abs(r) <= @tolerance do
       {:error, "Can't compute centroid from these points."}
     else
-      lat = asin(y / r)
-      lon = atan2(z, x)
-
-      {:pos, lat, lon}
+      {:pos, asin(y / r), atan2(z, x)}
     end
   end
 end
