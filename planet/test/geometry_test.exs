@@ -7,11 +7,7 @@ defmodule PLANET.GeometryTest do
 
   doctest PLANET.Geometry
 
-  # It appears Elixir is able to compute these values
-  # much more precisely than JS (whose delta is 1.0e-10)
-  @tolerance 1.111e-15
-
-  test "computes distance correctly" do
+  test "computes distance" do
     a = 2 * pi() / 5
 
     north = {:pos, pi() / 2, 0}
@@ -20,12 +16,12 @@ defmodule PLANET.GeometryTest do
 
     # zero tolerance
     assert_in_delta distance(north, north), 0, 0
-    assert_in_delta distance(north, ref_first), l(), @tolerance
-    assert_in_delta distance(north, ref_second), l(), @tolerance
-    assert_in_delta distance(ref_first, ref_second), l(), @tolerance
+    assert_in_delta distance(north, ref_first), l(), tolerance()
+    assert_in_delta distance(north, ref_second), l(), tolerance()
+    assert_in_delta distance(ref_first, ref_second), l(), tolerance()
   end
 
-  test "calls interpolate function as expected" do
+  test "calls interpolate functions" do
     north = {:pos, pi() / 2, 0}
     ref_first = {:pos, pi() / 2 - l(), 0}
 
@@ -41,6 +37,20 @@ defmodule PLANET.GeometryTest do
       )
 
     assert {:ok, {:pos, middle_lat, _}} = Map.fetch(results, 1)
-    assert_in_delta middle_lat, pi() / 2 - l() / 2, @tolerance
+    assert_in_delta middle_lat, pi() / 2 - l() / 2, tolerance()
+  end
+
+  test "computes centroids" do
+    # Find the centroid of a triangle with all right angles (oh, noneuclidian geometry…)
+    result_centroid =
+      centroid([
+        {:pos, pi() / 2, 0.0},
+        {:pos, 0.0, 0.0},
+        {:pos, 0.0, pi() / 2}
+      ])
+
+    assert {:pos, lat, lon} = result_centroid
+    assert_in_delta lat, asin(1 / 3 / sqrt(1 / 3)), tolerance()
+    assert_in_delta lon, pi() / 4, tolerance()
   end
 end

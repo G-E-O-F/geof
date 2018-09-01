@@ -3,6 +3,17 @@ defmodule PLANET.Geometry do
 
   ###
   #
+  # ATTRIBUTES
+  #
+  ###
+
+  # It appears Elixir is able to compute these values
+  # much more precisely than JS (whose delta is 1.0e-10)
+  @tolerance 1.111e-15
+  def tolerance, do: @tolerance
+
+  ###
+  #
   # TYPES
   #
   ###
@@ -81,5 +92,30 @@ defmodule PLANET.Geometry do
     lon = atan2(z, x)
 
     into.(acc, i, {:pos, lat, lon})
+  end
+
+  @spec centroid(nonempty_list(position)) :: position
+
+  def centroid(positions) do
+    n = length(positions)
+
+    sum_x = Enum.reduce(positions, 0, fn {:pos, lat, lon}, sum -> sum + cos(lat) * cos(lon) end)
+    sum_z = Enum.reduce(positions, 0, fn {:pos, lat, lon}, sum -> sum + cos(lat) * sin(lon) end)
+    sum_y = Enum.reduce(positions, 0, fn {:pos, lat, _}, sum -> sum + sin(lat) end)
+
+    x = sum_x / n
+    z = sum_z / n
+    y = sum_y / n
+
+    r = sqrt(x * x + z * z + y * y)
+
+    if abs(r) <= @tolerance do
+      {:error, "Can't compute centroid from these points."}
+    else
+      lat = asin(y / r)
+      lon = atan2(z, x)
+
+      {:pos, lat, lon}
+    end
   end
 end
