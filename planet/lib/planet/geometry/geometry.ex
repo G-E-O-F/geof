@@ -94,6 +94,10 @@ defmodule PLANET.Geometry do
     into.(acc, i, {:pos, lat, lon})
   end
 
+  @doc """
+    Computes the centroid of a polygon on the surface of the sphere defined
+    by a list of `positions`.
+  """
   @spec centroid(nonempty_list(position)) :: position
 
   def centroid(positions) do
