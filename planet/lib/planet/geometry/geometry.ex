@@ -103,13 +103,9 @@ defmodule PLANET.Geometry do
   def centroid(positions) do
     n = length(positions)
 
-    sum_x = Enum.reduce(positions, 0, fn {:pos, lat, lon}, sum -> sum + cos(lat) * cos(lon) end)
-    sum_z = Enum.reduce(positions, 0, fn {:pos, lat, lon}, sum -> sum + cos(lat) * sin(lon) end)
-    sum_y = Enum.reduce(positions, 0, fn {:pos, lat, _}, sum -> sum + sin(lat) end)
-
-    x = sum_x / n
-    z = sum_z / n
-    y = sum_y / n
+    x = Enum.reduce(positions, 0, fn {:pos, lat, lon}, sum -> sum + cos(lat) * cos(lon) / n end)
+    z = Enum.reduce(positions, 0, fn {:pos, lat, lon}, sum -> sum + cos(lat) * sin(lon) / n end)
+    y = Enum.reduce(positions, 0, fn {:pos, lat, _}, sum -> sum + sin(lat) / n end)
 
     r = sqrt(x * x + z * z + y * y)
 
