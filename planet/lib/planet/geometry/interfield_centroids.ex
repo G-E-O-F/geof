@@ -9,12 +9,6 @@ defmodule PLANET.Geometry.InterfieldCentroids do
 
   ###
   #
-  # ATTRIBUTES
-  #
-  ###
-
-  ###
-  #
   # TYPES
   #
   ###
@@ -34,6 +28,12 @@ defmodule PLANET.Geometry.InterfieldCentroids do
   # Utility functions
   ##
 
+  @spec set_position(
+          interfield_centroid_sphere,
+          list(PLANET.Field.index()),
+          PLANET.Geometry.position()
+        ) :: interfield_centroid_sphere
+
   defp set_position(sphere, [index1, index2, index3], {:pos, lat, lon}) do
     Map.put(sphere, MapSet.new([index1, index2, index3]), {:pos, lat, lon})
   end
@@ -44,11 +44,15 @@ defmodule PLANET.Geometry.InterfieldCentroids do
   #
   ##
 
+  # Convenience function without need for a `centroid_sphere`
+
   @spec interfield_centroids(integer) :: interfield_centroid_sphere
 
   def interfield_centroids(divisions) when is_integer(divisions) and divisions > 0 do
     interfield_centroids(PLANET.Geometry.FieldCentroids.field_centroids(divisions), divisions)
   end
+
+  # Main function
 
   @spec interfield_centroids(PLANET.Geometry.FieldCentroids.centroid_sphere(), integer) ::
           interfield_centroid_sphere
@@ -63,6 +67,8 @@ defmodule PLANET.Geometry.InterfieldCentroids do
     )
   end
 
+  # Computes centroids for the two triangles all nonpolar fields are responsible for setting.
+
   defp set_interfield_centroids_for_responsible_field(sphere, centroids, d, {:sxy, s, x, y}) do
     index = {:sxy, s, x, y}
     adj = adjacents(index, d)
@@ -75,7 +81,8 @@ defmodule PLANET.Geometry.InterfieldCentroids do
     |> set_position(t2, centroid(Enum.map(t2, fn index -> Map.get(centroids, index) end)))
   end
 
-  # Ignore polar fields, which are not responsible for any triangles
+  # Ignore polar fields, which are not responsible for any triangles.
+
   defp set_interfield_centroids_for_responsible_field(sphere, _, _, _) do
     sphere
   end
