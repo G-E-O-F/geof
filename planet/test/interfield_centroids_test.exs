@@ -47,4 +47,6 @@ defmodule PLANET.Geometry.InterfieldCentroidsTest do
     assert c1_lat == c2_lat
     assert c1_lon == c2_lon
   end
+
+  # TODO: is there a way to reasonably test the position values we're getting from this module?
 end

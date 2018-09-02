@@ -4,7 +4,9 @@ defmodule PLANET.Geometry.InterfieldCentroids do
   import PLANET.Field
 
   @moduledoc """
-    PLANET.Geometry.InterfieldCentroids computes the positions of the centroids between each Field on the Sphere. This is used to determine the vertices of a field's bounding polygon.
+    PLANET.Geometry.InterfieldCentroids computes the positions of the centroids
+    between each Field on the Sphere. This is used to determine the vertices of
+    a field's bounding polygon.
   """
 
   ###
