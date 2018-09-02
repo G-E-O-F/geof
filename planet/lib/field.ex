@@ -1,6 +1,6 @@
 defmodule PLANET.Field do
   @moduledoc """
-    PLANET.Field contains functions for handling an individual Field on a Planet
+    Functions for handling an individual Field on a Planet.
   """
 
   @type index :: :north | :south | {:sxy, integer, integer, integer}

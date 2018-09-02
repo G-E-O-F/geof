@@ -1,6 +1,6 @@
 defmodule PLANET.Sphere do
   @moduledoc """
-  Basic utility functions for spherical Planet data.
+    Functions for working with a Planet's Sphere.
   """
 
   @sections 0..4

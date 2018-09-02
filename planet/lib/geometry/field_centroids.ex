@@ -4,7 +4,8 @@ defmodule PLANET.Geometry.FieldCentroids do
   import PLANET.Geometry
 
   @moduledoc """
-    PLANET.Geometry.FieldCentroids computes the positions of the centroids of each Field on the Sphere.
+    Functions for computing the positions of the centroids of
+    each Field on a Sphere.
   """
 
   ###

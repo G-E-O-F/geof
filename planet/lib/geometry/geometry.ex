@@ -1,6 +1,10 @@
 defmodule PLANET.Geometry do
   import :math
 
+  @moduledoc """
+    Functions for computing a Planet's geometry.
+  """
+
   ###
   #
   # ATTRIBUTES
