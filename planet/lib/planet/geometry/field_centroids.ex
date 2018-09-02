@@ -1,5 +1,6 @@
 defmodule PLANET.Geometry.FieldCentroids do
   import :math
+  import PLANET.Sphere
   import PLANET.Geometry
 
   @moduledoc """
@@ -11,8 +12,6 @@ defmodule PLANET.Geometry.FieldCentroids do
   # ATTRIBUTES
   #
   ###
-
-  @sections 0..4
 
   @doc "The arclength of an edge of an icosahedron."
   @l acos(sqrt(5) / 5)
@@ -40,26 +39,6 @@ defmodule PLANET.Geometry.FieldCentroids do
 
   defp set_position(sphere, {:sxy, s, x, y}, {:pos, lat, lon}) do
     Map.put(sphere, {:sxy, s, x, y}, {:pos, lat, lon})
-  end
-
-  defp for_sections(sphere, each) do
-    Enum.reduce(
-      @sections,
-      sphere,
-      fn s, sphere ->
-        each.(sphere, s)
-      end
-    )
-  end
-
-  defp for_columns(sphere, d, each) do
-    Enum.reduce(
-      0..(d * 2 - 1),
-      sphere,
-      fn x, sphere ->
-        each.(sphere, x)
-      end
-    )
   end
 
   ##
