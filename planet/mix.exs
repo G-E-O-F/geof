@@ -18,8 +18,6 @@ defmodule PLANET.MixProject do
   end
 
   defp deps do
-    [
-      {:poison, "~> 4.0"}
-    ]
+    []
   end
 end
