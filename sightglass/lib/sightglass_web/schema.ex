@@ -6,9 +6,9 @@ defmodule SightglassWeb.Schema do
   alias SightglassWeb.Resolvers
 
   query do
-    @desc "Get all posts"
-    field :posts, list_of(:post) do
-      resolve(&Resolvers.Content.list_posts/3)
+    @desc "Get a planet"
+    field :planet, :planet do
+      resolve(&Resolvers.Content.get_planet/3)
     end
   end
 end
