@@ -83,7 +83,7 @@ defmodule PLANET.FieldTest do
     index = {:sxy, 0, dx - 1, 1}
 
     assert adjacents(index, d).nw == {:sxy, 0, dx - 2, 1}
-    assert adjacents(index, d).w == {:potato, 0, dx - 2, 2}
+    assert adjacents(index, d).w == {:sxy, 0, dx - 2, 2}
     assert adjacents(index, d).sw == {:sxy, 0, dx - 1, 2}
     assert adjacents(index, d).se == {:sxy, 1, dx / 2 + 1, dy - 1}
     assert adjacents(index, d).e == {:sxy, 1, dx / 2, dy - 1}
