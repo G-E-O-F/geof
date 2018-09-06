@@ -12,6 +12,8 @@ git add sightglass
 
 echo "[Lint & add]: THEATER"
 cd theater
-yarn precommit
+if yarn precommit; then
+  exit 1
+fi
 cd ..
 git add theater
