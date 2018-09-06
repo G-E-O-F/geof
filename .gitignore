@@ -20,3 +20,6 @@ erl_crash.dump
 
 # Package tarball ("mix hex.build")
 *.tar
+
+# IDE stuff that changes too often
+.idea/workspace.xml
