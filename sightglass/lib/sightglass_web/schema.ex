@@ -8,7 +8,8 @@ defmodule SightglassWeb.Schema do
   query do
     @desc "Get a planet"
     field :planet, :planet do
-      resolve(&Resolvers.Content.get_planet/3)
+      arg(:divisions, :integer, description: "The resolution of the model.")
+      resolve(&Resolvers.Planet.get_planet/3)
     end
   end
 end

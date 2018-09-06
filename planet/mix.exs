@@ -3,7 +3,7 @@ defmodule PLANET.MixProject do
 
   def project do
     [
-      app: :"g-e-o-f_planet",
+      app: :geof_planet,
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,

@@ -34,6 +34,7 @@ defmodule Sightglass.Mixfile do
     [
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
+      {:geof_planet, path: "../planet"},
       {:phoenix, "~> 1.3.4"},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_html, "~> 2.10"},
