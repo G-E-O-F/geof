@@ -1,12 +1,20 @@
-import join from 'lodash/join'
+import debounce from 'lodash/debounce'
+import domLoaded from 'dom-loaded'
 
-function component() {
-  const element = document.createElement('div')
+function onResize() {
+  const main = document.querySelector('main')
+  const canvas = main.querySelector('main canvas')
+  const depth = window.devicePixelRatio
 
-  // Lodash, currently included via a script, is required for this line to work
-  element.innerHTML = join(['Hello', 'world'], ' ')
+  const dims = main.getBoundingClientRect()
 
-  return element
+  canvas.setAttribute('width', dims.width * depth)
+  canvas.setAttribute('height', dims.height * depth)
 }
 
-document.body.appendChild(component())
+function __main__() {
+  window.addEventListener('resize', debounce(onResize, 1e3))
+  onResize()
+}
+
+domLoaded.then(__main__)
