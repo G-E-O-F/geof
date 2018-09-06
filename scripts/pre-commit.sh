@@ -1,6 +1,9 @@
 echo "[Lint & add]: PLANET"
 cd planet
 mix format
+if ! mix test; then
+  exit 1
+fi
 cd ..
 git add planet
 
