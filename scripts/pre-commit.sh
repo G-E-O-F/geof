@@ -12,7 +12,7 @@ git add sightglass
 
 echo "[Lint & add]: THEATER"
 cd theater
-if yarn precommit; then
+if ! yarn precommit; then
   exit 1
 fi
 cd ..
