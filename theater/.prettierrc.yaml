@@ -1,0 +1,6 @@
+# .prettierrc
+parser: babylon
+tabWidth: 2
+semi: false
+singleQuote: true
+trailingComma: all

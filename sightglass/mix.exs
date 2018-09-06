@@ -1,9 +1,9 @@
-defmodule PLANET.MixProject do
+defmodule SIGHTGLASS.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :"g-e-o-f_planet",
+      app: :"g-e-o-f_sightglass",
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,

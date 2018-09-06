@@ -1,11 +1,13 @@
-# The directory Mix writes compiled artifacts to
+# Compiled / built files
 _build
+dist
 
 # Coverage assets ("mix test --cover")
 cover
 
 # Dependencies
 deps
+node_modules
 
 # Generated docs output
 doc
