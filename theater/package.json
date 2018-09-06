@@ -20,7 +20,8 @@
     "eslint-plugin-import": "^2.14.0",
     "prettier": "^1.14.2",
     "webpack": "^4.17.2",
-    "webpack-cli": "^3.1.0"
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.8"
   },
   "dependencies": {
     "lodash": "^4.17.10"
@@ -33,6 +34,7 @@
     "clean": "rm -rf dist",
     "prebuild": "yarn clean && mkdir dist && cp app/index.html dist/",
     "build": "yarn webpack",
+    "start": "webpack-dev-server --config ./webpack/webpack.config.js",
     "webpack": "webpack --colors --display-error-details --display-optimization-bailout --config ./webpack/webpack.config.js"
   }
 }

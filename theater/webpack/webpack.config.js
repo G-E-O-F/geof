@@ -19,5 +19,11 @@ module.exports = {
     filename: 'main.js',
     path: path.resolve(CWD, 'dist'),
   },
+  devtool: 'inline-source-map',
+  devServer: {
+    contentBase: path.join(CWD, 'dist'),
+    compress: true,
+    port: 3331,
+  },
   resolve: resolve(),
 }
