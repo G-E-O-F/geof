@@ -1,7 +1,7 @@
-defmodule PLANET.Geometry.FieldCentroids do
+defmodule GEOF.Planet.Geometry.FieldCentroids do
   import :math
-  import PLANET.Sphere
-  import PLANET.Geometry
+  import GEOF.Planet.Sphere
+  import GEOF.Planet.Geometry
 
   @moduledoc """
     Functions for computing the positions of the centroids of
@@ -24,7 +24,7 @@ defmodule PLANET.Geometry.FieldCentroids do
   #
   ###
 
-  @type centroid_sphere :: %{PLANET.Field.index() => PLANET.Geometry.position()}
+  @type centroid_sphere :: %{GEOF.Planet.Field.index() => GEOF.Planet.Geometry.position()}
 
   ###
   #
@@ -196,7 +196,7 @@ defmodule PLANET.Geometry.FieldCentroids do
     n2 = d - 1 - j
     f1 = Map.get(sphere, {:sxy, s, x, 0})
     f2 = Map.get(sphere, {:sxy, s, x, j})
-    f3_index = Map.get(PLANET.Field.adjacents({:sxy, s, x, d - 1}, d), :sw)
+    f3_index = Map.get(GEOF.Planet.Field.adjacents({:sxy, s, x, d - 1}, d), :sw)
     f3 = Map.get(sphere, f3_index)
 
     interpolate(

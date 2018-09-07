@@ -1,6 +1,6 @@
-defmodule PLANET.Geometry.Mesh do
-  import PLANET.Sphere
-  import PLANET.Field
+defmodule GEOF.Planet.Geometry.Mesh do
+  import GEOF.Planet.Sphere
+  import GEOF.Planet.Field
   import :math
 
   @moduledoc """
@@ -17,12 +17,12 @@ defmodule PLANET.Geometry.Mesh do
   # Convenience function
 
   def poly_per_field(divisions) do
-    field_centroids = PLANET.Geometry.FieldCentroids.field_centroids(divisions)
+    field_centroids = GEOF.Planet.Geometry.FieldCentroids.field_centroids(divisions)
 
     poly_per_field(
       divisions,
       field_centroids,
-      PLANET.Geometry.InterfieldCentroids.interfield_centroids(field_centroids, divisions)
+      GEOF.Planet.Geometry.InterfieldCentroids.interfield_centroids(field_centroids, divisions)
     )
   end
 

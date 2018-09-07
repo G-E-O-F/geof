@@ -1,4 +1,4 @@
-defmodule PLANET.Field do
+defmodule GEOF.Planet.Field do
   @moduledoc """
     Functions for handling an individual Field on a Planet.
   """

@@ -1,4 +1,4 @@
-defmodule PLANET.Sphere do
+defmodule GEOF.Planet.Sphere do
   @moduledoc """
     Functions for working with a Planet's Sphere.
   """

@@ -1,9 +1,9 @@
-defmodule PLANET.Geometry.InterfieldCentroidsTest do
+defmodule GEOF.Planet.Geometry.InterfieldCentroidsTest do
   use ExUnit.Case
 
-  import PLANET.Geometry.InterfieldCentroids
+  import GEOF.Planet.Geometry.InterfieldCentroids
 
-  doctest PLANET.Geometry.InterfieldCentroids
+  doctest GEOF.Planet.Geometry.InterfieldCentroids
 
   test "computes interfield centroids" do
     interfield_centroid_sphere = interfield_centroids(3)

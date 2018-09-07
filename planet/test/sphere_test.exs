@@ -1,9 +1,9 @@
-defmodule PLANET.SphereTest do
+defmodule GEOF.Planet.SphereTest do
   use ExUnit.Case
 
-  import PLANET.Sphere
+  import GEOF.Planet.Sphere
 
-  doctest PLANET.Sphere
+  doctest GEOF.Planet.Sphere
 
   test "iterates through indices properly" do
     d = 7

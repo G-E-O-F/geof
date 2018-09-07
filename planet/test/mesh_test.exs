@@ -1,9 +1,9 @@
-defmodule PLANET.Geometry.MeshTest do
+defmodule GEOF.Planet.Geometry.MeshTest do
   use ExUnit.Case
 
-  import PLANET.Geometry.Mesh
+  import GEOF.Planet.Geometry.Mesh
 
-  doctest PLANET.Geometry.Mesh
+  doctest GEOF.Planet.Geometry.Mesh
 
   test "produces the accumulator" do
     d = 3
