@@ -22,9 +22,21 @@ function onResize() {
   resizeRenderer({ width, height })
 }
 
+let lastT = Date.now()
+
 function onReceivePlanetMesh(result) {
   const mesh = get(result, 'data.planet.mesh', null)
-  if (mesh) setPlanet(mesh)
+  if (mesh) {
+    console.info(
+      '[Received planet geometry]',
+      mesh.position.length,
+      'f',
+      mesh.index.length,
+      'i',
+    )
+    console.info('[Latency]', Date.now() - lastT, 'ms')
+    setPlanet(mesh)
+  } else console.info('[Received non-planet response]', result)
 }
 
 function __main__() {
@@ -35,6 +47,8 @@ function __main__() {
 
   play()
 
+  console.info('[Requesting planet geometry]')
+  lastT = Date.now()
   getPlanetMesh(17).then(onReceivePlanetMesh)
 }
 
