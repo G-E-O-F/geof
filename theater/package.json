@@ -1,0 +1,48 @@
+{
+  "name": "g-e-o-f_theater",
+  "version": "0.1.0",
+  "description": "Visualizes GEOF",
+  "main": "index.html",
+  "author": "Will Shown <w@willshown.com>",
+  "license": "MIT",
+  "browserslist": [
+    "last 2 versions"
+  ],
+  "engines": {
+    "node": "8.10.0",
+    "yarn": ">=1.9.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^9.0.0",
+    "eslint": "^5.5.0",
+    "eslint-plugin-babel": "^5.2.0",
+    "eslint-plugin-import": "^2.14.0",
+    "prettier": "^1.14.2",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.8"
+  },
+  "dependencies": {
+    "@absinthe/socket-apollo-link": "^0.1.11",
+    "apollo-cache-inmemory": "^1.2.9",
+    "apollo-client": "^2.4.1",
+    "dom-loaded": "^1.0.1",
+    "graphql": "^14.0.2",
+    "graphql-tag": "^2.9.2",
+    "imports-loader": "^0.8.0",
+    "lodash": "^4.17.10",
+    "three": "^0.96.0"
+  },
+  "scripts": {
+    "lint:eslint": "eslint --fix -c .eslintrc app",
+    "lint:prettier:app": "prettier --write  \"app/**/*.js\"",
+    "lint:prettier:webpack": "prettier --single-quote --no-semi --write --trailing-comma es5 \"webpack/**/*.js\"",
+    "precommit": "yarn lint:prettier:app && yarn lint:prettier:webpack && yarn lint:eslint",
+    "clean": "rm -rf dist",
+    "prebuild": "yarn clean && mkdir dist && cp app/index.html dist/",
+    "build": "yarn webpack",
+    "prestart": "yarn prebuild",
+    "start": "webpack-dev-server --config ./webpack/webpack.config.js --open",
+    "webpack": "webpack --colors --display-error-details --display-optimization-bailout --config ./webpack/webpack.config.js"
+  }
+}

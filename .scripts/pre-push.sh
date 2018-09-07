@@ -1,4 +1,6 @@
 echo "Testing PLANET"
 cd planet
-mix test
+if ! mix test; then
+  exit 1
+fi
 cd ..

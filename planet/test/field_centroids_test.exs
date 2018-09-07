@@ -1,11 +1,11 @@
-defmodule PLANET.Geometry.FieldCentroidsTest do
+defmodule GEOF.Planet.Geometry.FieldCentroidsTest do
   use ExUnit.Case
 
   import :math
-  import PLANET.Geometry
-  import PLANET.Geometry.FieldCentroids
+  import GEOF.Planet.Geometry
+  import GEOF.Planet.Geometry.FieldCentroids
 
-  doctest PLANET.Geometry.FieldCentroids
+  doctest GEOF.Planet.Geometry.FieldCentroids
 
   test "computes centroid maps for an icosahedron (divisions = 1)" do
     icosahedron = field_centroids(1)

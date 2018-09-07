@@ -1,11 +1,11 @@
-defmodule PLANET.GeometryTest do
+defmodule GEOF.Planet.GeometryTest do
   use ExUnit.Case
 
   import :math
-  import PLANET.Geometry
-  import PLANET.Geometry.FieldCentroids, only: [l: 0]
+  import GEOF.Planet.Geometry
+  import GEOF.Planet.Geometry.FieldCentroids, only: [l: 0]
 
-  doctest PLANET.Geometry
+  doctest GEOF.Planet.Geometry
 
   test "computes distance" do
     a = 2 * pi() / 5

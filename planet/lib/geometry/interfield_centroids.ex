@@ -1,7 +1,7 @@
-defmodule PLANET.Geometry.InterfieldCentroids do
-  import PLANET.Geometry
-  import PLANET.Sphere
-  import PLANET.Field
+defmodule GEOF.Planet.Geometry.InterfieldCentroids do
+  import GEOF.Planet.Geometry
+  import GEOF.Planet.Sphere
+  import GEOF.Planet.Field
 
   @moduledoc """
     Functions for computing the positions of the centroids between each
@@ -15,8 +15,10 @@ defmodule PLANET.Geometry.InterfieldCentroids do
   #
   ###
 
-  @type interfield_triangle_index :: MapSet.t(PLANET.Field.index())
-  @type interfield_centroid_sphere :: %{interfield_triangle_index => PLANET.Geometry.position()}
+  @type interfield_triangle_index :: MapSet.t(GEOF.Planet.Field.index())
+  @type interfield_centroid_sphere :: %{
+          interfield_triangle_index => GEOF.Planet.Geometry.position()
+        }
 
   ###
   #
@@ -32,8 +34,8 @@ defmodule PLANET.Geometry.InterfieldCentroids do
 
   @spec set_position(
           interfield_centroid_sphere,
-          list(PLANET.Field.index()),
-          PLANET.Geometry.position()
+          list(GEOF.Planet.Field.index()),
+          GEOF.Planet.Geometry.position()
         ) :: interfield_centroid_sphere
 
   defp set_position(sphere, [index1, index2, index3], {:pos, lat, lon}) do
@@ -51,12 +53,15 @@ defmodule PLANET.Geometry.InterfieldCentroids do
   @spec interfield_centroids(integer) :: interfield_centroid_sphere
 
   def interfield_centroids(divisions) when is_integer(divisions) and divisions > 0 do
-    interfield_centroids(PLANET.Geometry.FieldCentroids.field_centroids(divisions), divisions)
+    interfield_centroids(
+      GEOF.Planet.Geometry.FieldCentroids.field_centroids(divisions),
+      divisions
+    )
   end
 
   # Main function
 
-  @spec interfield_centroids(PLANET.Geometry.FieldCentroids.centroid_sphere(), integer) ::
+  @spec interfield_centroids(GEOF.Planet.Geometry.FieldCentroids.centroid_sphere(), integer) ::
           interfield_centroid_sphere
 
   def interfield_centroids(centroids, divisions) when is_integer(divisions) and divisions > 0 do

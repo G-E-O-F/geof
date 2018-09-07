@@ -1,0 +1,164 @@
+---
+    parser: babel-eslint
+    plugins:
+        - babel
+        - import
+    extends:
+        - eslint:recommended
+    env:
+        es6: true
+        browser: true
+    settings:
+        import/parser: babel-eslint
+    globals:
+      require: true
+      process: true
+      global: true
+      module: true
+      shallow: true
+      mount: true
+      testID: true
+      stubComponent: true
+      mockData: true
+      browser: true
+      page: true
+      __dirname: true
+    rules:
+        # optimizations
+        no-extra-bind: error
+        no-lone-blocks: error
+        no-loop-func: error
+        no-return-await: error
+        no-self-compare: error
+        no-throw-literal: error
+        no-useless-call: error
+        no-useless-concat: error
+        require-await: error
+        func-name-matching: error
+        prefer-const: error
+
+        # potential errors
+        array-callback-return: error
+        default-case: error
+        eqeqeq:
+            - error
+            - smart
+        no-eval: error
+        no-implied-eval: error
+        no-extend-native: error
+        no-floating-decimal: error
+        no-new: error
+        no-param-reassign: error
+        no-return-assign: error
+        no-shadow: error
+        no-sequences: error
+        no-unused-expressions: error
+        no-label-var: error
+        no-shadow-restricted-names: error
+        no-undef: error
+        no-unused-vars: off
+
+        # code style
+        no-new-func: error
+        one-var:
+          - error
+          - never
+        no-new-wrappers: error
+        prefer-promise-reject-errors:
+          - error
+          - allowEmptyReject: true
+        no-undef-init: error
+        function-paren-newline: off # prettier
+        id-length: error
+        new-cap:
+          - error
+          - capIsNew: false
+        new-parens: error
+        no-multiple-empty-lines: error
+        no-unneeded-ternary: error
+        no-whitespace-before-property: error
+        curly:
+          - error
+          - multi
+        object-curly-spacing:
+          - error
+          - always
+        no-lonely-if: error
+        #switch-colon-spacing: off #definition not found... why?
+        space-before-blocks: error
+        no-duplicate-imports: error
+        no-useless-computed-key: error
+        no-useless-rename: error
+        no-var: error
+        object-shorthand: error
+        prefer-arrow-callback: error
+        prefer-destructuring:
+          - error
+          - array: false
+        prefer-rest-params: error
+        prefer-spread: error
+        prefer-template: error
+        rest-spread-spacing: error
+        space-before-function-paren: off
+        object-property-newline:
+            - error
+            - allowMultiplePropertiesPerLine: true
+
+        # syntax style
+        computed-property-spacing: error
+        array-bracket-spacing: error
+        brace-style: error
+        no-multi-spaces: error
+        comma-spacing: error
+        func-call-spacing: error
+        key-spacing: error
+        keyword-spacing: error
+        no-tabs: error
+        no-trailing-spaces:
+          - warn
+          - skipBlankLines: true
+        arrow-spacing: error
+        template-curly-spacing:
+            - error
+            - never
+        arrow-body-style:
+            - error
+            - as-needed
+        semi:
+            - error
+            - never
+        quotes:
+            - error
+            - single
+            - avoidEscape: true
+        comma-style:
+            - error
+            - last
+            - exceptions:
+                ArrayExpression: true
+                ObjectExpression: true
+        comma-dangle:
+            - error
+            - always-multiline
+        dot-location:
+            - error
+            - property
+
+        # application style
+        no-alert: error
+        no-console: off # enable when we add sentry
+
+        # imports
+        import/prefer-default-export: off
+        import/unambiguous: error
+        import/no-named-default: off
+        import/no-named-as-default-member: error
+        import/no-mutable-exports: error
+        import/no-dynamic-require: error
+        import/no-duplicates: error
+        import/no-absolute-path: error
+        import/newline-after-import: error
+        import/named: error
+        import/first: error
+        import/export: error
+        # import/exports-last: error # not defined in imports package for some reason

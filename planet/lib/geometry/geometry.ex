@@ -1,4 +1,4 @@
-defmodule PLANET.Geometry do
+defmodule GEOF.Planet.Geometry do
   import :math
 
   @moduledoc """

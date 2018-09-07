@@ -1,9 +1,9 @@
-defmodule PLANET.FieldTest do
+defmodule GEOF.Planet.FieldTest do
   use ExUnit.Case
 
-  import PLANET.Field
+  import GEOF.Planet.Field
 
-  doctest PLANET.Field
+  doctest GEOF.Planet.Field
 
   test "links northern polar field correctly" do
     d = 1
