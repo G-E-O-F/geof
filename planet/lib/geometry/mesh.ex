@@ -8,9 +8,9 @@ defmodule PLANET.Geometry.Mesh do
     can be used in WebGL etc.
   """
 
-  @pent_faces [0, 2, 1, 0, 4, 2, 4, 3, 2]
-  @pent_faces_cw [1, 2, 0, 2, 4, 0, 2, 3, 4]
-  @hex_faces [0, 2, 1, 0, 3, 2, 0, 5, 3, 5, 4, 3]
+  @pent_faces Enum.reverse([0, 2, 1, 0, 4, 2, 4, 3, 2])
+  @pent_faces_cw Enum.reverse([1, 2, 0, 2, 4, 0, 2, 3, 4])
+  @hex_faces Enum.reverse([0, 2, 1, 0, 3, 2, 0, 5, 3, 5, 4, 3])
 
   @adj_order [:nw, :w, :sw, :se, :e, :ne]
 
@@ -45,17 +45,17 @@ defmodule PLANET.Geometry.Mesh do
           pos_c: 0
         ],
         d,
-        fn acc, index ->
+        fn acc, field_index ->
           pos_c = acc[:pos_c]
-          adj = adjacents(index, d)
+          adj = adjacents(field_index, d)
           sides = if adj.ne == nil, do: 5, else: 6
 
-          {:pos, lat, lon} = Map.get(field_centroids, index)
+          {:pos, lat, lon} = Map.get(field_centroids, field_index)
 
-          poly_positions =
+          position =
             Enum.reduce(
               0..(sides - 1),
-              [],
+              acc[:position],
               fn s, acc ->
                 next_s = rem(s + sides + 1, sides)
 
@@ -63,13 +63,13 @@ defmodule PLANET.Geometry.Mesh do
                   Map.get(
                     interfield_cartesian_points,
                     MapSet.new([
-                      index,
+                      field_index,
                       Map.get(adj, Enum.at(@adj_order, s)),
                       Map.get(adj, Enum.at(@adj_order, next_s))
                     ])
                   )
 
-                acc ++ [x, y, z]
+                [z | [y | [x | acc]]]
               end
             )
 
@@ -83,37 +83,42 @@ defmodule PLANET.Geometry.Mesh do
           ]
 
           # This repeats the same normal for each vertex
-          poly_normals =
+          normal =
             Enum.reduce(
               0..(sides - 1),
-              [],
+              acc[:normal],
               fn _, acc ->
-                acc ++ poly_normal
+                [x, y, z] = poly_normal
+                [z | [y | [x | acc]]]
               end
             )
 
-          poly_indices =
+          index =
             cond do
               # :south is a special case; its faces must wind backwards
-              index == :south ->
-                Enum.map(@pent_faces_cw, fn f -> f + pos_c end)
+              field_index == :south ->
+                Enum.reduce(@pent_faces_cw, acc[:index], fn f, acc -> [f + pos_c | acc] end)
 
               sides == 5 ->
-                Enum.map(@pent_faces, fn f -> f + pos_c end)
+                Enum.reduce(@pent_faces, acc[:index], fn f, acc -> [f + pos_c | acc] end)
 
               true ->
-                Enum.map(@hex_faces, fn f -> f + pos_c end)
+                Enum.reduce(@hex_faces, acc[:index], fn f, acc -> [f + pos_c | acc] end)
             end
 
           [
-            position: acc[:position] ++ poly_positions,
-            normal: acc[:normal] ++ poly_normals,
-            index: acc[:index] ++ poly_indices,
+            position: position,
+            normal: normal,
+            index: index,
             pos_c: acc[:pos_c] + sides
           ]
         end
       )
 
-    Keyword.delete(mesh_attr_buffers, :pos_c)
+    [
+      position: Enum.reverse(mesh_attr_buffers[:position]),
+      normal: Enum.reverse(mesh_attr_buffers[:normal]),
+      index: Enum.reverse(mesh_attr_buffers[:index])
+    ]
   end
 end
