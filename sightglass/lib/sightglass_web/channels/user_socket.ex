@@ -1,6 +1,9 @@
 defmodule SightglassWeb.UserSocket do
   use Phoenix.Socket
 
+  use Absinthe.Phoenix.Socket,
+    schema: SightglassWeb.Schema
+
   ## Channels
   # channel "room:*", SightglassWeb.RoomChannel
 

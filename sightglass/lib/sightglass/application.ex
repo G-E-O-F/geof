@@ -9,7 +9,9 @@ defmodule Sightglass.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(SightglassWeb.Endpoint, [])
+      supervisor(SightglassWeb.Endpoint, []),
+      # Start the subscription service
+      supervisor(Absinthe.Subscription, [SightglassWeb.Endpoint])
       # Start your own worker by calling: Sightglass.Worker.start_link(arg1, arg2, arg3)
       # worker(Sightglass.Worker, [arg1, arg2, arg3]),
     ]

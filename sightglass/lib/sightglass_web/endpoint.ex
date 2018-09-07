@@ -1,5 +1,6 @@
 defmodule SightglassWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :sightglass
+  use Absinthe.Phoenix.Endpoint
 
   socket("/socket", SightglassWeb.UserSocket)
 
