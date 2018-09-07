@@ -56,10 +56,7 @@
         no-label-var: error
         no-shadow-restricted-names: error
         no-undef: error
-        no-unused-vars:
-          - error
-          - varsIgnorePattern: React|cx$|l$
-            args: none
+        no-unused-vars: off
 
         # code style
         no-new-func: error
@@ -154,7 +151,6 @@
         # imports
         import/prefer-default-export: off
         import/unambiguous: error
-        import/no-webpack-loader-syntax: error
         import/no-named-default: off
         import/no-named-as-default-member: error
         import/no-mutable-exports: error

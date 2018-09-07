@@ -3,34 +3,39 @@ import get from 'lodash/get'
 import domLoaded from 'dom-loaded'
 
 import { getPlanetMesh } from './link'
+import {
+  play,
+  onResize as resizeRenderer,
+  setPlanet,
+  setRenderer,
+} from './scene'
 
 function onResize() {
   const main = document.querySelector('main')
-  const canvas = main.querySelector('main canvas')
   const depth = window.devicePixelRatio
 
   const dims = main.getBoundingClientRect()
 
-  canvas.setAttribute('width', dims.width * depth)
-  canvas.setAttribute('height', dims.height * depth)
+  const width = dims.width * depth
+  const height = dims.height * depth
+
+  resizeRenderer({ width, height })
 }
 
 function onReceivePlanetMesh(result) {
   const mesh = get(result, 'data.planet.mesh', null)
-  if (mesh)
-    console.log(
-      '[Successfully received mesh]',
-      mesh.position.length,
-      mesh.normal.length,
-      mesh.index.length,
-    )
+  if (mesh) setPlanet(mesh)
 }
 
 function __main__() {
+  setRenderer({ canvas: document.querySelector('main canvas') })
+
   window.addEventListener('resize', debounce(onResize, 1e3))
   onResize()
 
-  getPlanetMesh(1).then(onReceivePlanetMesh)
+  play()
+
+  getPlanetMesh(17).then(onReceivePlanetMesh)
 }
 
 domLoaded.then(__main__)
