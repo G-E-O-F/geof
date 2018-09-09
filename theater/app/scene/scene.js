@@ -30,7 +30,7 @@ export function onResize({ width, height }) {
 
 let planet
 
-export function setPlanet({ position, normal, index }) {
+export function setPlanet({ position, normal, index, vertex_order }) {
   if (planet) {
     scene.remove(planet)
     planet = null
@@ -62,6 +62,8 @@ export function setPlanet({ position, normal, index }) {
     }),
   )
 
+  planet.userData.vertex_order = vertex_order
+
   scene.add(planet)
 }
 
@@ -82,17 +84,16 @@ function isPentagon(fi, div) {
 }
 
 export function setPlanetFrame(divisions, frame) {
-  let ci = 0
   if (planet)
     for (let fi = 0; fi < 10 * divisions * divisions + 2; fi += 1) {
       const sides = (isPentagon(fi, divisions) && 5) || 6
+      const offset = planet.userData.vertex_order[fi]
       for (let si = 0; si < sides; si += 1) {
-        const cc = ci + si
-        planet.geometry.attributes.color.array[cc * 3 + 0] = frame[fi][0] / 255
-        planet.geometry.attributes.color.array[cc * 3 + 1] = frame[fi][1] / 255
-        planet.geometry.attributes.color.array[cc * 3 + 2] = frame[fi][2] / 255
+        const cc = offset + si * 3
+        planet.geometry.attributes.color.array[cc + 0] = frame[fi][0] / 255
+        planet.geometry.attributes.color.array[cc + 1] = frame[fi][1] / 255
+        planet.geometry.attributes.color.array[cc + 2] = frame[fi][2] / 255
       }
-      ci += sides
     }
   planet.geometry.attributes.color.needsUpdate = true
 }

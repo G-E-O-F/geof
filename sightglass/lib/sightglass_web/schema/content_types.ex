@@ -1,11 +1,19 @@
 defmodule SightglassWeb.Schema.ContentTypes do
   use Absinthe.Schema.Notation
 
+  scalar :map do
+    description("A mapping of some kind")
+    # Since this is a map, there is no meaningful logic to put here.
+    parse(fn map -> map end)
+    serialize(fn map -> map end)
+  end
+
   object :mesh do
     description("A planet's geometry as lists that can be cast to typed arrays")
     field(:position, list_of(:float))
     field(:normal, list_of(:float))
     field(:index, list_of(:integer))
+    field(:vertex_order, :map)
   end
 
   object :planet do
@@ -20,20 +28,6 @@ defmodule SightglassWeb.Schema.ContentTypes do
     field(:id, :id)
     field(:divisions, :integer)
     field(:pattern, :string)
-    field(:colors, :frame_colors)
-  end
-
-  scalar :frame_colors do
-    description("A mapping of vertex index to RGB tuples")
-    # Since this is a map, there is no meaningful logic to put here.
-    parse(fn map ->
-      IO.inspect(map)
-      map
-    end)
-
-    serialize(fn map ->
-      IO.inspect(map)
-      map
-    end)
+    field(:colors, :map)
   end
 end

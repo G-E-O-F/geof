@@ -10,8 +10,8 @@ defmodule GEOF.Planet.Pattern do
 
   def highlight_icosahedron(divisions) do
     d = divisions
-    c1 = {:rgb, 215, 114, 33}
-    c2 = {:rgb, 112, 0, 0}
+    c1 = {:rgb, 228, 234, 192}
+    c2 = {:rgb, 166, 206, 146}
 
     for_all_fields(%{}, divisions, fn
       acc, :north ->

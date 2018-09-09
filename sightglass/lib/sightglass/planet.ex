@@ -8,7 +8,8 @@ defmodule Sightglass.Planet do
       mesh: %{
         position: mesh[:position],
         normal: mesh[:normal],
-        index: mesh[:index]
+        index: mesh[:index],
+        vertex_order: mesh[:vertex_order]
       }
     }
   end

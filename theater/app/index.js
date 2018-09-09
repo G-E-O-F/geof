@@ -2,14 +2,14 @@ import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import domLoaded from 'dom-loaded'
 
-import { getPlanetMesh, getPlanetFrame } from './link'
+import { getPlanetMesh, getPlanetFrame } from './link/link'
 import {
   play,
   onResize as resizeRenderer,
   setPlanet,
   setPlanetFrame,
   setRenderer,
-} from './scene'
+} from './scene/scene'
 
 const DIVISIONS = 17
 

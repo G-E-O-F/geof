@@ -20,6 +20,7 @@ export function getPlanetMesh(divisions) {
             position
             normal
             index
+            vertex_order
           }
         }
       }
