@@ -13,7 +13,7 @@ const node = {
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  entry: './app/index.js',
+  entry: './app/app.js',
   node,
   output: {
     filename: 'main.js',

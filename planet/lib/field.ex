@@ -7,6 +7,13 @@ defmodule GEOF.Planet.Field do
 
   @sections 5
 
+  def flatten_index(:north, _), do: 0
+  def flatten_index(:south, _), do: 1
+
+  def flatten_index({:sxy, s, x, y}, d) do
+    s * d * d * 2 + x * d + y + 2
+  end
+
   @doc "Provides a map of indices for a field's adjacent fields."
   def adjacents(:north, _) do
     %{

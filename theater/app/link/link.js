@@ -20,7 +20,22 @@ export function getPlanetMesh(divisions) {
             position
             normal
             index
+            vertex_order
           }
+        }
+      }
+    `,
+  })
+}
+
+export function getPlanetFrame(divisions, pattern) {
+  return client.mutate({
+    mutation: gql`
+      mutation {
+        elapseFrame(divisions: ${divisions}, pattern: "${pattern}") {
+          divisions
+          pattern
+          colors
         }
       }
     `,

@@ -8,9 +8,9 @@ defmodule GEOF.Planet.Geometry.Mesh do
     can be used in WebGL etc.
   """
 
-  @pent_faces Enum.reverse([0, 2, 1, 0, 4, 2, 4, 3, 2])
-  @pent_faces_cw Enum.reverse([1, 2, 0, 2, 4, 0, 2, 3, 4])
-  @hex_faces Enum.reverse([0, 2, 1, 0, 3, 2, 0, 5, 3, 5, 4, 3])
+  @pent_faces [0, 2, 1, 0, 4, 2, 4, 3, 2]
+  @pent_faces_cw [1, 2, 0, 2, 4, 0, 2, 3, 4]
+  @hex_faces [0, 2, 1, 0, 3, 2, 0, 5, 3, 5, 4, 3]
 
   @adj_order [:nw, :w, :sw, :se, :e, :ne]
 
@@ -42,7 +42,9 @@ defmodule GEOF.Planet.Geometry.Mesh do
           position: [],
           normal: [],
           index: [],
-          pos_c: 0
+          vertex_order: %{},
+          pos_c: 0,
+          buffer_i: 0
         ],
         d,
         fn acc, field_index ->
@@ -110,7 +112,10 @@ defmodule GEOF.Planet.Geometry.Mesh do
             position: position,
             normal: normal,
             index: index,
-            pos_c: acc[:pos_c] + sides
+            vertex_order:
+              Map.put(acc[:vertex_order], flatten_index(field_index, d), acc[:buffer_i]),
+            pos_c: acc[:pos_c] + sides,
+            buffer_i: acc[:buffer_i] + sides * 3
           ]
         end
       )
@@ -118,7 +123,8 @@ defmodule GEOF.Planet.Geometry.Mesh do
     [
       position: Enum.reverse(mesh_attr_buffers[:position]),
       normal: Enum.reverse(mesh_attr_buffers[:normal]),
-      index: Enum.reverse(mesh_attr_buffers[:index])
+      index: Enum.reverse(mesh_attr_buffers[:index]),
+      vertex_order: mesh_attr_buffers[:vertex_order]
     ]
   end
 end
