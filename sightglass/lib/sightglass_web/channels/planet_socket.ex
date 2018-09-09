@@ -1,4 +1,4 @@
-defmodule SightglassWeb.UserSocket do
+defmodule SightglassWeb.PlanetSocket do
   use Phoenix.Socket
 
   use Absinthe.Phoenix.Socket,

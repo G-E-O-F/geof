@@ -10,7 +10,7 @@ defmodule SightglassWeb.Router do
 
     forward("/graphiql", Absinthe.Plug.GraphiQL,
       schema: SightglassWeb.Schema,
-      socket: SightglassWeb.UserSocket
+      socket: SightglassWeb.PlanetSocket
     )
 
     forward("/", Absinthe.Plug, schema: SightglassWeb.Schema)

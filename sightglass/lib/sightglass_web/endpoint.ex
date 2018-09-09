@@ -2,7 +2,7 @@ defmodule SightglassWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :sightglass
   use Absinthe.Phoenix.Endpoint
 
-  socket("/socket", SightglassWeb.UserSocket)
+  socket("/planet", SightglassWeb.PlanetSocket)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
