@@ -11,7 +11,7 @@ import {
   setRenderer,
 } from './scene/scene'
 
-const DIVISIONS = 17
+const DIVISIONS = 27
 
 function onResize() {
   const main = document.querySelector('main')
