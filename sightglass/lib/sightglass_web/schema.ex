@@ -12,4 +12,14 @@ defmodule SightglassWeb.Schema do
       resolve(&Resolvers.Planet.get_planet/3)
     end
   end
+
+  mutation do
+    @desc "Request a new frame from the model"
+    field :elapse_frame, :frame do
+      arg(:divisions, :integer)
+      arg(:pattern, :string)
+
+      resolve(&Resolvers.Planet.get_planet_frame/3)
+    end
+  end
 end

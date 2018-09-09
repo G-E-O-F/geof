@@ -26,3 +26,17 @@ export function getPlanetMesh(divisions) {
     `,
   })
 }
+
+export function getPlanetFrame(divisions, pattern) {
+  return client.mutate({
+    mutation: gql`
+      mutation {
+        elapseFrame(divisions: ${divisions}, pattern: "${pattern}") {
+          divisions
+          pattern
+          colors
+        }
+      }
+    `,
+  })
+}

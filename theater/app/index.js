@@ -2,13 +2,16 @@ import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import domLoaded from 'dom-loaded'
 
-import { getPlanetMesh } from './link'
+import { getPlanetMesh, getPlanetFrame } from './link'
 import {
   play,
   onResize as resizeRenderer,
   setPlanet,
+  setPlanetFrame,
   setRenderer,
 } from './scene'
+
+const DIVISIONS = 17
 
 function onResize() {
   const main = document.querySelector('main')
@@ -39,6 +42,15 @@ function onReceivePlanetMesh(result) {
   } else console.info('[Received non-planet response]', result)
 }
 
+function onReceivePlanetFrame(result) {
+  const frameColors = get(result, 'data.elapseFrame.colors', null)
+  const divisions = get(result, 'data.elapseFrame.divisions', null)
+  if (frameColors) {
+    console.info('[Received planet color frame]')
+    setPlanetFrame(divisions, frameColors)
+  }
+}
+
 function __main__() {
   setRenderer({ canvas: document.querySelector('main canvas') })
 
@@ -49,7 +61,10 @@ function __main__() {
 
   console.info('[Requesting planet geometry]')
   lastT = Date.now()
-  getPlanetMesh(17).then(onReceivePlanetMesh)
+  getPlanetMesh(DIVISIONS)
+    .then(onReceivePlanetMesh)
+    .then(() => getPlanetFrame(DIVISIONS, 'highlight_icosahedron'))
+    .then(onReceivePlanetFrame)
 }
 
 domLoaded.then(__main__)

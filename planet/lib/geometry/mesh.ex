@@ -8,9 +8,9 @@ defmodule GEOF.Planet.Geometry.Mesh do
     can be used in WebGL etc.
   """
 
-  @pent_faces Enum.reverse([0, 2, 1, 0, 4, 2, 4, 3, 2])
-  @pent_faces_cw Enum.reverse([1, 2, 0, 2, 4, 0, 2, 3, 4])
-  @hex_faces Enum.reverse([0, 2, 1, 0, 3, 2, 0, 5, 3, 5, 4, 3])
+  @pent_faces [0, 2, 1, 0, 4, 2, 4, 3, 2]
+  @pent_faces_cw [1, 2, 0, 2, 4, 0, 2, 3, 4]
+  @hex_faces [0, 2, 1, 0, 3, 2, 0, 5, 3, 5, 4, 3]
 
   @adj_order [:nw, :w, :sw, :se, :e, :ne]
 
