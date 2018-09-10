@@ -27,7 +27,12 @@ defmodule GEOF.Planet.SphereServer do
            end
          )
      }}
+
+    # TODO: give field servers the PIDs of the adjacent fields' servers
   end
+
+  # TODO: add `handle_cast` and `cast` to fields; handle responses at `handle_info`
+  # May need to specify the iteration cycle and store some way of determining when it's done.
 
   @impl true
   def handle_call(:tick, _from, state) do
