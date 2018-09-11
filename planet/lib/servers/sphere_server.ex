@@ -4,17 +4,23 @@ defmodule GEOF.Planet.SphereServer do
   # API
 
   def start_link(divisions) do
-    GenServer.start_link(__MODULE__, [divisions])
+    sphere_id = make_ref()
+    GenServer.start_link(__MODULE__, [divisions, sphere_id], name: sphere_via_registry(sphere_id))
+  end
+
+  defp sphere_via_registry(sphere_id) do
+    GEOF.Planet.Registry.via({:sphere, sphere_id})
   end
 
   # SERVER
 
   @impl true
-  def init([divisions]) do
-    {:ok, supervisor} = GEOF.Planet.FieldSupervisor.start_link(divisions)
+  def init([divisions, sphere_id]) do
+    {:ok, supervisor} = GEOF.Planet.FieldSupervisor.start_link(divisions, sphere_id)
 
     {:ok,
      %{
+       id: sphere_id,
        divisions: divisions,
        geometry: %{
          field_centroids: nil,

@@ -3,14 +3,14 @@ defmodule GEOF.Planet.FieldSupervisor do
 
   # API
 
-  def start_link(divisions) do
-    Supervisor.start_link(__MODULE__, [divisions])
+  def start_link(divisions, sphere_id) do
+    Supervisor.start_link(__MODULE__, [divisions, sphere_id])
   end
 
   # SERVER
 
   @impl true
-  def init([divisions]) when is_integer(divisions) and divisions >= 0 do
+  def init([divisions, sphere_id]) do
     # One child per field, identified by field index
 
     children =
@@ -21,7 +21,7 @@ defmodule GEOF.Planet.FieldSupervisor do
             start: {
               GEOF.Planet.FieldServer,
               :start_link,
-              [index]
+              [sphere_id, index]
             }
           }
           | acc
