@@ -51,16 +51,6 @@ defmodule GEOF.Planet.FieldServer do
   end
 
   @impl true
-  def handle_call(:get_state, _from, state) do
-    {:reply, state, state}
-  end
-
-  @impl true
-  def handle_call(:get_data, _from, state) do
-    {:reply, Map.get(state, :data), state}
-  end
-
-  @impl true
   def handle_cast({:iterate, module_name, func_name}, state) do
     # Applies an arbitrary module's function with the current and adjacent fields' state
     {:noreply,
@@ -73,6 +63,16 @@ defmodule GEOF.Planet.FieldServer do
          [state, get_adjacents_data(state)]
        )
      )}
+  end
+
+  @impl true
+  def handle_call(:get_state, _from, state) do
+    {:reply, state, state}
+  end
+
+  @impl true
+  def handle_call(:get_data, _from, state) do
+    {:reply, Map.get(state, :data), state}
   end
 
   defp get_adjacents_data(state) do
