@@ -1,5 +1,6 @@
 defmodule GEOF.Planet.FieldSupervisor do
   use Supervisor
+  import GEOF.Planet.Field
 
   # API
 
@@ -21,7 +22,7 @@ defmodule GEOF.Planet.FieldSupervisor do
             start: {
               GEOF.Planet.FieldServer,
               :start_link,
-              [sphere_id, index]
+              [sphere_id, index, adjacents(index, divisions)]
             }
           }
           | acc
