@@ -1,18 +1,15 @@
 defmodule GEOF.Planet.FieldServer do
   use GenServer
+  import GEOF.Planet.Registry
 
   # API
 
   def start_link(sphere_id, index) do
-    GenServer.start_link(__MODULE__, [sphere_id], name: field_via_registry(sphere_id, index))
+    GenServer.start_link(__MODULE__, [sphere_id], name: field_via_reg(sphere_id, index))
   end
 
   def set_data(sphere_id, index, new_data) do
-    GenServer.cast(field_via_registry(sphere_id, index), {:set_data, new_data})
-  end
-
-  defp field_via_registry(sphere_id, index) do
-    GEOF.Planet.Registry.via({:field, sphere_id, index})
+    GenServer.cast(field_via_reg(sphere_id, index), {:set_data, new_data})
   end
 
   # SERVER

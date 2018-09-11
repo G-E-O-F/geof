@@ -1,15 +1,12 @@
 defmodule GEOF.Planet.SphereServer do
   use GenServer
+  import GEOF.Planet.Registry
 
   # API
 
   def start_link(divisions) do
     sphere_id = make_ref()
-    GenServer.start_link(__MODULE__, [divisions, sphere_id], name: sphere_via_registry(sphere_id))
-  end
-
-  defp sphere_via_registry(sphere_id) do
-    GEOF.Planet.Registry.via({:sphere, sphere_id})
+    GenServer.start_link(__MODULE__, [divisions, sphere_id], name: sphere_via_reg(sphere_id))
   end
 
   # SERVER
