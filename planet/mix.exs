@@ -13,11 +13,13 @@ defmodule PLANET.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :gproc]
     ]
   end
 
   defp deps do
-    []
+    [
+      {:gproc, "~> 0.8"}
+    ]
   end
 end

@@ -1,13 +1,20 @@
 defmodule GEOF.Planet.FieldServer do
   use GenServer
 
-  @impl true
-  def init([index, color]) do
-    {:ok, %{index: index, color: color}}
+  # API
+
+  def start_link(index) do
+    GenServer.start_link(__MODULE__, [], name: via_registry(index))
   end
 
+  defp via_registry(index) do
+    {:via, :gproc, {:n, :l, index}}
+  end
+
+  # SERVER
+
   @impl true
-  def handle_call(:tick, _from, state) do
-    {:reply, Map.get(state, :color), state}
+  def init(_) do
+    {:ok, %{}}
   end
 end
