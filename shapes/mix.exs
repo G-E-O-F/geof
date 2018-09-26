@@ -18,6 +18,8 @@ defmodule GEOF.Shapes.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:vector, "~> 1.0"}
+    ]
   end
 end
