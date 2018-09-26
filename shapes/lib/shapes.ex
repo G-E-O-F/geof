@@ -21,11 +21,12 @@ defmodule GEOF.Shapes do
 
     determinant = Vector.dot(inv_l_ab, p_01x02)
 
-    t =
-      Vector.dot(
-        p_01x02,
-        l_a_minus_p_0
-      ) / determinant
+    # In case you want the `t` component later:
+    # t =
+    #  Vector.dot(
+    #    p_01x02,
+    #    l_a_minus_p_0
+    #  ) / determinant
 
     u =
       Vector.dot(
