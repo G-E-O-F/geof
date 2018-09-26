@@ -1,4 +1,4 @@
-defmodule SightglassWeb.Schema.ContentTypes do
+defmodule GEOF.SightglassWeb.Schema.ContentTypes do
   use Absinthe.Schema.Notation
 
   scalar :map do

@@ -6,11 +6,11 @@
 use Mix.Config
 
 # Configures the endpoint
-config :sightglass, SightglassWeb.Endpoint,
+config :geof_sightglass, GEOF.SightglassWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "8OEyCS6JvYJfRRRWCIcMjTZuK7wtpejeHlWDOBY0irea8SQqP8Kio8Klm1UAMz+p",
-  render_errors: [view: SightglassWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Sightglass.PubSub, adapter: Phoenix.PubSub.PG2]
+  render_errors: [view: GEOF.SightglassWeb.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: GEOF.Sightglass.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,

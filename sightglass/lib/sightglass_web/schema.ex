@@ -1,9 +1,9 @@
-defmodule SightglassWeb.Schema do
+defmodule GEOF.SightglassWeb.Schema do
   use Absinthe.Schema
 
-  import_types(SightglassWeb.Schema.ContentTypes)
+  import_types(GEOF.SightglassWeb.Schema.ContentTypes)
 
-  alias SightglassWeb.Resolvers
+  alias GEOF.SightglassWeb.Resolvers
 
   query do
     @desc "Get a planet"

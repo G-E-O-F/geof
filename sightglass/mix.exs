@@ -1,9 +1,9 @@
-defmodule Sightglass.Mixfile do
+defmodule GEOF.Sightglass.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :sightglass,
+      app: :geof_sightglass,
       version: "0.0.1",
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -18,7 +18,7 @@ defmodule Sightglass.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Sightglass.Application, []},
+      mod: {GEOF.Sightglass.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

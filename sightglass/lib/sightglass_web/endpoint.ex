@@ -1,8 +1,8 @@
-defmodule SightglassWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :sightglass
+defmodule GEOF.SightglassWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :geof_sightglass
   use Absinthe.Phoenix.Endpoint
 
-  socket("/planet", SightglassWeb.PlanetSocket)
+  socket("/planet", GEOF.SightglassWeb.PlanetSocket)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -23,7 +23,7 @@ defmodule SightglassWeb.Endpoint do
   plug(Plug.MethodOverride)
   plug(Plug.Head)
 
-  plug(SightglassWeb.Router)
+  plug(GEOF.SightglassWeb.Router)
 
   @doc """
   Callback invoked for dynamically configuring the endpoint.

@@ -1,11 +1,11 @@
-defmodule SightglassWeb.PlanetSocket do
+defmodule GEOF.SightglassWeb.PlanetSocket do
   use Phoenix.Socket
 
   use Absinthe.Phoenix.Socket,
-    schema: SightglassWeb.Schema
+    schema: GEOF.SightglassWeb.Schema
 
   ## Channels
-  # channel "room:*", SightglassWeb.RoomChannel
+  # channel "room:*", GEOF.SightglassWeb.RoomChannel
 
   ## Transports
   transport(:websocket, Phoenix.Transports.WebSocket)
@@ -33,7 +33,7 @@ defmodule SightglassWeb.PlanetSocket do
   # Would allow you to broadcast a "disconnect" event and terminate
   # all active sockets and channels for a given user:
   #
-  #     SightglassWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
+  #     GEOF.SightglassWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
   def id(_socket), do: nil

@@ -1,5 +1,5 @@
-defmodule SightglassWeb.Router do
-  use SightglassWeb, :router
+defmodule GEOF.SightglassWeb.Router do
+  use GEOF.SightglassWeb, :router
 
   pipeline :api do
     plug(:accepts, ["json"])
@@ -9,10 +9,10 @@ defmodule SightglassWeb.Router do
     pipe_through(:api)
 
     forward("/graphiql", Absinthe.Plug.GraphiQL,
-      schema: SightglassWeb.Schema,
-      socket: SightglassWeb.PlanetSocket
+      schema: GEOF.SightglassWeb.Schema,
+      socket: GEOF.SightglassWeb.PlanetSocket
     )
 
-    forward("/", Absinthe.Plug, schema: SightglassWeb.Schema)
+    forward("/", Absinthe.Plug, schema: GEOF.SightglassWeb.Schema)
   end
 end

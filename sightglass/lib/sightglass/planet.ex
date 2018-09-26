@@ -1,4 +1,4 @@
-defmodule Sightglass.Planet do
+defmodule GEOF.Sightglass.Planet do
   def get_planet(divisions) do
     mesh = GEOF.Planet.Geometry.Mesh.poly_per_field(divisions)
 

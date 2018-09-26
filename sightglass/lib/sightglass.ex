@@ -1,6 +1,6 @@
-defmodule Sightglass do
+defmodule GEOF.Sightglass do
   @moduledoc """
-  Sightglass keeps the contexts that define your domain
+  GEOF.Sightglass keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless
