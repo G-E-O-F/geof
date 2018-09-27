@@ -29,4 +29,27 @@ defmodule GEOF.Planet.Pattern do
       Map.put(acc, index, highlight_icosahedron_on_field(index, divisions))
     end)
   end
+
+  @tetrahedron_colors %{
+    0 => {:rgb, 0, 108, 127},
+    1 => {:rgb, 235, 246, 247},
+    2 => {:rgb, 220, 48, 35},
+    3 => {:rgb, 91, 137, 48},
+    nil => {:rgb, 23, 20, 18}
+  }
+
+  def tetrahedron(divisions) do
+    centroids = GEOF.Planet.Geometry.FieldCentroids.field_centroids(divisions)
+
+    for_all_fields(%{}, divisions, fn acc, index ->
+      Map.put(acc, index, tetrahedron(centroids, index))
+    end)
+  end
+
+  def tetrahedron(centroids, index) do
+    Map.get(
+      @tetrahedron_colors,
+      GEOF.Shapes.face_of_4_hedron(Map.get(centroids, index))
+    )
+  end
 end

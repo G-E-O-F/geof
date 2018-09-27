@@ -19,7 +19,8 @@ defmodule PLANET.MixProject do
 
   defp deps do
     [
-      {:gproc, "~> 0.8"}
+      {:gproc, "~> 0.8"},
+      {:geof_shapes, path: "../shapes"}
     ]
   end
 end

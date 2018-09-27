@@ -1,3 +1,4 @@
 %{
   "gproc": {:hex, :gproc, "0.8.0", "cea02c578589c61e5341fce149ea36ccef236cc2ecac8691fba408e7ea77ec2f", [:rebar3], [], "hexpm"},
+  "vector": {:hex, :vector, "1.0.0", "ca9bfdf6cac8c9d4ceb490e75420578183c85b75e8df894e0b990823e13e67f0", [:mix], [], "hexpm"},
 }
