@@ -50,7 +50,7 @@ defmodule GEOF.Shapes do
           l_a_minus_p_0
         ) / determinant
 
-      u >= 0 and v >= 0 and u + v <= 1 and t < 0
+      u >= 0 and v >= 0 and u + v <= 1 and t <= 0
     end
   end
 
