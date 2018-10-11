@@ -11,6 +11,6 @@ defmodule GEOF.Planet.SphereServerTest do
 
     assert {:ok, sspid} = SphereServer.start_link(d)
 
-    assert :erlang.system_info(:process_count) == initial_count + 3 + 4
+    assert :erlang.system_info(:process_count) == initial_count + 2 + 4
   end
 end

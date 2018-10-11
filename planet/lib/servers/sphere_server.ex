@@ -49,7 +49,7 @@ defmodule GEOF.Planet.SphereServer do
 
   defp get_field_sets(sphere, n) when n == 4 do
     field_sets =
-      Enum.reduce(0..n, %{}, fn panel_index, field_sets ->
+      Enum.reduce(0..(n - 1), %{}, fn panel_index, field_sets ->
         Map.put(field_sets, panel_index, MapSet.new())
       end)
 
