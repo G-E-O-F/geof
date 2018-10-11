@@ -1,6 +1,11 @@
 defmodule GEOF.Planet.SphereServer do
   use GenServer
+
   import GEOF.Planet.Registry
+  import GEOF.Planet.Geometry.FieldCentroids
+  import GEOF.Planet.Geometry.InterfieldCentroids
+  import GEOF.Planet.Sphere
+  import GEOF.Shapes
 
   # API
 
@@ -13,19 +18,54 @@ defmodule GEOF.Planet.SphereServer do
 
   @impl true
   def init([divisions, sphere_id]) do
-    {:ok, supervisor} = GEOF.Planet.FieldSupervisor.start_link(divisions, sphere_id)
+    field_centroids = field_centroids(divisions)
+    interfield_centroids = interfield_centroids(field_centroids, divisions)
+
+    sphere = %{
+      id: sphere_id,
+      divisions: divisions,
+      field_centroids: field_centroids,
+      interfield_centroids: interfield_centroids
+    }
+
+    sphere = Map.put(sphere, :field_sets, get_field_sets(sphere))
+
+    {:ok, panel_supervisor} = GEOF.Planet.PanelSupervisor.start_link(sphere)
 
     {:ok,
      %{
-       id: sphere_id,
-       divisions: divisions,
-       geometry: %{
-         field_centroids: nil,
-         interfield_centroids: nil,
-         mesh: nil
-       },
-       supervisor: supervisor
+       sphere: sphere,
+       panel_supervisor: panel_supervisor
      }}
+  end
+
+  defp get_field_sets(sphere) do
+    threads = :erlang.system_info(:schedulers_online)
+
+    cond do
+      threads > 0 -> get_field_sets(sphere, 4)
+    end
+  end
+
+  defp get_field_sets(sphere, n) when n == 4 do
+    field_sets =
+      Enum.reduce(0..n, %{}, fn panel_index, field_sets ->
+        Map.put(field_sets, panel_index, MapSet.new())
+      end)
+
+    for_all_fields(field_sets, Map.get(sphere, :divisions), fn field_sets, field_index ->
+      panel_index_for_field =
+        face_of_4_hedron(Map.get(Map.get(sphere, :field_centroids), field_index))
+
+      Map.put(
+        field_sets,
+        panel_index_for_field,
+        MapSet.put(
+          Map.get(field_sets, panel_index_for_field),
+          field_index
+        )
+      )
+    end)
   end
 
   # TODO: add `handle_cast` and `cast` to fields; handle responses at `handle_info`

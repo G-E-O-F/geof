@@ -84,7 +84,7 @@ function isPentagon(fi, div) {
 }
 
 export function setPlanetFrame(divisions, frame) {
-  if (planet)
+  if (planet) {
     for (let fi = 0; fi < 10 * divisions * divisions + 2; fi += 1) {
       const sides = (isPentagon(fi, divisions) && 5) || 6
       const offset = planet.userData.vertex_order[fi]
@@ -95,7 +95,8 @@ export function setPlanetFrame(divisions, frame) {
         planet.geometry.attributes.color.array[cc + 2] = frame[fi][2] / 255
       }
     }
-  planet.geometry.attributes.color.needsUpdate = true
+    planet.geometry.attributes.color.needsUpdate = true
+  }
 }
 
 let playing = false
