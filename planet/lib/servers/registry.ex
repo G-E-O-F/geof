@@ -8,6 +8,6 @@ defmodule GEOF.Planet.Registry do
   end
 
   def panel_via_reg(sphere, panel_index) do
-    via({:panel, Map.get(sphere, :id), panel_index})
+    via({:panel, sphere.id, panel_index})
   end
 end

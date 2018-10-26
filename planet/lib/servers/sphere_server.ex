@@ -48,18 +48,19 @@ defmodule GEOF.Planet.SphereServer do
   end
 
   defp get_field_sets(sphere, n) when n == 4 do
-    field_sets =
-      Enum.reduce(0..(n - 1), %{}, fn panel_index, field_sets ->
-        Map.put(field_sets, panel_index, MapSet.new())
-      end)
-
-    for_all_fields(field_sets, sphere.divisions, fn field_sets, field_index ->
+    for_all_fields(init_field_sets(n), sphere.divisions, fn field_sets, field_index ->
       panel_index_for_field = face_of_4_hedron(sphere.field_centroids[field_index])
 
       update_in(
         field_sets[panel_index_for_field],
         &MapSet.put(&1, field_index)
       )
+    end)
+  end
+
+  defp init_field_sets(n) do
+    Enum.reduce(0..(n - 1), %{}, fn panel_index, field_sets ->
+      Map.put(field_sets, panel_index, MapSet.new())
     end)
   end
 

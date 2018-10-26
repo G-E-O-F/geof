@@ -11,26 +11,22 @@ defmodule GEOF.Planet.PanelSupervisor do
 
   @impl true
   def init([sphere]) do
-    children = get_children(sphere)
-
     Supervisor.init(
-      children,
+      get_children(sphere),
       strategy: :one_for_all
     )
   end
 
   defp get_children(sphere) do
-    field_sets = Map.get(sphere, :field_sets)
-
     Enum.map(
-      Map.keys(field_sets),
+      Map.keys(sphere.field_sets),
       fn panel_index ->
         %{
-          id: {Map.get(sphere, :id), panel_index},
+          id: {sphere.id, panel_index},
           start: {
             GEOF.Planet.PanelServer,
             :start_link,
-            [sphere, panel_index, Map.get(field_sets, panel_index)]
+            [sphere, panel_index, sphere.field_sets[panel_index]]
           }
         }
       end
