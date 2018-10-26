@@ -53,17 +53,12 @@ defmodule GEOF.Planet.SphereServer do
         Map.put(field_sets, panel_index, MapSet.new())
       end)
 
-    for_all_fields(field_sets, Map.get(sphere, :divisions), fn field_sets, field_index ->
-      panel_index_for_field =
-        face_of_4_hedron(Map.get(Map.get(sphere, :field_centroids), field_index))
+    for_all_fields(field_sets, sphere.divisions, fn field_sets, field_index ->
+      panel_index_for_field = face_of_4_hedron(sphere.field_centroids[field_index])
 
-      Map.put(
-        field_sets,
-        panel_index_for_field,
-        MapSet.put(
-          Map.get(field_sets, panel_index_for_field),
-          field_index
-        )
+      update_in(
+        field_sets[panel_index_for_field],
+        &MapSet.put(&1, field_index)
       )
     end)
   end
