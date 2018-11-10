@@ -26,9 +26,30 @@ defmodule GEOF.Planet.PanelServerTest do
 
     Process.sleep(120)
 
-    assert state = PanelServer.get_state(sphere, index)
+    assert state = PanelServer.get_state(sphere.id, index)
 
-    assert Map.get(state, :id) == {Map.get(sphere, :id), index}
+    assert Map.get(state, :id) == {sphere.id, index}
+    assert :ok = GenServer.stop(pspid)
+  end
+
+  test "gets panel data" do
+    sphere = %{
+      id: make_ref()
+    }
+
+    index = 1
+    key = {:sxy, 3, 1, 7}
+
+    field_set = MapSet.new()
+    field_set = MapSet.put(field_set, key)
+
+    assert {:ok, pspid} = PanelServer.start_link(sphere, index, field_set)
+
+    Process.sleep(120)
+
+    assert data = PanelServer.get_all_data(sphere.id, index)
+
+    assert Map.keys(data) == [key]
     assert :ok = GenServer.stop(pspid)
   end
 

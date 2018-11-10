@@ -7,11 +7,17 @@ defmodule GEOF.Planet.SphereServer do
   import GEOF.Planet.Sphere
   import GEOF.Shapes
 
+  alias GEOF.Planet.PanelSupervisor
+  alias GEOF.Planet.PanelServer
+
   # API
 
-  def start_link(divisions) do
-    sphere_id = make_ref()
+  def start_link(divisions, sphere_id) do
     GenServer.start_link(__MODULE__, [divisions, sphere_id], name: sphere_via_reg(sphere_id))
+  end
+
+  def get_all_data(sphere_id) do
+    GenServer.call(sphere_via_reg(sphere_id), :get_all_data)
   end
 
   # SERVER
@@ -30,13 +36,26 @@ defmodule GEOF.Planet.SphereServer do
 
     sphere = Map.put(sphere, :field_sets, get_field_sets(sphere))
 
-    {:ok, panel_supervisor} = GEOF.Planet.PanelSupervisor.start_link(sphere)
+    {:ok, panel_supervisor} = PanelSupervisor.start_link(sphere)
 
     {:ok,
      %{
        sphere: sphere,
        panel_supervisor: panel_supervisor
      }}
+  end
+
+  @impl true
+  def handle_call(:get_all_data, _from, state) do
+    {:reply,
+     Enum.reduce(Map.keys(state.sphere.field_sets), %{}, fn panel_index, all_data ->
+       panel_data = PanelServer.get_all_data(state.sphere.id, panel_index)
+
+       Map.merge(
+         all_data,
+         panel_data
+       )
+     end), state}
   end
 
   defp get_field_sets(sphere) do
@@ -63,7 +82,4 @@ defmodule GEOF.Planet.SphereServer do
       Map.put(field_sets, panel_index, MapSet.new())
     end)
   end
-
-  # TODO: add `handle_cast` and `cast` to fields; handle responses at `handle_info`
-  # May need to specify the iteration cycle and store some way of determining when it's done.
 end

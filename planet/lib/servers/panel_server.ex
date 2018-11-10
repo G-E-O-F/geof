@@ -6,16 +6,17 @@ defmodule GEOF.Planet.PanelServer do
 
   def start_link(sphere, panel_index, field_set) do
     GenServer.start_link(__MODULE__, [sphere, panel_index, field_set],
-      name: panel_via_reg(sphere, panel_index)
+      name: panel_via_reg(sphere.id, panel_index)
     )
   end
 
-  #  def get_data(sphere_id, index) do
-  #    GenServer.call(field_via_reg(sphere_id, index), :get_data)
-  #  end
+  def get_all_data(sphere_id, panel_index) do
+    GenServer.call(panel_via_reg(sphere_id, panel_index), :get_all_data)
+  end
 
-  def get_state(sphere, panel_index) do
-    GenServer.call(panel_via_reg(sphere, panel_index), :get_state)
+  # `get_state` is for testing purposes only
+  def get_state(sphere_id, panel_index) do
+    GenServer.call(panel_via_reg(sphere_id, panel_index), :get_state)
   end
 
   #  def iterate(sphere_id, index, module_name, func_name) do
@@ -32,9 +33,9 @@ defmodule GEOF.Planet.PanelServer do
   def init([sphere, panel_index, field_set]) do
     {:ok,
      %{
-       id: {Map.get(sphere, :id), panel_index},
-       field_set: field_set,
-       data: nil
+       id: {sphere.id, panel_index},
+       parent_sphere: sphere.id,
+       field_data: Enum.reduce(field_set, %{}, &Map.put(&2, &1, nil))
      }}
   end
 
@@ -59,12 +60,12 @@ defmodule GEOF.Planet.PanelServer do
   #  end
 
   @impl true
+  def handle_call(:get_all_data, _from, state) do
+    {:reply, state.field_data, state}
+  end
+
+  @impl true
   def handle_call(:get_state, _from, state) do
     {:reply, state, state}
   end
-
-  #  @impl true
-  #  def handle_call(:get_data, _from, state) do
-  #    {:reply, Map.get(state, :data), state}
-  #  end
 end

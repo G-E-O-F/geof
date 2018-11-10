@@ -7,7 +7,7 @@ defmodule GEOF.Planet.Registry do
     via({:sphere, sphere_id})
   end
 
-  def panel_via_reg(sphere, panel_index) do
-    via({:panel, sphere.id, panel_index})
+  def panel_via_reg(sphere_id, panel_index) do
+    via({:panel, sphere_id, panel_index})
   end
 end
