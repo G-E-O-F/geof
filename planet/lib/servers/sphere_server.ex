@@ -20,6 +20,11 @@ defmodule GEOF.Planet.SphereServer do
     GenServer.call(sphere_via_reg(sphere_id), :get_all_data)
   end
 
+  def start_frame(sphere_id, {module_name, function_name}) do
+    per_field = {module_name, function_name}
+    GenServer.cast(sphere_via_reg(sphere_id), {:start_frame, per_field})
+  end
+
   # SERVER
 
   @impl true
@@ -41,7 +46,8 @@ defmodule GEOF.Planet.SphereServer do
     {:ok,
      %{
        sphere: sphere,
-       panel_supervisor: panel_supervisor
+       panel_supervisor: panel_supervisor,
+       in_frame: false
      }}
   end
 
@@ -57,6 +63,25 @@ defmodule GEOF.Planet.SphereServer do
        )
      end), state}
   end
+
+  @impl true
+  def handle_cast({:start_frame, per_field}, state) do
+    Enum.each(Map.keys(state.sphere.field_sets), fn panel_index ->
+      PanelServer.start_frame(
+        state.sphere.id,
+        panel_index,
+        per_field,
+        # TODO: compute & maintain `adjacent_fields_data_for_panel` (atom is just placeholder)
+        :adjacent_fields_data_for_panel
+      )
+    end)
+
+    {:noreply, Map.put(state, :in_frame, true)}
+  end
+
+  # TODO: how does a frame end?
+
+  # Computing Panels as sets of Fields
 
   defp get_field_sets(sphere) do
     threads = :erlang.system_info(:schedulers_online)

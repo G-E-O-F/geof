@@ -14,18 +14,17 @@ defmodule GEOF.Planet.PanelServer do
     GenServer.call(panel_via_reg(sphere_id, panel_index), :get_all_data)
   end
 
+  def start_frame(sphere_id, panel_index, per_field, adjacent_fields_data_for_panel) do
+    GenServer.cast(
+      panel_via_reg(sphere_id, panel_index),
+      {:start_frame, per_field, adjacent_fields_data_for_panel}
+    )
+  end
+
   # `get_state` is for testing purposes only
   def get_state(sphere_id, panel_index) do
     GenServer.call(panel_via_reg(sphere_id, panel_index), :get_state)
   end
-
-  #  def iterate(sphere_id, index, module_name, func_name) do
-  #    GenServer.cast(field_via_reg(sphere_id, index), {:iterate, module_name, func_name})
-  #  end
-
-  #  def finish_iteration(sphere_id, index) do
-  #    GenServer.cast(field_via_reg(sphere_id, index), :finish_iteration)
-  #  end
 
   # SERVER
 
@@ -39,26 +38,6 @@ defmodule GEOF.Planet.PanelServer do
      }}
   end
 
-  #  @impl true
-  #  def handle_cast(:finish_iteration, state) do
-  #    {:noreply, Map.put(state, :data, Map.get(state, :next)) |> Map.delete(:next)}
-  #  end
-
-  #  @impl true
-  #  def handle_cast({:iterate, module_name, func_name}, state) do
-  #    # Applies an arbitrary module's function with the current and adjacent fields' state
-  #    {:noreply,
-  #     Map.put(
-  #       state,
-  #       :next,
-  #       apply(
-  #         String.to_existing_atom("Elixir.#{module_name}"),
-  #         func_name,
-  #         [state, get_adjacents_data(state)]
-  #       )
-  #     )}
-  #  end
-
   @impl true
   def handle_call(:get_all_data, _from, state) do
     {:reply, state.field_data, state}
@@ -67,5 +46,20 @@ defmodule GEOF.Planet.PanelServer do
   @impl true
   def handle_call(:get_state, _from, state) do
     {:reply, state, state}
+  end
+
+  @impl true
+  def handle_cast(
+        {:start_frame, {module_name, function_name}, adjacent_fields_data_for_panel},
+        state
+      ) do
+    # TODO: implement
+    # …should probably use `apply` for each field somewhere, like so:
+    #       apply(
+    #         String.to_existing_atom("Elixir.#{module_name}"),
+    #         func_name,
+    #         [field_data, adjacent_fields_data_for_field]
+    #       )
+    {:noreply, state}
   end
 end
