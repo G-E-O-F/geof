@@ -16,7 +16,7 @@ defmodule GEOF.Sightglass.Planet do
 
   def get_planet_frame(divisions, pattern) do
     # This is just example stuff for now.
-    frame_colors = GEOF.Planet.Pattern.tetrahedron(divisions)
+    frame_colors = GEOF.Planet.Pattern.octahedron(divisions)
 
     %{
       id: "#{divisions}:#{pattern}",

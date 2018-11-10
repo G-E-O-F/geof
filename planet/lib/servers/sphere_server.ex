@@ -62,6 +62,7 @@ defmodule GEOF.Planet.SphereServer do
     threads = :erlang.system_info(:schedulers_online)
 
     cond do
+      threads >= 8 -> get_field_sets(sphere, 8)
       threads > 0 -> get_field_sets(sphere, 4)
     end
   end
@@ -69,6 +70,17 @@ defmodule GEOF.Planet.SphereServer do
   defp get_field_sets(sphere, n) when n == 4 do
     for_all_fields(init_field_sets(n), sphere.divisions, fn field_sets, field_index ->
       panel_index_for_field = face_of_4_hedron(sphere.field_centroids[field_index])
+
+      update_in(
+        field_sets[panel_index_for_field],
+        &MapSet.put(&1, field_index)
+      )
+    end)
+  end
+
+  defp get_field_sets(sphere, n) when n == 8 do
+    for_all_fields(init_field_sets(n), sphere.divisions, fn field_sets, field_index ->
+      panel_index_for_field = face_of_8_hedron(sphere.field_centroids[field_index])
 
       update_in(
         field_sets[panel_index_for_field],

@@ -101,4 +101,12 @@ defmodule GEOF.Shapes do
       line_intersects_triangle?(line, triangle)
     end)
   end
+
+  def face_of_8_hedron({:pos, lat, lon}) do
+    x_offset = if cos(lat) * cos(lon) > 0, do: 1, else: 0
+    z_offset = if cos(lat) * sin(lon) > 0, do: 2, else: 0
+    y_offset = if sin(lat) > 0, do: 4, else: 0
+
+    x_offset + z_offset + y_offset
+  end
 end

@@ -52,4 +52,31 @@ defmodule GEOF.Planet.Pattern do
       GEOF.Shapes.face_of_4_hedron(Map.get(centroids, index))
     )
   end
+
+  @octahedron_colors %{
+    0 => {:rgb, 247, 230, 197},
+    1 => {:rgb, 82, 131, 130},
+    2 => {:rgb, 164, 52, 93},
+    3 => {:rgb, 59, 51, 34},
+    4 => {:rgb, 4, 79, 103},
+    5 => {:rgb, 140, 156, 118},
+    6 => {:rgb, 197, 81, 26},
+    7 => {:rgb, 219, 90, 107},
+    nil => {:rgb, 23, 20, 18}
+  }
+
+  def octahedron(divisions) do
+    centroids = GEOF.Planet.Geometry.FieldCentroids.field_centroids(divisions)
+
+    for_all_fields(%{}, divisions, fn acc, index ->
+      Map.put(acc, index, octahedron(centroids, index))
+    end)
+  end
+
+  def octahedron(centroids, index) do
+    Map.get(
+      @octahedron_colors,
+      GEOF.Shapes.face_of_8_hedron(Map.get(centroids, index))
+    )
+  end
 end
