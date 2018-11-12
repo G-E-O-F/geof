@@ -1,29 +1,30 @@
 defmodule GEOF.Planet.PanelServer do
   use GenServer
-  import GEOF.Planet.Registry
+
+  alias GEOF.Planet.Registry
 
   # API
 
   def start_link(sphere, panel_index, field_set) do
     GenServer.start_link(__MODULE__, [sphere, panel_index, field_set],
-      name: panel_via_reg(sphere.id, panel_index)
+      name: Registry.panel_via_reg(sphere.id, panel_index)
     )
   end
 
   def get_all_data(sphere_id, panel_index) do
-    GenServer.call(panel_via_reg(sphere_id, panel_index), :get_all_data)
+    GenServer.call(Registry.panel_via_reg(sphere_id, panel_index), :get_all_data)
   end
 
   def start_frame(sphere_id, panel_index, per_field, adjacent_fields_data_for_panel) do
     GenServer.cast(
-      panel_via_reg(sphere_id, panel_index),
+      Registry.panel_via_reg(sphere_id, panel_index),
       {:start_frame, per_field, adjacent_fields_data_for_panel}
     )
   end
 
   # `get_state` is for testing purposes only
   def get_state(sphere_id, panel_index) do
-    GenServer.call(panel_via_reg(sphere_id, panel_index), :get_state)
+    GenServer.call(Registry.panel_via_reg(sphere_id, panel_index), :get_state)
   end
 
   # SERVER

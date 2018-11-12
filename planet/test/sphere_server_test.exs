@@ -14,6 +14,7 @@ defmodule GEOF.Planet.SphereServerTest do
     assert {:ok, sspid} = SphereServer.start_link(d, id)
 
     assert :erlang.system_info(:process_count) > initial_count
+    assert :ok = GenServer.stop(sspid)
   end
 
   test "gets field data from panel children" do

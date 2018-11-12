@@ -1,28 +1,31 @@
 defmodule GEOF.Planet.SphereServer do
   use GenServer
 
-  import GEOF.Planet.Registry
   import GEOF.Planet.Geometry.FieldCentroids
   import GEOF.Planet.Geometry.InterfieldCentroids
-  import GEOF.Planet.Sphere
-  import GEOF.Shapes
 
+  alias GEOF.Planet.Field
   alias GEOF.Planet.PanelSupervisor
   alias GEOF.Planet.PanelServer
+  alias GEOF.Planet.Registry
+  alias GEOF.Planet.Sphere
+  alias GEOF.Shapes
 
   # API
 
   def start_link(divisions, sphere_id) do
-    GenServer.start_link(__MODULE__, [divisions, sphere_id], name: sphere_via_reg(sphere_id))
+    GenServer.start_link(__MODULE__, [divisions, sphere_id],
+      name: Registry.sphere_via_reg(sphere_id)
+    )
   end
 
   def get_all_data(sphere_id) do
-    GenServer.call(sphere_via_reg(sphere_id), :get_all_data)
+    GenServer.call(Registry.sphere_via_reg(sphere_id), :get_all_data)
   end
 
   def start_frame(sphere_id, {module_name, function_name}) do
     per_field = {module_name, function_name}
-    GenServer.cast(sphere_via_reg(sphere_id), {:start_frame, per_field})
+    GenServer.cast(Registry.sphere_via_reg(sphere_id), {:start_frame, per_field})
   end
 
   # SERVER
@@ -93,8 +96,8 @@ defmodule GEOF.Planet.SphereServer do
   end
 
   defp get_field_sets(sphere, n) when n == 4 do
-    for_all_fields(init_field_sets(n), sphere.divisions, fn field_sets, field_index ->
-      panel_index_for_field = face_of_4_hedron(sphere.field_centroids[field_index])
+    Sphere.for_all_fields(init_field_sets(n), sphere.divisions, fn field_sets, field_index ->
+      panel_index_for_field = Shapes.face_of_4_hedron(sphere.field_centroids[field_index])
 
       update_in(
         field_sets[panel_index_for_field],
@@ -104,8 +107,8 @@ defmodule GEOF.Planet.SphereServer do
   end
 
   defp get_field_sets(sphere, n) when n == 8 do
-    for_all_fields(init_field_sets(n), sphere.divisions, fn field_sets, field_index ->
-      panel_index_for_field = face_of_8_hedron(sphere.field_centroids[field_index])
+    Sphere.for_all_fields(init_field_sets(n), sphere.divisions, fn field_sets, field_index ->
+      panel_index_for_field = Shapes.face_of_8_hedron(sphere.field_centroids[field_index])
 
       update_in(
         field_sets[panel_index_for_field],
