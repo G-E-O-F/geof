@@ -1,15 +1,25 @@
 defmodule GEOF.Planet.SphereServer do
   use GenServer
 
-  import GEOF.Planet.Geometry.FieldCentroids
-  import GEOF.Planet.Geometry.InterfieldCentroids
-
-  alias GEOF.Planet.Field
+  alias GEOF.Planet.Geometry.FieldCentroids
+  alias GEOF.Planet.Geometry.InterfieldCentroids
   alias GEOF.Planet.PanelSupervisor
   alias GEOF.Planet.PanelServer
   alias GEOF.Planet.Registry
   alias GEOF.Planet.Sphere
   alias GEOF.Shapes
+
+  # TYPES
+
+  @type map_of_fields_at_panels :: %{integer => MapSet.t(GEOF.Planet.Field.index())}
+
+  @type sphere :: %{
+          :id => any,
+          :divisions => integer,
+          :field_centroids => FieldCentroids.centroid_sphere(),
+          :interfield_centroids => InterfieldCentroids.interfield_centroid_sphere(),
+          :field_sets => map_of_fields_at_panels
+        }
 
   # API
 
@@ -32,17 +42,7 @@ defmodule GEOF.Planet.SphereServer do
 
   @impl true
   def init([divisions, sphere_id]) do
-    field_centroids = field_centroids(divisions)
-    interfield_centroids = interfield_centroids(field_centroids, divisions)
-
-    sphere = %{
-      id: sphere_id,
-      divisions: divisions,
-      field_centroids: field_centroids,
-      interfield_centroids: interfield_centroids
-    }
-
-    sphere = Map.put(sphere, :field_sets, get_field_sets(sphere))
+    sphere = get_sphere(divisions, sphere_id)
 
     {:ok, panel_supervisor} = PanelSupervisor.start_link(sphere)
 
@@ -52,6 +52,22 @@ defmodule GEOF.Planet.SphereServer do
        panel_supervisor: panel_supervisor,
        in_frame: false
      }}
+  end
+
+  @spec get_sphere(integer, any) :: sphere
+
+  def get_sphere(divisions, sphere_id) do
+    field_centroids = FieldCentroids.field_centroids(divisions)
+    interfield_centroids = InterfieldCentroids.interfield_centroids(field_centroids, divisions)
+
+    sphere = %{
+      id: sphere_id,
+      divisions: divisions,
+      field_centroids: field_centroids,
+      interfield_centroids: interfield_centroids
+    }
+
+    Map.put(sphere, :field_sets, get_field_sets(sphere))
   end
 
   @impl true
@@ -85,6 +101,14 @@ defmodule GEOF.Planet.SphereServer do
   # TODO: how does a frame end?
 
   # Computing Panels as sets of Fields
+
+  # @doc """
+  #  Creates a `map_of_fields_at_panels` mapping panel indices to the fields indexes
+  #  that belong to that panel. Panels are formed by splitting the sphere into a number of
+  #  parts based on the available threads and efficient perimeter-minimizing geometries.
+  # """
+
+  @spec get_field_sets(sphere) :: map_of_fields_at_panels
 
   defp get_field_sets(sphere) do
     threads = :erlang.system_info(:schedulers_online)

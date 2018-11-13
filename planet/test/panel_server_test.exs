@@ -9,47 +9,38 @@ defmodule GEOF.Planet.PanelServerTest do
   use ExUnit.Case
 
   alias GEOF.Planet.PanelServer
+  alias GEOF.Planet.SphereServer
 
   doctest GEOF.Planet.PanelServer
 
   test "initializes" do
-    sphere = %{
-      id: make_ref()
-    }
+    sphere = SphereServer.get_sphere(10, make_ref())
 
     index = 1
 
-    field_set = MapSet.new()
-    field_set = MapSet.put(field_set, {:sxy, 1, 1, 1})
-
-    assert {:ok, pspid} = PanelServer.start_link(sphere, index, field_set)
+    assert {:ok, pspid} = PanelServer.start_link(sphere, index)
 
     Process.sleep(120)
 
     assert state = PanelServer.get_state(sphere.id, index)
 
-    assert Map.get(state, :id) == {sphere.id, index}
+    assert state.id == {sphere.id, index}
+    assert MapSet.size(state.adjacent_fields[0]) == 16
     assert :ok = GenServer.stop(pspid)
   end
 
   test "gets panel data" do
-    sphere = %{
-      id: make_ref()
-    }
+    sphere = SphereServer.get_sphere(10, make_ref())
 
-    index = 1
-    key = {:sxy, 3, 1, 7}
+    index = 2
 
-    field_set = MapSet.new()
-    field_set = MapSet.put(field_set, key)
-
-    assert {:ok, pspid} = PanelServer.start_link(sphere, index, field_set)
+    assert {:ok, pspid} = PanelServer.start_link(sphere, index)
 
     Process.sleep(120)
 
     assert data = PanelServer.get_all_data(sphere.id, index)
 
-    assert Map.keys(data) == [key]
+    assert length(Map.keys(data)) > 1
     assert :ok = GenServer.stop(pspid)
   end
 

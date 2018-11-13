@@ -28,7 +28,7 @@ defmodule GEOF.Planet.PanelSupervisor do
           start: {
             GEOF.Planet.PanelServer,
             :start_link,
-            [sphere, panel_index, sphere.field_sets[panel_index]]
+            [sphere, panel_index]
           }
         }
       end
