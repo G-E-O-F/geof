@@ -9,12 +9,6 @@ defmodule GEOF.Planet.SphereServer do
   alias GEOF.Planet.Sphere
   alias GEOF.Shapes
 
-  ###
-  #
-  # Types
-  #
-  ###
-
   # ~~~
   # Naming conventions:
   #
@@ -23,8 +17,14 @@ defmodule GEOF.Planet.SphereServer do
   # `field_data`, and a group of such data is `sphere_data`, whether it's data for just part of
   # the sphere or for the entire sphere.
   #
-  # In the servers' APIs, `get` is always a call, and `request` and `handle` are always casts.
+  # In the servers' APIs, `get` is always a call, and `request` and `send` are always casts.
   # ~~~
+
+  ###
+  #
+  # Types
+  #
+  ###
 
   @type sphere_data :: %{Field.index() => any}
 
