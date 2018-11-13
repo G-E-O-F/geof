@@ -14,7 +14,7 @@ defmodule GEOF.Planet.PanelServerTest do
   doctest GEOF.Planet.PanelServer
 
   test "initializes" do
-    sphere = SphereServer.get_sphere(10, make_ref())
+    sphere = SphereServer.init_sphere(10, make_ref())
 
     index = 1
 
@@ -30,7 +30,7 @@ defmodule GEOF.Planet.PanelServerTest do
   end
 
   test "gets panel data" do
-    sphere = SphereServer.get_sphere(10, make_ref())
+    sphere = SphereServer.init_sphere(10, make_ref())
 
     index = 2
 
@@ -38,7 +38,7 @@ defmodule GEOF.Planet.PanelServerTest do
 
     Process.sleep(120)
 
-    assert data = PanelServer.get_all_data(sphere.id, index)
+    assert data = PanelServer.get_all_field_data(sphere.id, index)
 
     assert length(Map.keys(data)) > 1
     assert :ok = GenServer.stop(pspid)

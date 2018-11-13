@@ -14,14 +14,14 @@ defmodule GEOF.Planet.PanelSupervisor do
   @impl true
   def init([sphere]) do
     Supervisor.init(
-      get_children(sphere),
+      init_children(sphere),
       strategy: :one_for_all
     )
   end
 
-  defp get_children(sphere) do
+  defp init_children(sphere) do
     Enum.map(
-      Map.keys(sphere.field_sets),
+      Map.keys(sphere.fields_at_panels),
       fn panel_index ->
         %{
           id: {sphere.id, panel_index},

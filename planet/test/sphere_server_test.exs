@@ -27,9 +27,9 @@ defmodule GEOF.Planet.SphereServerTest do
              MapSet.difference(
                # All keys in Sphere by definition:
                Sphere.for_all_fields(MapSet.new(), d, &MapSet.put(&1, &2)),
-               # All keys we get from SphereServer.get_all_data:
-               MapSet.new(Map.keys(SphereServer.get_all_data(id)))
+               # All keys we get from SphereServer.get_all_field_data:
+               MapSet.new(Map.keys(SphereServer.get_all_field_data(id)))
              )
-           )
+           ) == 0
   end
 end
