@@ -7,19 +7,11 @@ defmodule GEOF.Planet.PanelServer do
 
   ###
   #
-  # Types
-  #
-  ###
-
-  @type panel_index :: integer
-
-  ###
-  #
   # API
   #
   ###
 
-  @spec start_link(SphereServer.sphere(), panel_index) :: GenServer.on_start()
+  @spec start_link(SphereServer.sphere(), SphereServer.panel_index()) :: GenServer.on_start()
 
   def start_link(sphere, panel_index) do
     GenServer.start_link(__MODULE__, [sphere, panel_index],
@@ -33,25 +25,21 @@ defmodule GEOF.Planet.PanelServer do
     GenServer.call(Registry.panel_via_reg(sphere_id, panel_index), :get_state)
   end
 
-  @spec get_all_field_data(SphereServer.sphere_id(), panel_index) :: SphereServer.sphere_data()
+  @spec get_all_field_data(SphereServer.sphere_id(), SphereServer.panel_index()) ::
+          SphereServer.sphere_data()
 
   def get_all_field_data(sphere_id, panel_index) do
     GenServer.call(Registry.panel_via_reg(sphere_id, panel_index), :get_all_field_data)
   end
 
-  @spec start_frame(SphereServer.sphere_id(), panel_index, SphereServer.fn_ref()) :: :ok
+  @spec start_frame(SphereServer.sphere_id(), SphereServer.panel_index(), SphereServer.fn_ref()) ::
+          :ok
 
   def start_frame(sphere_id, panel_index, per_field) do
     GenServer.cast(
       Registry.panel_via_reg(sphere_id, panel_index),
       {:start_frame, per_field}
     )
-  end
-
-  @spec request_field_data(SphereServer.sphere_id(), panel_index, MapSet.t(Field.index())) :: :ok
-
-  def request_field_data(_sphere_id, _panel_index, _adjacent_fields) do
-    nil
   end
 
   ###
@@ -69,7 +57,6 @@ defmodule GEOF.Planet.PanelServer do
     {:ok,
      %{
        id: {sphere.id, panel_index},
-       parent_sphere: sphere.id,
        field_data: init_field_data(sphere.fields_at_panels[panel_index]),
        adjacent_fields: init_adjacent_fields(sphere, panel_index),
        in_frame: false
@@ -101,7 +88,7 @@ defmodule GEOF.Planet.PanelServer do
   #  panels which are adjacent to _this_ panel. Used to share relevant field data between processes.
   # """
 
-  @spec init_adjacent_fields(SphereServer.sphere(), panel_index) ::
+  @spec init_adjacent_fields(SphereServer.sphere(), SphereServer.panel_index()) ::
           SphereServer.fields_at_panels()
 
   defp init_adjacent_fields(sphere, panel_index) do
@@ -153,13 +140,44 @@ defmodule GEOF.Planet.PanelServer do
 
   @impl true
   def handle_cast({:start_frame, {module_name, function_name}}, state) do
-    # todo: implement
-    # …should probably use `apply` for each field somewhere, like so:
-    #       apply(
-    #         String.to_existing_atom("Elixir.#{module_name}"),
-    #         func_name,
-    #         [field_data, adjacent_fields_data_for_field]
-    #       )
+    {sphere_id, panel_index} = state.id
+
+    # First, send a request for adjacent field data to the other panels
+    Enum.each(state.adjacent_fields, fn {adjacent_panel_index, fields} ->
+      if adjacent_panel_index != panel_index and MapSet.size(fields) > 0 do
+        GenServer.cast(
+          Registry.panel_via_reg(sphere_id, adjacent_panel_index),
+          {:send_field_data, panel_index, fields}
+        )
+      end
+    end)
+
     {:noreply, Map.put(state, :in_frame, true)}
   end
+
+  # :send_field_data is a cast received by this panel from panels in the same sphere which need
+  # some of this panel's field data
+
+  @impl true
+  def handle_cast({:send_field_data, to_panel_index, fields}, state) do
+    # todo: gather the field data for the `fields` requested
+    # todo: send the field data via GenServer.cast to :receive_field_data
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast({:receive_field_data, field_data}, state) do
+    # todo: store field_data in a cache of data for adjacent fields
+    # todo: evaluate if we're ready to begin iterating
+    # {:noreply, state}
+  end
+
+  # Notes for later:
+
+  # …should probably use `apply` for each field somewhere, like so:
+  #       apply(
+  #         String.to_existing_atom("Elixir.#{module_name}"),
+  #         func_name,
+  #         [field_data, adjacent_fields_data_for_field]
+  #       )
 end

@@ -26,13 +26,17 @@ defmodule GEOF.Planet.SphereServer do
   #
   ###
 
-  @type sphere_data :: %{Field.index() => any}
+  @type sphere_id :: reference
 
-  @type fields_at_panels :: %{PanelServer.panel_index() => MapSet.t(GEOF.Planet.Field.index())}
+  @type panel_index :: integer
+
+  @type sphere_data :: %{GEOF.Planet.Field.index() => any}
+
+  @type fields :: MapSet.t(GEOF.Planet.Field.index())
+
+  @type fields_at_panels :: %{panel_index => fields}
 
   @type fn_ref :: {module(), function_name :: atom}
-
-  @type sphere_id :: reference
 
   @type sphere :: %{
           :id => reference,
