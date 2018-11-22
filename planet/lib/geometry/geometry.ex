@@ -11,6 +11,8 @@ defmodule GEOF.Planet.Geometry do
   #
   ###
 
+  @doc "The apparent accuracy of Erlang's trigonometry."
+
   # It appears Elixir is able to compute these values
   # much more precisely than JS (whose delta is 1.0e-10)
   @tolerance 1.111e-15
@@ -43,6 +45,8 @@ defmodule GEOF.Planet.Geometry do
 
   @spec distance(position, position) :: float
 
+  def distance(position_1, position_2)
+
   def distance({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon}) do
     2 *
       asin(
@@ -61,6 +65,8 @@ defmodule GEOF.Planet.Geometry do
 
   @spec course(position, position) :: {:course, float, float}
 
+  def course(position_1, position_2)
+
   def course({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon}) do
     d = distance({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon})
     a_relative = acos((sin(f2_lat) - sin(f1_lat) * cos(d)) / (sin(d) * cos(f1_lat)))
@@ -71,7 +77,7 @@ defmodule GEOF.Planet.Geometry do
   end
 
   @doc """
-    Calls the `into` function `divisions`-1 times, once for each
+    Calls `fun` `divisions`-1 times, once for each
     point spaced evenly between two points on the sphere, and reduces the
     `init_acc` into a final value.
   """
@@ -83,23 +89,23 @@ defmodule GEOF.Planet.Geometry do
           (any, integer, position -> any)
         ) :: any
 
-  def interpolate(init_acc, divisions, pos_1, pos_2, each)
+  def interpolate(acc, divisions, position_1, position_2, fun)
       when is_integer(divisions) and divisions > 1 do
-    Enum.reduce(1..(divisions - 1), init_acc, fn i, acc ->
-      interpolate_step(acc, divisions, pos_1, pos_2, each, i)
+    Enum.reduce(1..(divisions - 1), acc, fn i, acc ->
+      interpolate_step(acc, divisions, position_1, position_2, fun, i)
     end)
   end
 
-  def interpolate(init_acc, _, _, _, _) do
-    init_acc
+  def interpolate(acc, _, _, _, _) do
+    acc
   end
 
-  defp interpolate_step(acc, d, pos_1, pos_2, each, i) do
-    {:pos, f1_lat, f1_lon} = pos_1
-    {:pos, f2_lat, f2_lon} = pos_2
+  defp interpolate_step(acc, d, position_1, position_2, fun, i) do
+    {:pos, f1_lat, f1_lon} = position_1
+    {:pos, f2_lat, f2_lon} = position_2
 
     f = i / d
-    d = distance(pos_1, pos_2)
+    d = distance(position_1, position_2)
 
     a = sin((1 - f) * d) / sin(d)
     b = sin(f * d) / sin(d)
@@ -111,7 +117,7 @@ defmodule GEOF.Planet.Geometry do
     lat = atan2(y, sqrt(pow(x, 2) + pow(z, 2)))
     lon = atan2(z, x)
 
-    each.(acc, i, {:pos, lat, lon})
+    fun.(acc, i, {:pos, lat, lon})
   end
 
   @doc """

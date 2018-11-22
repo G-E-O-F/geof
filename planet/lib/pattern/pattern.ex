@@ -73,17 +73,17 @@ defmodule GEOF.Planet.Pattern do
   @spec tetrahedron(Sphere.divisions()) :: frame
 
   def tetrahedron(divisions) do
-    centroids = FieldCentroids.field_centroids(divisions)
+    centroid_sphere = FieldCentroids.field_centroids(divisions)
 
-    Sphere.for_all_fields(%{}, divisions, fn acc, index ->
-      Map.put(acc, index, tetrahedron(centroids, index))
+    Sphere.for_all_fields(%{}, divisions, fn acc, field_index ->
+      Map.put(acc, field_index, tetrahedron(centroid_sphere, field_index))
     end)
   end
 
-  defp tetrahedron(centroids, index) do
+  defp tetrahedron(centroid_sphere, field_index) do
     Map.get(
       @tetrahedron_colors,
-      GEOF.Shapes.face_of_4_hedron(Map.get(centroids, index))
+      GEOF.Shapes.face_of_4_hedron(Map.get(centroid_sphere, field_index))
     )
   end
 
@@ -108,17 +108,17 @@ defmodule GEOF.Planet.Pattern do
   @spec octahedron(Sphere.divisions()) :: frame
 
   def octahedron(divisions) do
-    centroids = FieldCentroids.field_centroids(divisions)
+    centroid_sphere = FieldCentroids.field_centroids(divisions)
 
-    Sphere.for_all_fields(%{}, divisions, fn acc, index ->
-      Map.put(acc, index, octahedron(centroids, index))
+    Sphere.for_all_fields(%{}, divisions, fn acc, field_index ->
+      Map.put(acc, field_index, octahedron(centroid_sphere, field_index))
     end)
   end
 
-  def octahedron(centroids, index) do
+  defp octahedron(centroid_sphere, field_index) do
     Map.get(
       @octahedron_colors,
-      GEOF.Shapes.face_of_8_hedron(Map.get(centroids, index))
+      GEOF.Shapes.face_of_8_hedron(Map.get(centroid_sphere, field_index))
     )
   end
 end

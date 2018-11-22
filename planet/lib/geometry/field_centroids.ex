@@ -16,7 +16,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
   #
   ###
 
-  # The arclength of an edge of an icosahedron.
+  @doc "The arclength of an edge of an icosahedron."
   @l acos(sqrt(5) / 5)
   def l, do: @l
 

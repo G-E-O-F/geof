@@ -27,14 +27,14 @@ defmodule GEOF.Planet.Sphere do
 
   @spec for_all_fields(any, divisions, field_reducer) :: any
 
-  def for_all_fields(acc, divisions, each) do
+  def for_all_fields(acc, divisions, fun) do
     acc
-    |> each.(:north)
-    |> each.(:south)
+    |> fun.(:north)
+    |> fun.(:south)
     |> for_sections(fn acc, s ->
       for_columns(acc, divisions, fn acc, x ->
         for_rows(acc, divisions, fn acc, y ->
-          each.(acc, {:sxy, s, x, y})
+          fun.(acc, {:sxy, s, x, y})
         end)
       end)
     end)
@@ -44,12 +44,12 @@ defmodule GEOF.Planet.Sphere do
 
   @spec for_sections(any, sxy_reducer) :: any
 
-  def for_sections(acc, each) do
+  def for_sections(acc, fun) do
     Enum.reduce(
       0..4,
       acc,
       fn s, acc ->
-        each.(acc, s)
+        fun.(acc, s)
       end
     )
   end
@@ -58,12 +58,12 @@ defmodule GEOF.Planet.Sphere do
 
   @spec for_columns(any, divisions, sxy_reducer) :: any
 
-  def for_columns(acc, divisions, each) do
+  def for_columns(acc, divisions, fun) do
     Enum.reduce(
       0..(divisions * 2 - 1),
       acc,
       fn x, acc ->
-        each.(acc, x)
+        fun.(acc, x)
       end
     )
   end
@@ -72,12 +72,12 @@ defmodule GEOF.Planet.Sphere do
 
   @spec for_rows(any, divisions, sxy_reducer) :: any
 
-  def for_rows(acc, divisions, each) do
+  def for_rows(acc, divisions, fun) do
     Enum.reduce(
       0..(divisions - 1),
       acc,
       fn y, acc ->
-        each.(acc, y)
+        fun.(acc, y)
       end
     )
   end

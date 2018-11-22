@@ -28,6 +28,8 @@ defmodule GEOF.Planet.Field do
 
   def flatten_index(:south, _), do: 1
 
+  def flatten_index(field_index, divisions)
+
   def flatten_index({:sxy, s, x, y}, d) do
     s * d * d * 2 + x * d + y + 2
   end
@@ -80,10 +82,11 @@ defmodule GEOF.Planet.Field do
     }
   end
 
-  def adjacents({:sxy, s, x, y}, divisions) do
-    d = divisions
-    max_x = divisions * 2 - 1
-    max_y = divisions - 1
+  def adjacents(field_index, divisions)
+
+  def adjacents({:sxy, s, x, y}, d) do
+    max_x = d * 2 - 1
+    max_y = d - 1
 
     next_s = rem(s + 1 + @sections, @sections)
     prev_s = rem(s - 1 + @sections, @sections)

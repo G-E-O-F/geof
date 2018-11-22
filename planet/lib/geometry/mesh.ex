@@ -8,6 +8,8 @@ defmodule GEOF.Planet.Geometry.Mesh do
 
   alias GEOF.Planet.Sphere
   alias GEOF.Planet.Field
+  alias GEOF.Planet.Geometry.FieldCentroids
+  alias GEOF.Planet.Geometry.InterfieldCentroids
 
   # Constant lists of integers that break down vertices of hexagons and polygons into triangles.
 
@@ -46,19 +48,29 @@ defmodule GEOF.Planet.Geometry.Mesh do
 
   # Convenience function
 
+  @doc "Produces a `mesh` with a polygon for each field. Deprecated outside of testing and examples."
+
   @spec poly_per_field(Sphere.divisions()) :: mesh
 
   def poly_per_field(divisions) do
-    field_centroids = GEOF.Planet.Geometry.FieldCentroids.field_centroids(divisions)
+    field_centroids = FieldCentroids.field_centroids(divisions)
 
     poly_per_field(
       divisions,
       field_centroids,
-      GEOF.Planet.Geometry.InterfieldCentroids.interfield_centroids(field_centroids, divisions)
+      InterfieldCentroids.interfield_centroids(field_centroids, divisions)
     )
   end
 
   # Main function
+
+  @doc "Produces a `mesh` with a polygon for each field. Vertices are copied for each polygon."
+
+  @spec poly_per_field(
+          Sphere.divisions(),
+          FieldCentroids.centroid_sphere(),
+          InterfieldCentroids.interfield_centroid_sphere()
+        ) :: mesh
 
   def poly_per_field(divisions, field_centroids, interfield_centroids) do
     d = divisions

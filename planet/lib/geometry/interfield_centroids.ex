@@ -20,10 +20,10 @@ defmodule GEOF.Planet.Geometry.InterfieldCentroids do
 
   @type interfield_triangle_index :: MapSet.t(Field.index())
 
-  @typedoc "Maps `interfield_triangle`s to `position`s."
+  @typedoc "Maps `interfield_triangle`s to the `position`s of their centroids."
 
   @type interfield_centroid_sphere :: %{
-          interfield_triangle_index => Geometry.position()
+          required(interfield_triangle_index) => Geometry.position()
         }
 
   ###
@@ -74,17 +74,18 @@ defmodule GEOF.Planet.Geometry.InterfieldCentroids do
 
   # Main function
 
-  @doc "Computes a new `interfield_centroid_sphere` with a cached `centroid_sphere`."
+  @doc "Computes a new `interfield_centroid_sphere` with the provided `centroid_sphere`."
 
   @spec interfield_centroids(FieldCentroids.centroid_sphere(), Sphere.divisions()) ::
           interfield_centroid_sphere
 
-  def interfield_centroids(centroids, divisions) when is_integer(divisions) and divisions > 0 do
+  def interfield_centroids(centroid_sphere, divisions)
+      when is_integer(divisions) and divisions > 0 do
     Sphere.for_all_fields(
       Map.new(),
       divisions,
       fn sphere, index ->
-        set_interfield_centroids_for_responsible_field(sphere, centroids, divisions, index)
+        set_interfield_centroids_for_responsible_field(sphere, centroid_sphere, divisions, index)
       end
     )
   end
