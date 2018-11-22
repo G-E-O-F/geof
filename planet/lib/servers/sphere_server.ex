@@ -28,7 +28,7 @@ defmodule GEOF.Planet.SphereServer do
 
   @type sphere_id :: reference
 
-  @type panel_index :: integer
+  @type panel_index :: non_neg_integer
 
   @type sphere_data :: %{GEOF.Planet.Field.index() => any}
 
@@ -40,7 +40,7 @@ defmodule GEOF.Planet.SphereServer do
 
   @type sphere :: %{
           :id => reference,
-          :divisions => integer,
+          :divisions => Sphere.divisions(),
           :field_centroids => FieldCentroids.centroid_sphere(),
           :interfield_centroids => InterfieldCentroids.interfield_centroid_sphere(),
           :fields_at_panels => fields_at_panels
@@ -52,7 +52,7 @@ defmodule GEOF.Planet.SphereServer do
   #
   ###
 
-  @spec start_link(integer, sphere_id) :: GenServer.on_start()
+  @spec start_link(Sphere.divisions(), sphere_id) :: GenServer.on_start()
 
   def start_link(divisions, sphere_id) do
     GenServer.start_link(__MODULE__, [divisions, sphere_id],
@@ -97,7 +97,7 @@ defmodule GEOF.Planet.SphereServer do
      }}
   end
 
-  @spec init_sphere(integer, sphere_id) :: sphere
+  @spec init_sphere(Sphere.divisions(), sphere_id) :: sphere
 
   def init_sphere(divisions, sphere_id) do
     field_centroids = FieldCentroids.field_centroids(divisions)

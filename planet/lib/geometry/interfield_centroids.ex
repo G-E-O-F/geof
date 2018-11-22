@@ -1,13 +1,14 @@
 defmodule GEOF.Planet.Geometry.InterfieldCentroids do
-  import GEOF.Planet.Geometry
-  import GEOF.Planet.Sphere
-  import GEOF.Planet.Field
-
   @moduledoc """
     Functions for computing the positions of the centroids between each
     Field on a Sphere. This is used to determine the vertices of a
     field's bounding polygon.
   """
+
+  alias GEOF.Planet.Geometry
+  alias GEOF.Planet.Sphere
+  alias GEOF.Planet.Field
+  alias GEOF.Planet.Geometry.FieldCentroids
 
   ###
   #
@@ -15,9 +16,14 @@ defmodule GEOF.Planet.Geometry.InterfieldCentroids do
   #
   ###
 
-  @type interfield_triangle_index :: MapSet.t(GEOF.Planet.Field.index())
+  @typedoc "`interfield_triangle`s are identified by the Fields whose centroids define their vertices."
+
+  @type interfield_triangle_index :: MapSet.t(Field.index())
+
+  @typedoc "Maps `interfield_triangle`s to `position`s."
+
   @type interfield_centroid_sphere :: %{
-          interfield_triangle_index => GEOF.Planet.Geometry.position()
+          interfield_triangle_index => Geometry.position()
         }
 
   ###
@@ -32,10 +38,12 @@ defmodule GEOF.Planet.Geometry.InterfieldCentroids do
   # Utility functions
   ##
 
+  # Adds a new entry to an `interfield_centroid_sphere`.
+
   @spec set_position(
           interfield_centroid_sphere,
-          list(GEOF.Planet.Field.index()),
-          GEOF.Planet.Geometry.position()
+          list(Field.index()),
+          Geometry.position()
         ) :: interfield_centroid_sphere
 
   defp set_position(sphere, [index1, index2, index3], {:pos, lat, lon}) do
@@ -50,22 +58,29 @@ defmodule GEOF.Planet.Geometry.InterfieldCentroids do
 
   # Convenience function without need for a `centroid_sphere`
 
-  @spec interfield_centroids(integer) :: interfield_centroid_sphere
+  @doc """
+    Computes a new `interfield_centroid_sphere`, computing its own `centroid_sphere`.
+    Deprecated outside of testing and examples.
+  """
+
+  @spec interfield_centroids(Sphere.divisions()) :: interfield_centroid_sphere
 
   def interfield_centroids(divisions) when is_integer(divisions) and divisions > 0 do
     interfield_centroids(
-      GEOF.Planet.Geometry.FieldCentroids.field_centroids(divisions),
+      FieldCentroids.field_centroids(divisions),
       divisions
     )
   end
 
   # Main function
 
-  @spec interfield_centroids(GEOF.Planet.Geometry.FieldCentroids.centroid_sphere(), integer) ::
+  @doc "Computes a new `interfield_centroid_sphere` with a cached `centroid_sphere`."
+
+  @spec interfield_centroids(FieldCentroids.centroid_sphere(), Sphere.divisions()) ::
           interfield_centroid_sphere
 
   def interfield_centroids(centroids, divisions) when is_integer(divisions) and divisions > 0 do
-    for_all_fields(
+    Sphere.for_all_fields(
       Map.new(),
       divisions,
       fn sphere, index ->
@@ -74,18 +89,24 @@ defmodule GEOF.Planet.Geometry.InterfieldCentroids do
     )
   end
 
-  # Computes centroids for the two triangles all nonpolar fields are responsible for setting.
+  # Computes centroids for the two triangles all non-polar fields are responsible for setting.
 
   defp set_interfield_centroids_for_responsible_field(sphere, centroids, d, {:sxy, s, x, y}) do
     index = {:sxy, s, x, y}
-    adj = adjacents(index, d)
+    adj = Field.adjacents(index, d)
 
     t1 = [adj.w, adj.nw, index]
     t2 = [adj.sw, adj.w, index]
 
     sphere
-    |> set_position(t1, centroid(Enum.map(t1, fn index -> Map.get(centroids, index) end)))
-    |> set_position(t2, centroid(Enum.map(t2, fn index -> Map.get(centroids, index) end)))
+    |> set_position(
+      t1,
+      Geometry.centroid(Enum.map(t1, fn index -> Map.get(centroids, index) end))
+    )
+    |> set_position(
+      t2,
+      Geometry.centroid(Enum.map(t2, fn index -> Map.get(centroids, index) end))
+    )
   end
 
   # Ignore polar fields, which are not responsible for any triangles.

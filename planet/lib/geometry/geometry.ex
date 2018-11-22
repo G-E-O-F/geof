@@ -1,9 +1,9 @@
 defmodule GEOF.Planet.Geometry do
-  import :math
-
   @moduledoc """
     Functions for computing a Planet's geometry.
   """
+
+  import :math
 
   ###
   #
@@ -22,8 +22,12 @@ defmodule GEOF.Planet.Geometry do
   #
   ###
 
+  @typedoc """
+    `position` encodes coordinates on the Sphere in the Geographic Coordinate System as
+    tuples of the format `{:pos, latitude, longitude}`, i.e. `{:pos, φ, λ}`, where
+    -π/2 ≤ φ ≤ π/2 and 0 ≤ λ ≤ 2π.
+  """
   @type position :: {:pos, float, float}
-  @type course :: {:course, float, float}
 
   ###
   #
@@ -36,6 +40,7 @@ defmodule GEOF.Planet.Geometry do
   ##
 
   @doc "Returns the arclength between two points on the sphere."
+
   @spec distance(position, position) :: float
 
   def distance({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon}) do
@@ -48,8 +53,13 @@ defmodule GEOF.Planet.Geometry do
       )
   end
 
-  @doc "Returns the heading and distance from the first position to the second position"
-  @spec course(position, position) :: course
+  @doc """
+    Returns the heading and distance from the first position to the second position.
+
+    Used only for testing, so documentation is sparse.
+  """
+
+  @spec course(position, position) :: {:course, float, float}
 
   def course({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon}) do
     d = distance({:pos, f1_lat, f1_lon}, {:pos, f2_lat, f2_lon})
@@ -61,16 +71,22 @@ defmodule GEOF.Planet.Geometry do
   end
 
   @doc """
-    Calls the `into` callback function `divisions`-1 times, once for each
+    Calls the `into` function `divisions`-1 times, once for each
     point spaced evenly between two points on the sphere, and reduces the
     `init_acc` into a final value.
   """
-  @spec interpolate(any, integer, position, position, fun) :: {:ok}
+  @spec interpolate(
+          any,
+          GEOF.Sphere.divisions(),
+          position,
+          position,
+          (any, integer, position -> any)
+        ) :: any
 
-  def interpolate(init_acc, divisions, pos_1, pos_2, into)
+  def interpolate(init_acc, divisions, pos_1, pos_2, each)
       when is_integer(divisions) and divisions > 1 do
     Enum.reduce(1..(divisions - 1), init_acc, fn i, acc ->
-      interpolate_step(acc, divisions, pos_1, pos_2, into, i)
+      interpolate_step(acc, divisions, pos_1, pos_2, each, i)
     end)
   end
 
@@ -78,7 +94,7 @@ defmodule GEOF.Planet.Geometry do
     init_acc
   end
 
-  defp interpolate_step(acc, d, pos_1, pos_2, into, i) do
+  defp interpolate_step(acc, d, pos_1, pos_2, each, i) do
     {:pos, f1_lat, f1_lon} = pos_1
     {:pos, f2_lat, f2_lon} = pos_2
 
@@ -95,14 +111,15 @@ defmodule GEOF.Planet.Geometry do
     lat = atan2(y, sqrt(pow(x, 2) + pow(z, 2)))
     lon = atan2(z, x)
 
-    into.(acc, i, {:pos, lat, lon})
+    each.(acc, i, {:pos, lat, lon})
   end
 
   @doc """
     Computes the centroid of a polygon on the surface of the sphere defined
-    by a list of `positions`.
+    by a list of `position`s.
   """
-  @spec centroid(nonempty_list(position)) :: position
+
+  @spec centroid(nonempty_list(position)) :: position | {:error, String.t()}
 
   def centroid(positions) do
     n = length(positions)

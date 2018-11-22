@@ -1,12 +1,14 @@
 defmodule GEOF.Planet.Geometry.FieldCentroids do
-  import :math
-  import GEOF.Planet.Sphere
-  import GEOF.Planet.Geometry
-
   @moduledoc """
     Functions for computing the positions of the centroids of
     each Field on a Sphere.
   """
+
+  import :math
+
+  alias GEOF.Planet.Field
+  alias GEOF.Planet.Geometry
+  alias GEOF.Planet.Sphere
 
   ###
   #
@@ -14,7 +16,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
   #
   ###
 
-  @doc "The arclength of an edge of an icosahedron."
+  # The arclength of an edge of an icosahedron.
   @l acos(sqrt(5) / 5)
   def l, do: @l
 
@@ -24,7 +26,9 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
   #
   ###
 
-  @type centroid_sphere :: %{GEOF.Planet.Field.index() => GEOF.Planet.Geometry.position()}
+  @typedoc "Maps Field indexes to `position`s."
+
+  @type centroid_sphere :: %{Field.index() => Geometry.position()}
 
   ###
   #
@@ -38,6 +42,10 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
   # Utility functions
   ##
 
+  # Adds an entry to a `centroid_sphere`
+
+  @spec set_position(centroid_sphere, Field.index(), Geometry.position()) :: centroid_sphere
+
   defp set_position(sphere, {:sxy, s, x, y}, {:pos, lat, lon}) do
     Map.put(sphere, {:sxy, s, x, y}, {:pos, lat, lon})
   end
@@ -48,16 +56,15 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
   #
   ##
 
-  @doc """
-    Creates a Map between fields as <S,X,Y>|north|south and their centroids as the `sphere` type. The resolution of the sphere is determined by `divisions` supplied as the only argument.
-  """
-  @spec field_centroids(integer) :: centroid_sphere
+  @doc "Computes a new `centroid_sphere`."
+
+  @spec field_centroids(Sphere.divisions()) :: centroid_sphere
 
   def field_centroids(divisions) when is_integer(divisions) and divisions > 0 do
     d = divisions
     max_x = 2 * d - 1
 
-    for_sections(
+    Sphere.for_sections(
       # Initialize the map with positions for polar fields
       %{
         north: {:pos, pi() / 2, 0.0},
@@ -89,7 +96,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
   defp centroids_at_edge_fields(sphere, d) when is_integer(d) and d > 1 do
     max_x = 2 * d - 1
 
-    for_sections(sphere, fn sphere, s ->
+    Sphere.for_sections(sphere, fn sphere, s ->
       p = rem(s + 4, 5)
 
       snP = Map.get(sphere, :north)
@@ -103,7 +110,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
 
       # ...from north pole to current north tropical pentagon
 
-      interpolate(
+      Geometry.interpolate(
         sphere,
         d,
         snP,
@@ -115,7 +122,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
 
       # ...from current north tropical pentagon to previous north tropical pentagon
 
-      |> interpolate(
+      |> Geometry.interpolate(
         d,
         cnT,
         pnT,
@@ -126,7 +133,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
 
       # ...from current north tropical pentagon to previous south tropical pentagon
 
-      |> interpolate(
+      |> Geometry.interpolate(
         d,
         cnT,
         psT,
@@ -137,7 +144,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
 
       # ...from current north tropical pentagon to current south tropical pentagon
 
-      |> interpolate(
+      |> Geometry.interpolate(
         d,
         cnT,
         csT,
@@ -148,7 +155,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
 
       # ...from current south tropical pentagon to previous south tropical pentagon
 
-      |> interpolate(
+      |> Geometry.interpolate(
         d,
         csT,
         psT,
@@ -159,7 +166,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
 
       # ...from current south tropical pentagon to south pole
 
-      |> interpolate(
+      |> Geometry.interpolate(
         d,
         csT,
         ssP,
@@ -179,8 +186,8 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
   ##
 
   defp centroids_between_edges(sphere, d) when is_integer(d) and d > 2 do
-    for_sections(sphere, fn sphere, s ->
-      for_columns(sphere, d, fn sphere, x ->
+    Sphere.for_sections(sphere, fn sphere, s ->
+      Sphere.for_columns(sphere, d, fn sphere, x ->
         set_positions_between_edges(sphere, d, s, x)
       end)
     end)
@@ -199,7 +206,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
     f3_index = Map.get(GEOF.Planet.Field.adjacents({:sxy, s, x, d - 1}, d), :sw)
     f3 = Map.get(sphere, f3_index)
 
-    interpolate(
+    Geometry.interpolate(
       sphere,
       n1 + 1,
       f1,
@@ -208,7 +215,7 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
         set_position(sphere, {:sxy, s, x, i}, position)
       end
     )
-    |> interpolate(
+    |> Geometry.interpolate(
       n2 + 1,
       f2,
       f3,

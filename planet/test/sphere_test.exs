@@ -5,7 +5,7 @@ defmodule GEOF.Planet.SphereTest do
 
   doctest GEOF.Planet.Sphere
 
-  test "iterates through indices properly" do
+  test "iterates through indexes properly" do
     d = 7
 
     n_fields =

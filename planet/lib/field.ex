@@ -3,18 +3,58 @@ defmodule GEOF.Planet.Field do
     Functions for handling an individual Field on a Planet.
   """
 
-  @type index :: :north | :south | {:sxy, integer, integer, integer}
+  alias GEOF.Planet.Sphere
 
+  @typedoc """
+    A Field's index uniquely identifies it on a Sphere and it's used to identify its position
+    and which Fields are adjacent.
+
+    If the Field is not one of the poles, it's defined by its SXY coordinates, where S is
+    the section `0..4`, X is `0..divisions * 2`, Y is `0..divisions`.
+  """
+  @type index :: :north | :south | {:sxy, non_neg_integer, non_neg_integer, non_neg_integer}
+
+  # Sections is the number of 2-dimensional arrays in the Sphere. It's always 5.
   @sections 5
 
+  @doc """
+    Determines the 1-dimensional integer index of a Field given its index
+    and the Sphere's number of divisions.
+  """
+
+  @spec flatten_index(index, Sphere.divisions()) :: non_neg_integer
+
   def flatten_index(:north, _), do: 0
+
   def flatten_index(:south, _), do: 1
 
   def flatten_index({:sxy, s, x, y}, d) do
     s * d * d * 2 + x * d + y + 2
   end
 
-  @doc "Provides a map of indices for a field's adjacent fields."
+  @typedoc """
+    Provides the indexes of Fields at specific positions relevant to the way the Sphere is
+    organized.
+
+    For pentagonal fields, located at the vertices of the icosahedron, no `ne` adjacent Field
+    exists, so `nil` is given.
+  """
+
+  @type adjacents_map :: %{
+          nw: index,
+          w: index,
+          sw: index,
+          se: index,
+          e: index,
+          ne: nil | index
+        }
+
+  @doc """
+    Provides a map of indexes for a field's adjacent fields.
+  """
+
+  @spec adjacents(index, Sphere.divisions()) :: adjacents_map
+
   def adjacents(:north, _) do
     %{
       nw: {:sxy, 0, 0, 0},
