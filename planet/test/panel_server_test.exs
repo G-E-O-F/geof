@@ -25,7 +25,29 @@ defmodule GEOF.Planet.PanelServerTest do
     assert state = PanelServer.get_state(sphere.id, index)
 
     assert state.id == {sphere.id, index}
-    assert MapSet.size(state.adjacent_fields[0]) == 16
+
+    assert many_adj_panels =
+             Enum.reduce(
+               state.adjacent_fields,
+               0,
+               fn {_panel_index, adjacent_fields}, acc ->
+                 if MapSet.size(adjacent_fields) > 2, do: acc + 1, else: acc
+               end
+             )
+
+    assert few_adj_panels =
+             Enum.reduce(
+               state.adjacent_fields,
+               0,
+               fn {_panel_index, adjacent_fields}, acc ->
+                 size = MapSet.size(adjacent_fields)
+                 if size > 0 and size <= 2, do: acc + 1, else: acc
+               end
+             )
+
+    assert many_adj_panels == 3
+    assert few_adj_panels <= 3
+
     assert :ok = GenServer.stop(pspid)
   end
 
