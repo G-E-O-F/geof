@@ -49,18 +49,25 @@ defmodule GEOF.Planet.Field do
     Provides the indexes of Fields at specific positions relevant to the way the Sphere is
     organized.
 
-    For pentagonal fields, located at the vertices of the icosahedron, no `ne` adjacent Field
-    exists, so `nil` is given.
+    For pentagonal fields, located at the vertices of the icosahedron, no `ne` adjacent Field is defined.
   """
 
-  @type adjacents_map :: %{
-          nw: index,
-          w: index,
-          sw: index,
-          se: index,
-          e: index,
-          ne: nil | index
-        }
+  @type adjacents_map ::
+          %{
+            nw: index,
+            w: index,
+            sw: index,
+            se: index,
+            e: index
+          }
+          | %{
+              nw: index,
+              w: index,
+              sw: index,
+              se: index,
+              e: index,
+              ne: index
+            }
 
   @doc """
     Provides a map of indexes for a field's adjacent fields.
@@ -74,8 +81,7 @@ defmodule GEOF.Planet.Field do
       w: {:sxy, 1, 0, 0},
       sw: {:sxy, 2, 0, 0},
       se: {:sxy, 3, 0, 0},
-      e: {:sxy, 4, 0, 0},
-      ne: nil
+      e: {:sxy, 4, 0, 0}
     }
   end
 
@@ -88,8 +94,7 @@ defmodule GEOF.Planet.Field do
       w: {:sxy, 1, max_x, max_y},
       sw: {:sxy, 2, max_x, max_y},
       se: {:sxy, 3, max_x, max_y},
-      e: {:sxy, 4, max_x, max_y},
-      ne: nil
+      e: {:sxy, 4, max_x, max_y}
     }
   end
 
@@ -157,24 +162,34 @@ defmodule GEOF.Planet.Field do
         true -> {:sxy, s, x + 1, y - 1}
       end
 
-    # northeastern adjacent (y--)
-    adj_ne =
-      cond do
-        is_pentagon -> nil
-        y > 0 -> {:sxy, s, x, y - 1}
-        # attach northeastern side to next northwestern edge
-        y == 0 and x < d -> {:sxy, next_s, 0, x}
-        # attach northeastern side to next west-southwestern edge
-        y == 0 -> {:sxy, next_s, x - d, max_y}
-      end
+    if is_pentagon do
+      %{
+        nw: adj_nw,
+        w: adj_w,
+        sw: adj_sw,
+        se: adj_se,
+        e: adj_e
+      }
+    else
+      # northeastern adjacent (y--)
+      adj_ne =
+        cond do
+          is_pentagon -> nil
+          y > 0 -> {:sxy, s, x, y - 1}
+          # attach northeastern side to next northwestern edge
+          y == 0 and x < d -> {:sxy, next_s, 0, x}
+          # attach northeastern side to next west-southwestern edge
+          y == 0 -> {:sxy, next_s, x - d, max_y}
+        end
 
-    %{
-      nw: adj_nw,
-      w: adj_w,
-      sw: adj_sw,
-      se: adj_se,
-      e: adj_e,
-      ne: adj_ne
-    }
+      %{
+        nw: adj_nw,
+        w: adj_w,
+        sw: adj_sw,
+        se: adj_se,
+        e: adj_e,
+        ne: adj_ne
+      }
+    end
   end
 end

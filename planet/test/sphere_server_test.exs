@@ -51,7 +51,15 @@ defmodule GEOF.Planet.SphereServerTest do
 
     all_fields_with_one = Sphere.for_all_fields(Map.new(), d, &Map.put(&1, &2, 1))
 
-    # assert SphereServer.get_all_field_data(id) == all_fields_with_one
+    SphereServer.start_frame(
+      id,
+      {"GEOF.Planet.SphereServerTestBattery", "increment_field"},
+      self()
+    )
+
+    assert_receive :frame_complete, 5000
+
+    assert SphereServer.get_all_field_data(id) == all_fields_with_one
 
     assert :ok = GenServer.stop(sspid)
   end

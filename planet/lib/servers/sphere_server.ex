@@ -67,11 +67,16 @@ defmodule GEOF.Planet.SphereServer do
     GenServer.call(Registry.sphere_via_reg(sphere_id), :get_all_field_data)
   end
 
-  @spec start_frame(sphere_id, fn_ref) :: :ok
+  @spec start_frame(sphere_id, fn_ref, pid) :: :ok
 
-  def start_frame(sphere_id, {module_name, function_name}) do
-    per_field = {String.to_existing_atom("Elixir.#{module_name}"), function_name}
-    GenServer.cast(Registry.sphere_via_reg(sphere_id), {:start_frame, per_field})
+  def start_frame(sphere_id, {module_name, function_name}, from) do
+    #    IO.puts("[sphere] start_frame")
+    per_field = {
+      String.to_existing_atom("Elixir.#{module_name}"),
+      String.to_existing_atom(function_name)
+    }
+
+    GenServer.cast(Registry.sphere_via_reg(sphere_id), {:start_frame, per_field, from})
   end
 
   ###
@@ -112,6 +117,9 @@ defmodule GEOF.Planet.SphereServer do
     }
 
     fields_at_panels = init_fields_at_panels(sphere)
+
+    #    IO.puts("[sphere] fields at panels")
+    #    IO.inspect(fields_at_panels)
 
     Map.merge(sphere, %{
       fields_at_panels: fields_at_panels,
@@ -186,7 +194,9 @@ defmodule GEOF.Planet.SphereServer do
   ###
 
   @impl true
-  def handle_cast({:start_frame, per_field}, state) do
+  def handle_cast({:start_frame, per_field, from}, state) do
+    state = Map.put(state, :__reply_to__, from)
+
     Enum.each(Map.keys(state.sphere.fields_at_panels), fn panel_index ->
       PanelServer.start_frame(
         state.sphere.id,
@@ -206,6 +216,8 @@ defmodule GEOF.Planet.SphereServer do
 
   @impl true
   def handle_cast({:__ready_to_commit_frame__, panel_index}, state) do
+    #    IO.puts("[sphere] __ready_to_commit_frame__: #{panel_index}")
+
     state =
       update_in(
         state.__panels_ready_to_commit__,
@@ -218,6 +230,8 @@ defmodule GEOF.Planet.SphereServer do
 
   @impl true
   def handle_cast(:__commit_frame__, state) do
+    #    IO.puts("[sphere] __commit_frame__")
+
     Enum.each(Map.keys(state.sphere.fields_at_panels), fn panel_index ->
       PanelServer.commit_frame(
         state.sphere.id,
@@ -225,6 +239,7 @@ defmodule GEOF.Planet.SphereServer do
       )
     end)
 
+    if is_pid(state.__reply_to__), do: send(state.__reply_to__, :frame_complete)
     {:noreply, state}
   end
 

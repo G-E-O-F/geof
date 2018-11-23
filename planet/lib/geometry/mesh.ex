@@ -94,7 +94,7 @@ defmodule GEOF.Planet.Geometry.Mesh do
         fn acc, field_index ->
           pos_c = acc[:pos_c]
           adj = Field.adjacents(field_index, d)
-          sides = if adj.ne == nil, do: 5, else: 6
+          sides = if Map.has_key?(adj, :ne), do: 6, else: 5
 
           {:pos, lat, lon} = Map.get(field_centroids, field_index)
 

@@ -61,9 +61,15 @@ defmodule GEOF.Planet.PanelServer do
     fields = sphere.fields_at_panels[panel_index]
     adjacent_fields = init_adjacent_fields(sphere, panel_index)
 
+    #    IO.puts("[panel #{panel_index}] has fields")
+    #    IO.inspect(fields)
+    #    IO.puts("[panel #{panel_index}] has adjacents")
+    #    IO.inspect(adjacent_fields)
+
     {:ok,
      %{
        id: {sphere.id, panel_index},
+       divisions: sphere.divisions,
        fields: fields,
        field_data: init_field_data(fields),
        adjacent_fields: adjacent_fields,
@@ -132,7 +138,7 @@ defmodule GEOF.Planet.PanelServer do
               adjacent_fields_at_panels[
                 panel_for_field(sphere.fields_at_panels, foreign_adjacent_field_index)
               ],
-              &MapSet.put(&1, field_index)
+              &MapSet.put(&1, foreign_adjacent_field_index)
             )
           end
         )
@@ -168,6 +174,7 @@ defmodule GEOF.Planet.PanelServer do
   @impl true
   def handle_cast({:start_frame, per_field}, state) do
     {sphere_id, panel_index} = state.id
+    #    IO.puts("[panel #{panel_index}] start_frame")
 
     state = Map.put(state, :frame_fun, per_field)
     state = Map.put(state, :adjacent_field_data, Map.new())
@@ -193,6 +200,12 @@ defmodule GEOF.Planet.PanelServer do
     {sphere_id, _panel_index} = state.id
 
     Enum.each(fields, fn field_index ->
+      #      IO.puts(
+      #        "[panel #{panel_index}] send, to: #{to_panel_index}, about: #{
+      #          Field.index_to_string(field_index)
+      #        }, avail: #{Map.has_key?(state.field_data, field_index)}, n: #{map_size(state.field_data)}\n"
+      #      )
+
       if Map.has_key?(state.field_data, field_index) do
         GenServer.cast(
           Registry.panel_via_reg(sphere_id, to_panel_index),
@@ -225,15 +238,15 @@ defmodule GEOF.Planet.PanelServer do
   def handle_cast(:__populate_frame__, state) do
     {sphere_id, panel_index} = state.id
     {module, function_name} = state.frame_fun
-
-    state = Map.put(state, :__current_frame__, Map.new())
+    #    IO.puts("[panel #{panel_index}] __populate_frame__")
 
     state =
-      Enum.reduce(state.fields, state, fn field_index, state ->
-        update_in(
-          state.__current_frame__,
-          &Map.put(
-            &1,
+      Map.put(
+        state,
+        :__current_frame__,
+        Enum.reduce(state.fields, %{}, fn field_index, current_frame ->
+          Map.put(
+            current_frame,
             field_index,
             apply(
               module,
@@ -244,8 +257,8 @@ defmodule GEOF.Planet.PanelServer do
               ]
             )
           )
-        )
-      end)
+        end)
+      )
 
     GenServer.cast(Registry.sphere_via_reg(sphere_id), {:__ready_to_commit_frame__, panel_index})
 
@@ -253,6 +266,14 @@ defmodule GEOF.Planet.PanelServer do
   end
 
   defp ready_to_populate_frame?(state) do
+    #    {_sphere_id, panel_index} = state.id
+    #
+    #    IO.puts(
+    #      "[panel #{panel_index}] ready to populate? #{map_size(state.adjacent_field_data)}, #{
+    #        state.n_adjacent_fields
+    #      }"
+    #    )
+
     map_size(state.adjacent_field_data) >= state.n_adjacent_fields
   end
 
@@ -260,7 +281,7 @@ defmodule GEOF.Planet.PanelServer do
     {_sphere_id, panel_index} = state.id
 
     Map.new(
-      Field.adjacents(field_index, state.sphere.divisions),
+      Field.adjacents(field_index, state.divisions),
       fn {dir, adjacent_field_index} ->
         cond do
           Map.has_key?(state.field_data, adjacent_field_index) ->
@@ -269,7 +290,7 @@ defmodule GEOF.Planet.PanelServer do
           Map.has_key?(state.adjacent_field_data, adjacent_field_index) ->
             {dir, {adjacent_field_index, state.adjacent_field_data[adjacent_field_index]}}
 
-          adjacent_field_index != nil ->
+          true ->
             exit(
               "Field data logistical error: data for Field #{
                 Field.index_to_string(adjacent_field_index)
