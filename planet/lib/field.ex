@@ -34,6 +34,17 @@ defmodule GEOF.Planet.Field do
     s * d * d * 2 + x * d + y + 2
   end
 
+  @doc """
+    Stringifies a Field index.
+  """
+
+  @spec index_to_string(index) :: String.t()
+
+  def index_to_string(field_index)
+  def index_to_string(:north), do: ":north"
+  def index_to_string(:south), do: ":south"
+  def index_to_string({:sxy, s, x, y}), do: "{:sxy, #{s}, #{x}, #{y}}}"
+
   @typedoc """
     Provides the indexes of Fields at specific positions relevant to the way the Sphere is
     organized.

@@ -1,10 +1,3 @@
-# defmodule GEOF.Planet.FieldServerTestBattery do
-#  def iterator(state, adjacent_states) do
-#    {:sxy, s, x, y} = Map.get(state, :id)
-#    s + x + y + length(adjacent_states)
-#  end
-# end
-
 defmodule GEOF.Planet.PanelServerTest do
   use ExUnit.Case
 
@@ -45,8 +38,14 @@ defmodule GEOF.Planet.PanelServerTest do
                end
              )
 
+    # The panels are triangular, so the bulk of the Fields should belong to the 3
+    # panels that share an edge with this panel.
     assert many_adj_panels == 3
+    # Sometimes there's a few adjacent Fields belonging to panels completely
+    # opposite this panel's vertices.
     assert few_adj_panels <= 3
+    # This panel shouldn't register any of its own Fields as adjacent.
+    assert MapSet.size(state.adjacent_fields[index]) == 0
 
     assert :ok = GenServer.stop(pspid)
   end

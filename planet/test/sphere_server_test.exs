@@ -1,3 +1,9 @@
+defmodule GEOF.Planet.SphereServerTestBattery do
+  def increment_field(_field_with_data, _adjacent_fields_with_data) do
+    1
+  end
+end
+
 defmodule GEOF.Planet.SphereServerTest do
   use ExUnit.Case
 
@@ -31,5 +37,22 @@ defmodule GEOF.Planet.SphereServerTest do
                MapSet.new(Map.keys(SphereServer.get_all_field_data(id)))
              )
            ) == 0
+
+    assert :ok = GenServer.stop(sspid)
+  end
+
+  test "iterates" do
+    d = 8
+    id = make_ref()
+
+    assert {:ok, sspid} = SphereServer.start_link(d, id)
+
+    # TODO: fix this
+
+    all_fields_with_one = Sphere.for_all_fields(Map.new(), d, &Map.put(&1, &2, 1))
+
+    # assert SphereServer.get_all_field_data(id) == all_fields_with_one
+
+    assert :ok = GenServer.stop(sspid)
   end
 end

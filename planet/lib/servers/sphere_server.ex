@@ -43,7 +43,8 @@ defmodule GEOF.Planet.SphereServer do
           :divisions => Sphere.divisions(),
           :field_centroids => FieldCentroids.centroid_sphere(),
           :interfield_centroids => InterfieldCentroids.interfield_centroid_sphere(),
-          :fields_at_panels => fields_at_panels
+          :fields_at_panels => fields_at_panels,
+          :n_panels => non_neg_integer
         }
 
   ###
@@ -69,7 +70,7 @@ defmodule GEOF.Planet.SphereServer do
   @spec start_frame(sphere_id, fn_ref) :: :ok
 
   def start_frame(sphere_id, {module_name, function_name}) do
-    per_field = {module_name, function_name}
+    per_field = {String.to_existing_atom("Elixir.#{module_name}"), function_name}
     GenServer.cast(Registry.sphere_via_reg(sphere_id), {:start_frame, per_field})
   end
 
@@ -110,7 +111,12 @@ defmodule GEOF.Planet.SphereServer do
       interfield_centroids: interfield_centroids
     }
 
-    Map.put(sphere, :fields_at_panels, init_fields_at_panels(sphere))
+    fields_at_panels = init_fields_at_panels(sphere)
+
+    Map.merge(sphere, %{
+      fields_at_panels: fields_at_panels,
+      n_panels: length(Map.keys(fields_at_panels))
+    })
   end
 
   @impl true
@@ -189,8 +195,40 @@ defmodule GEOF.Planet.SphereServer do
       )
     end)
 
-    {:noreply, Map.put(state, :in_frame, true)}
+    state =
+      Map.merge(state, %{
+        __panels_ready_to_commit__: MapSet.new(),
+        in_frame: true
+      })
+
+    {:noreply, state}
   end
 
-  # TODO: how does a frame end?
+  @impl true
+  def handle_cast({:__ready_to_commit_frame__, panel_index}, state) do
+    state =
+      update_in(
+        state.__panels_ready_to_commit__,
+        &MapSet.put(&1, panel_index)
+      )
+
+    if ready_to_commit_frame?(state), do: GenServer.cast(self(), :__commit_frame__)
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast(:__commit_frame__, state) do
+    Enum.each(Map.keys(state.sphere.fields_at_panels), fn panel_index ->
+      PanelServer.commit_frame(
+        state.sphere.id,
+        panel_index
+      )
+    end)
+
+    {:noreply, state}
+  end
+
+  defp ready_to_commit_frame?(state) do
+    MapSet.size(state.__panels_ready_to_commit__) == state.sphere.n_panels
+  end
 end
