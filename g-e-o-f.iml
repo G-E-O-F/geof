@@ -7,8 +7,12 @@
       <sourceFolder url="file://$MODULE_DIR$/theater/app" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/sightglass/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/sightglass/lib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/shapes/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/shapes/lib" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/planet/_build" />
       <excludeFolder url="file://$MODULE_DIR$/planet/cover" />
+      <excludeFolder url="file://$MODULE_DIR$/shapes/_build" />
+      <excludeFolder url="file://$MODULE_DIR$/sightglass/_build" />
       <excludeFolder url="file://$MODULE_DIR$/theater/dist" />
     </content>
     <orderEntry type="jdk" jdkName="Elixir 1.7.1" jdkType="Elixir SDK" />

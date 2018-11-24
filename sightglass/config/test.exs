@@ -2,7 +2,7 @@ use Mix.Config
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :sightglass, SightglassWeb.Endpoint,
+config :geof_sightglass, GEOF.SightglassWeb.Endpoint,
   http: [port: 4441],
   server: false
 

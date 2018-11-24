@@ -12,7 +12,7 @@ defmodule GEOF.Planet.FieldTest do
     assert adjacents(:north, d).sw == {:sxy, 2, 0, 0}
     assert adjacents(:north, d).se == {:sxy, 3, 0, 0}
     assert adjacents(:north, d).e == {:sxy, 4, 0, 0}
-    assert adjacents(:north, d).ne == nil
+    refute Map.has_key?(adjacents(:north, d), :ne)
   end
 
   test "links southern polar field correctly" do
@@ -25,7 +25,7 @@ defmodule GEOF.Planet.FieldTest do
     assert adjacents(:south, d).sw == {:sxy, 2, dx - 1, dy - 1}
     assert adjacents(:south, d).se == {:sxy, 3, dx - 1, dy - 1}
     assert adjacents(:south, d).e == {:sxy, 4, dx - 1, dy - 1}
-    assert adjacents(:south, d).ne == nil
+    refute Map.has_key?(adjacents(:south, d), :ne)
   end
 
   test "links the northern tropical fields correctly" do
@@ -37,7 +37,7 @@ defmodule GEOF.Planet.FieldTest do
     assert adjacents(index, d).sw == {:sxy, 4, 1, 0}
     assert adjacents(index, d).se == {:sxy, 0, 1, 0}
     assert adjacents(index, d).e == {:sxy, 1, 0, 0}
-    assert adjacents(index, d).ne == nil
+    refute Map.has_key?(adjacents(index, d), :ne)
   end
 
   test "links the southern tropical fields correctly" do
@@ -49,7 +49,7 @@ defmodule GEOF.Planet.FieldTest do
     assert adjacents(index, d).sw == :south
     assert adjacents(index, d).se == {:sxy, 1, 1, 0}
     assert adjacents(index, d).e == {:sxy, 1, 0, 0}
-    assert adjacents(index, d).ne == nil
+    refute Map.has_key?(adjacents(index, d), :ne)
   end
 
   test "links fields on the north-northeastern edge" do

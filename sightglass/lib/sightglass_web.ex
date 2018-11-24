@@ -1,12 +1,12 @@
-defmodule SightglassWeb do
+defmodule GEOF.SightglassWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use SightglassWeb, :controller
-      use SightglassWeb, :view
+      use GEOF.SightglassWeb, :controller
+      use GEOF.SightglassWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -19,10 +19,10 @@ defmodule SightglassWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: SightglassWeb
+      use Phoenix.Controller, namespace: GEOF.SightglassWeb
       import Plug.Conn
-      import SightglassWeb.Router.Helpers
-      import SightglassWeb.Gettext
+      import GEOF.SightglassWeb.Router.Helpers
+      import GEOF.SightglassWeb.Gettext
     end
   end
 
@@ -37,7 +37,7 @@ defmodule SightglassWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import SightglassWeb.Gettext
+      import GEOF.SightglassWeb.Gettext
     end
   end
 

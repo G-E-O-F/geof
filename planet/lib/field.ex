@@ -3,26 +3,97 @@ defmodule GEOF.Planet.Field do
     Functions for handling an individual Field on a Planet.
   """
 
-  @type index :: :north | :south | {:sxy, integer, integer, integer}
+  alias GEOF.Planet.Sphere
 
+  @typedoc """
+    A Field's index uniquely identifies it on a Sphere and it's used to identify its position
+    and which Fields are adjacent.
+
+    If the Field is not one of the poles, it's defined by its SXY coordinates, where S is
+    the section `0..4`, X is `0..divisions * 2`, Y is `0..divisions`.
+  """
+  @type index :: :north | :south | {:sxy, non_neg_integer, non_neg_integer, non_neg_integer}
+
+  # Sections is the number of 2-dimensional arrays in the Sphere. It's always 5.
   @sections 5
 
+  @doc """
+    Determines the 1-dimensional integer index of a Field given its index
+    and the Sphere's number of divisions.
+  """
+
+  @spec flatten_index(index, Sphere.divisions()) :: non_neg_integer
+
   def flatten_index(:north, _), do: 0
+
   def flatten_index(:south, _), do: 1
+
+  def flatten_index(field_index, divisions)
 
   def flatten_index({:sxy, s, x, y}, d) do
     s * d * d * 2 + x * d + y + 2
   end
 
-  @doc "Provides a map of indices for a field's adjacent fields."
+  @doc """
+    Stringifies a Field index.
+  """
+
+  @spec index_to_string(index) :: String.t()
+
+  def index_to_string(field_index)
+  def index_to_string(:north), do: ":north"
+  def index_to_string(:south), do: ":south"
+  def index_to_string({:sxy, s, x, y}), do: "{:sxy, #{s}, #{x}, #{y}}}"
+
+  @typedoc """
+    Provides the indexes of Fields that are adjacent to this Field, organized by specific relative positions relevant to the way the Sphere is organized.
+
+    For pentagonal fields, all located at a vertex of the icosahedron, no `ne` adjacent Field is defined.
+  """
+
+  @type adjacents_map ::
+          %{
+            nw: index,
+            w: index,
+            sw: index,
+            se: index,
+            e: index
+          }
+          | %{
+              nw: index,
+              w: index,
+              sw: index,
+              se: index,
+              e: index,
+              ne: index
+            }
+
+  @doc """
+    Provides a map of indexes for a field's adjacent fields.
+  """
+
+  @spec is_pentagon(index, Sphere.divisions()) :: boolean
+
+  def is_pentagon(field_index, divisions)
+  def is_pentagon(:north, _), do: true
+  def is_pentagon(:south, _), do: true
+  def is_pentagon({:sxy, _s, x, y}, d), do: y == 0 and rem(x + 1, d) == 0
+
+  @doc """
+    Provides a map of indexes for a field's adjacent fields.
+  """
+
+  @spec adjacents(index, Sphere.divisions()) :: adjacents_map
+
+  def adjacents(field_index, divisions)
+
   def adjacents(:north, _) do
     %{
       nw: {:sxy, 0, 0, 0},
       w: {:sxy, 1, 0, 0},
       sw: {:sxy, 2, 0, 0},
       se: {:sxy, 3, 0, 0},
-      e: {:sxy, 4, 0, 0},
-      ne: nil
+      e: {:sxy, 4, 0, 0}
     }
   end
 
@@ -35,20 +106,18 @@ defmodule GEOF.Planet.Field do
       w: {:sxy, 1, max_x, max_y},
       sw: {:sxy, 2, max_x, max_y},
       se: {:sxy, 3, max_x, max_y},
-      e: {:sxy, 4, max_x, max_y},
-      ne: nil
+      e: {:sxy, 4, max_x, max_y}
     }
   end
 
-  def adjacents({:sxy, s, x, y}, divisions) do
-    d = divisions
-    max_x = divisions * 2 - 1
-    max_y = divisions - 1
+  def adjacents({:sxy, s, x, y}, d) do
+    max_x = d * 2 - 1
+    max_y = d - 1
 
     next_s = rem(s + 1 + @sections, @sections)
     prev_s = rem(s - 1 + @sections, @sections)
 
-    is_pentagon = y == 0 and rem(x + 1, d) == 0
+    is_pentagon = is_pentagon({:sxy, s, x, y}, d)
 
     # northwestern adjacent (x--)
     adj_nw =
@@ -103,24 +172,34 @@ defmodule GEOF.Planet.Field do
         true -> {:sxy, s, x + 1, y - 1}
       end
 
-    # northeastern adjacent (y--)
-    adj_ne =
-      cond do
-        is_pentagon -> nil
-        y > 0 -> {:sxy, s, x, y - 1}
-        # attach northeastern side to next northwestern edge
-        y == 0 and x < d -> {:sxy, next_s, 0, x}
-        # attach northeastern side to next west-southwestern edge
-        y == 0 -> {:sxy, next_s, x - d, max_y}
-      end
+    if is_pentagon do
+      %{
+        nw: adj_nw,
+        w: adj_w,
+        sw: adj_sw,
+        se: adj_se,
+        e: adj_e
+      }
+    else
+      # northeastern adjacent (y--)
+      adj_ne =
+        cond do
+          is_pentagon -> nil
+          y > 0 -> {:sxy, s, x, y - 1}
+          # attach northeastern side to next northwestern edge
+          y == 0 and x < d -> {:sxy, next_s, 0, x}
+          # attach northeastern side to next west-southwestern edge
+          y == 0 -> {:sxy, next_s, x - d, max_y}
+        end
 
-    %{
-      nw: adj_nw,
-      w: adj_w,
-      sw: adj_sw,
-      se: adj_se,
-      e: adj_e,
-      ne: adj_ne
-    }
+      %{
+        nw: adj_nw,
+        w: adj_w,
+        sw: adj_sw,
+        se: adj_se,
+        e: adj_e,
+        ne: adj_ne
+      }
+    end
   end
 end
