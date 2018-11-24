@@ -42,10 +42,6 @@ defmodule GEOF.Planet.PanelServer do
     )
   end
 
-  def commit_frame(sphere_id, panel_index) do
-    GenServer.call(Registry.panel_via_reg(sphere_id, panel_index), :__commit_frame__)
-  end
-
   ###
   #
   # Server
@@ -60,11 +56,6 @@ defmodule GEOF.Planet.PanelServer do
   def init([sphere, panel_index]) do
     fields = sphere.fields_at_panels[panel_index]
     adjacent_fields = init_adjacent_fields(sphere, panel_index)
-
-    #    IO.puts("[panel #{panel_index}] has fields")
-    #    IO.inspect(fields)
-    #    IO.puts("[panel #{panel_index}] has adjacents")
-    #    IO.inspect(adjacent_fields)
 
     {:ok,
      %{
@@ -174,17 +165,15 @@ defmodule GEOF.Planet.PanelServer do
   @impl true
   def handle_cast({:start_frame, per_field}, state) do
     {sphere_id, panel_index} = state.id
-    #    IO.puts("[panel #{panel_index}] start_frame")
 
     state = Map.put(state, :frame_fun, per_field)
     state = Map.put(state, :adjacent_field_data, Map.new())
 
-    # Stage 1: send a request for adjacent field data to the other panels
     Enum.each(state.adjacent_fields, fn {adjacent_panel_index, fields} ->
       if adjacent_panel_index != panel_index and MapSet.size(fields) > 0 do
         GenServer.cast(
           Registry.panel_via_reg(sphere_id, adjacent_panel_index),
-          {:send_field_data, panel_index, fields}
+          {:__send_field_data__, panel_index, fields}
         )
       end
     end)
@@ -192,24 +181,15 @@ defmodule GEOF.Planet.PanelServer do
     {:noreply, state}
   end
 
-  # :send_field_data is a cast received by this panel from panels in the same sphere which need
-  # some of this panel's field data
-
   @impl true
-  def handle_cast({:send_field_data, to_panel_index, fields}, state) do
+  def handle_cast({:__send_field_data__, to_panel_index, fields}, state) do
     {sphere_id, _panel_index} = state.id
 
     Enum.each(fields, fn field_index ->
-      #      IO.puts(
-      #        "[panel #{panel_index}] send, to: #{to_panel_index}, about: #{
-      #          Field.index_to_string(field_index)
-      #        }, avail: #{Map.has_key?(state.field_data, field_index)}, n: #{map_size(state.field_data)}\n"
-      #      )
-
       if Map.has_key?(state.field_data, field_index) do
         GenServer.cast(
           Registry.panel_via_reg(sphere_id, to_panel_index),
-          {:receive_field_data, field_index, state.field_data[field_index]}
+          {:__receive_field_data__, field_index, state.field_data[field_index]}
         )
       end
     end)
@@ -218,7 +198,7 @@ defmodule GEOF.Planet.PanelServer do
   end
 
   @impl true
-  def handle_cast({:receive_field_data, field_index, data_for_field}, state) do
+  def handle_cast({:__receive_field_data__, field_index, data_for_field}, state) do
     # store field_data in a cache of data for adjacent fields
     state =
       update_in(
@@ -238,7 +218,6 @@ defmodule GEOF.Planet.PanelServer do
   def handle_cast(:__populate_frame__, state) do
     {sphere_id, panel_index} = state.id
     {module, function_name} = state.frame_fun
-    #    IO.puts("[panel #{panel_index}] __populate_frame__")
 
     state =
       Map.put(
@@ -266,14 +245,6 @@ defmodule GEOF.Planet.PanelServer do
   end
 
   defp ready_to_populate_frame?(state) do
-    #    {_sphere_id, panel_index} = state.id
-    #
-    #    IO.puts(
-    #      "[panel #{panel_index}] ready to populate? #{map_size(state.adjacent_field_data)}, #{
-    #        state.n_adjacent_fields
-    #      }"
-    #    )
-
     map_size(state.adjacent_field_data) >= state.n_adjacent_fields
   end
 
@@ -296,8 +267,6 @@ defmodule GEOF.Planet.PanelServer do
                 Field.index_to_string(adjacent_field_index)
               } not available for panel {ref, #{panel_index}}}"
             )
-
-            # Ignore if `adjacent_field_index` is `nil`
         end
       end
     )

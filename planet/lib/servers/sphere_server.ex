@@ -17,7 +17,11 @@ defmodule GEOF.Planet.SphereServer do
   # `field_data`, and a group of such data is `sphere_data`, whether it's data for just part of
   # the sphere or for the entire sphere.
   #
-  # In the servers' APIs, `get` is always a call, and `request` and `send` are always casts.
+  # In the servers' APIs, `get` is always a call, and `send` and `receive` are always casts.
+  #
+  # Atoms surrounded with double-underscores indicate messages and state keys that are intended
+  # only to be used by processes internal to `SphereServer` and `PanelServer`. Once an iteration is
+  # complete, no remaining messages or state keys should be present in the system.
   # ~~~
 
   ###
@@ -70,7 +74,6 @@ defmodule GEOF.Planet.SphereServer do
   @spec start_frame(sphere_id, fn_ref, pid) :: :ok
 
   def start_frame(sphere_id, {module_name, function_name}, from) do
-    #    IO.puts("[sphere] start_frame")
     per_field = {
       String.to_existing_atom("Elixir.#{module_name}"),
       String.to_existing_atom(function_name)
@@ -117,9 +120,6 @@ defmodule GEOF.Planet.SphereServer do
     }
 
     fields_at_panels = init_fields_at_panels(sphere)
-
-    #    IO.puts("[sphere] fields at panels")
-    #    IO.inspect(fields_at_panels)
 
     Map.merge(sphere, %{
       fields_at_panels: fields_at_panels,
@@ -195,8 +195,6 @@ defmodule GEOF.Planet.SphereServer do
 
   @impl true
   def handle_cast({:start_frame, per_field, from}, state) do
-    state = Map.put(state, :__reply_to__, from)
-
     Enum.each(Map.keys(state.sphere.fields_at_panels), fn panel_index ->
       PanelServer.start_frame(
         state.sphere.id,
@@ -205,19 +203,16 @@ defmodule GEOF.Planet.SphereServer do
       )
     end)
 
-    state =
-      Map.merge(state, %{
-        __panels_ready_to_commit__: MapSet.new(),
-        in_frame: true
-      })
-
-    {:noreply, state}
+    {:noreply,
+     Map.merge(state, %{
+       __reply_to__: from,
+       __panels_ready_to_commit__: MapSet.new(),
+       in_frame: true
+     })}
   end
 
   @impl true
   def handle_cast({:__ready_to_commit_frame__, panel_index}, state) do
-    #    IO.puts("[sphere] __ready_to_commit_frame__: #{panel_index}")
-
     state =
       update_in(
         state.__panels_ready_to_commit__,
@@ -230,17 +225,18 @@ defmodule GEOF.Planet.SphereServer do
 
   @impl true
   def handle_cast(:__commit_frame__, state) do
-    #    IO.puts("[sphere] __commit_frame__")
-
     Enum.each(Map.keys(state.sphere.fields_at_panels), fn panel_index ->
-      PanelServer.commit_frame(
-        state.sphere.id,
-        panel_index
-      )
+      GenServer.call(Registry.panel_via_reg(state.sphere.id, panel_index), :__commit_frame__)
     end)
 
     if is_pid(state.__reply_to__), do: send(state.__reply_to__, :frame_complete)
-    {:noreply, state}
+
+    {:noreply,
+     Map.drop(state, [
+       :__reply_to__,
+       :__panels_ready_to_commit__
+     ])
+     |> Map.put(:in_frame, false)}
   end
 
   defp ready_to_commit_frame?(state) do
