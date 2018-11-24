@@ -46,10 +46,9 @@ defmodule GEOF.Planet.Field do
   def index_to_string({:sxy, s, x, y}), do: "{:sxy, #{s}, #{x}, #{y}}}"
 
   @typedoc """
-    Provides the indexes of Fields at specific positions relevant to the way the Sphere is
-    organized.
+    Provides the indexes of Fields that are adjacent to this Field, organized by specific relative positions relevant to the way the Sphere is organized.
 
-    For pentagonal fields, located at the vertices of the icosahedron, no `ne` adjacent Field is defined.
+    For pentagonal fields, all located at a vertex of the icosahedron, no `ne` adjacent Field is defined.
   """
 
   @type adjacents_map ::
@@ -73,7 +72,20 @@ defmodule GEOF.Planet.Field do
     Provides a map of indexes for a field's adjacent fields.
   """
 
+  @spec is_pentagon(index, Sphere.divisions()) :: boolean
+
+  def is_pentagon(field_index, divisions)
+  def is_pentagon(:north, _), do: true
+  def is_pentagon(:south, _), do: true
+  def is_pentagon({:sxy, _s, x, y}, d), do: y == 0 and rem(x + 1, d) == 0
+
+  @doc """
+    Provides a map of indexes for a field's adjacent fields.
+  """
+
   @spec adjacents(index, Sphere.divisions()) :: adjacents_map
+
+  def adjacents(field_index, divisions)
 
   def adjacents(:north, _) do
     %{
@@ -98,8 +110,6 @@ defmodule GEOF.Planet.Field do
     }
   end
 
-  def adjacents(field_index, divisions)
-
   def adjacents({:sxy, s, x, y}, d) do
     max_x = d * 2 - 1
     max_y = d - 1
@@ -107,7 +117,7 @@ defmodule GEOF.Planet.Field do
     next_s = rem(s + 1 + @sections, @sections)
     prev_s = rem(s - 1 + @sections, @sections)
 
-    is_pentagon = y == 0 and rem(x + 1, d) == 0
+    is_pentagon = is_pentagon({:sxy, s, x, y}, d)
 
     # northwestern adjacent (x--)
     adj_nw =

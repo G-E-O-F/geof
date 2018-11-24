@@ -1,6 +1,22 @@
 defmodule GEOF.Planet.SphereServerTestBattery do
-  def increment_field(_field_with_data, _adjacent_fields_with_data) do
-    1
+  alias GEOF.Planet.Field
+
+  def add_one_to_field({_field_index, field_data}, _adjacent_fields_with_data) do
+    if field_data == nil do
+      1
+    else
+      field_data + 1
+    end
+  end
+
+  def confirm_link({field_index, _field_data}, adjacent_fields_with_data) do
+    # Assumes divisions is 8!
+    adj = Field.adjacents(field_index, 8)
+
+    adj ==
+      Map.new(adjacent_fields_with_data, fn {dir, {adj_field_index, nil}} ->
+        {dir, adj_field_index}
+      end)
   end
 end
 
@@ -41,25 +57,55 @@ defmodule GEOF.Planet.SphereServerTest do
     assert :ok = GenServer.stop(sspid)
   end
 
-  test "iterates" do
+  test "iterates twice" do
     d = 8
     id = make_ref()
 
     assert {:ok, sspid} = SphereServer.start_link(d, id)
 
-    # TODO: fix this
-
     all_fields_with_one = Sphere.for_all_fields(Map.new(), d, &Map.put(&1, &2, 1))
+    all_fields_with_two = Sphere.for_all_fields(Map.new(), d, &Map.put(&1, &2, 2))
 
     SphereServer.start_frame(
       id,
-      {"GEOF.Planet.SphereServerTestBattery", "increment_field"},
+      {"GEOF.Planet.SphereServerTestBattery", "add_one_to_field"},
       self()
     )
 
     assert_receive :frame_complete, 5000
 
     assert SphereServer.get_all_field_data(id) == all_fields_with_one
+
+    SphereServer.start_frame(
+      id,
+      {"GEOF.Planet.SphereServerTestBattery", "add_one_to_field"},
+      self()
+    )
+
+    assert_receive :frame_complete, 5000
+
+    assert SphereServer.get_all_field_data(id) == all_fields_with_two
+
+    assert :ok = GenServer.stop(sspid)
+  end
+
+  test "confirms adjacent panels are properly linked" do
+    d = 8
+    id = make_ref()
+
+    assert {:ok, sspid} = SphereServer.start_link(d, id)
+
+    all_fields_with_true = Sphere.for_all_fields(Map.new(), d, &Map.put(&1, &2, true))
+
+    SphereServer.start_frame(
+      id,
+      {"GEOF.Planet.SphereServerTestBattery", "confirm_link"},
+      self()
+    )
+
+    assert_receive :frame_complete, 5000
+
+    assert SphereServer.get_all_field_data(id) == all_fields_with_true
 
     assert :ok = GenServer.stop(sspid)
   end
