@@ -1,4 +1,4 @@
-image: trenpixster/elixir:latest
+image: _/elixir:1.8
 
 # // no add'l services needed
 # services:

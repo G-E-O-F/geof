@@ -6,7 +6,7 @@ defmodule PLANET.MixProject do
       name: "GEOF Planet",
       app: :geof_planet,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs()
