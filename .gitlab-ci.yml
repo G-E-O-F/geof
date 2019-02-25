@@ -1,4 +1,4 @@
-image: _/elixir:1.8
+image: elixir:1.8
 
 # // no add'l services needed
 # services:
