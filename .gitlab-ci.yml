@@ -1,3 +1,5 @@
+image: trenpixster/elixir:latest
+
 # // no add'l services needed
 # services:
 #   - service:version
