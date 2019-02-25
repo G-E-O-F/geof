@@ -1,5 +1,9 @@
 # Sightglass
 
+**TODO: document**
+
+## Phoenix boilerplate documentation
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
@@ -9,7 +13,7 @@ Now you can visit [`localhost:4441`](http://localhost:4441) from your browser.
 
 Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
 
-## Learn more
+#### Learn more
 
   * Official website: http://www.phoenixframework.org/
   * Guides: http://phoenixframework.org/docs/overview
