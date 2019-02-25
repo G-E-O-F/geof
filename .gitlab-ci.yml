@@ -1,0 +1,11 @@
+# // no add'l services needed
+# services:
+#   - service:version
+
+before_script:
+  - mix local.rebar --force
+  - mix local.hex --force
+
+mix:
+  script:
+    - ./.scripts/ci.sh
