@@ -9,7 +9,25 @@ defmodule PLANET.MixProject do
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      docs: docs()
+      docs: docs(),
+      test_coverage: test(),
+      preferred_cli_env: cli_env()
+    ]
+  end
+
+  def test do
+    [
+      tool: ExCoveralls,
+      output: "_cover"
+    ]
+  end
+
+  def cli_env do
+    [
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test
     ]
   end
 
@@ -48,6 +66,7 @@ defmodule PLANET.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.10.5", only: :test, runtime: false},
       {:gproc, "~> 0.8"},
       {:geof_shapes, path: "../shapes"}
     ]
