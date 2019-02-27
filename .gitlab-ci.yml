@@ -1,5 +1,9 @@
 image: thur3/geof:v0.1
 
+stages:
+  - test
+  - deploy
+
 before_script:
   - mix local.rebar --force
   - mix local.hex --force
