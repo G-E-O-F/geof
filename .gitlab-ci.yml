@@ -7,3 +7,9 @@ before_script:
 test:
   stage: test
   script: ./.scripts/ci-test.sh
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  script: ./.scripts/ci-deploy.sh

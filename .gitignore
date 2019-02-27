@@ -23,6 +23,7 @@ erl_crash.dump
 
 # IDE stuff that changes too often
 .idea/workspace.xml
+.idea/libraries
 .idea/shelf
 
 # OS stuff

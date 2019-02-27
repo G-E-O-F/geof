@@ -1,14 +1,6 @@
-node_modules
 build
 config
 .env
 .firebase
 *-error.log
 *-debug.log
-
-# OS stuff
-.DS_Store
-
-# IDE stuff that changes too often
-.idea/workspace.xml
-.idea/shelf

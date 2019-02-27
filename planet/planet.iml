@@ -8,5 +8,9 @@
     </content>
     <orderEntry type="jdk" jdkName="Elixir 1.8.1" jdkType="Elixir SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="ex_doc" level="project" />
+    <orderEntry type="library" name="excoveralls" level="project" />
+    <orderEntry type="library" name="gproc" level="project" />
+    <orderEntry type="library" name="geof_shapes" level="project" />
   </component>
 </module>
