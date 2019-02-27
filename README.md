@@ -25,3 +25,7 @@ A server which provides the web API for GEOF internals.
 ### `theater`
 
 A web app which provides a GUI for GEOF internals.
+
+## Licenses
+
+Each component in GEOF is distributed separately and with its own license.
