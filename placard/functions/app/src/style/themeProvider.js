@@ -18,15 +18,15 @@ export const theme = createMuiTheme({
   palette: {
     type: 'light',
     primary: {
-      main: colors.red,
-      contrastText: '#fff',
+      main: colors.back,
+      contrastText: colors.fore,
     },
     secondary: {
-      main: colors.light,
-      contrastText: colors.dark,
+      main: colors.back,
+      contrastText: colors.fore,
     },
     text: {
-      primary: colors.dark,
+      primary: colors.fore,
     },
   },
   shadows: themedShadows,
@@ -36,6 +36,7 @@ export const theme = createMuiTheme({
     fontSize: 16,
     // specific type styles
     h1: {
+      ...fonts.display.bold,
       ...typeScale(7),
       [breakpoints.up('sm')]: {
         ...typeScale(10),
@@ -44,27 +45,35 @@ export const theme = createMuiTheme({
       lineHeight: 1,
     },
     h3: {
+      ...fonts.display.bold,
       ...typeScale(5),
     },
     h4: {
+      ...fonts.display.bold,
       ...typeScale(3),
     },
     h5: {
+      ...fonts.display.bold,
       ...typeScale(3),
     },
     h6: {
+      ...fonts.display.bold,
       ...typeScale(2),
     },
     body1: {
+      ...fonts.text.regular,
       ...typeScale(0),
     },
     body2: {
+      ...fonts.text.regular,
       ...typeScale(-1),
     },
     button: {
+      ...fonts.text.regular,
       ...typeScale(-2),
     },
     caption: {
+      ...fonts.text.regular,
       ...typeScale(-2),
       [breakpoints.up('sm')]: {
         ...typeScale(-1),

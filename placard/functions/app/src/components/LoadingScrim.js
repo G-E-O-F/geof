@@ -7,9 +7,9 @@ import { colors } from '../style'
 const styles = {
   loading: {
     animation: 'loading infinite linear 4s',
-    backgroundImage: `linear-gradient(90deg, ${colors.dark} 0%, ${colors.lightA(
-      0.5
-    )} 25%, ${colors.dark} 50%)`,
+    backgroundImage: `linear-gradient(90deg, ${colors.back} 0%, ${
+      colors.fore
+    } 25%, ${colors.back} 50%)`,
     backgroundSize: '1400px',
     opacity: 1,
     zIndex: 1,

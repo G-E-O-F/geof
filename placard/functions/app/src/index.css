@@ -1,14 +1,14 @@
 html {
   font-size: 16px;
-  background-color: rgb(239, 240, 241);
-  --text-background: rgb(239, 240, 241);
+  background-color: rgb(33, 32, 30);
+  --text-background: rgb(33, 32, 30);
 }
 
 body {
-  color: rgb(45, 42, 38);
+  color: rgb(243, 241, 237);
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: 'Maven Pro', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: 'lnum' 1, 'pnum' 1, 'kern' 1, 'liga' 1, 'clig' 1;
