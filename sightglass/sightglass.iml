@@ -8,5 +8,15 @@
     </content>
     <orderEntry type="jdk" jdkName="Elixir 1.8.1" jdkType="Elixir SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="absinthe" level="project" />
+    <orderEntry type="library" name="absinthe_plug" level="project" />
+    <orderEntry type="library" name="absinthe_phoenix" level="project" />
+    <orderEntry type="library" name="geof_planet" level="project" />
+    <orderEntry type="library" name="phoenix" level="project" />
+    <orderEntry type="library" name="phoenix_pubsub" level="project" />
+    <orderEntry type="library" name="phoenix_html" level="project" />
+    <orderEntry type="library" name="phoenix_live_reload" level="project" />
+    <orderEntry type="library" name="gettext" level="project" />
+    <orderEntry type="library" name="cowboy" level="project" />
   </component>
 </module>
