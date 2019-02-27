@@ -1,0 +1,22 @@
+{
+  "hosting": {
+    "public": "functions/app/build",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "render"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": {
+    "predeploy": ["cd functions/app && yarn build"]
+  }
+}

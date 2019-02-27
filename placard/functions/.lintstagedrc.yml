@@ -1,0 +1,4 @@
+linters:
+  "{app,server}/**/*.{js,json,css,md}":
+    - prettier --single-quote --trailing-comma es5 --no-semi --write
+    - git add

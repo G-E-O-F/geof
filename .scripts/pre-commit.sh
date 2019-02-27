@@ -29,3 +29,10 @@ if ! yarn precommit; then
 fi
 cd ..
 git add theater
+
+echo "[Lint & add]: PLACARD"
+cd placard/functions
+if ! yarn precommit; then
+  exit 1
+fi
+cd ../..

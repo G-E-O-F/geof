@@ -1,0 +1,36 @@
+html {
+  font-size: 16px;
+  background-color: rgb(239, 240, 241);
+  --text-background: rgb(239, 240, 241);
+}
+
+body {
+  color: rgb(45, 42, 38);
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'lnum' 1, 'pnum' 1, 'kern' 1, 'liga' 1, 'clig' 1;
+  text-rendering: optimizeLegibility;
+  text-rendering: geometricPrecision;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+sub,
+sup {
+  line-height: 0;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 0;
+  }
+  100% {
+    background-position: 1400px;
+  }
+}
