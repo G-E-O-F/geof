@@ -23,9 +23,6 @@ class Intro extends React.Component {
   render() {
     return (
       <Page id="intro" description="Simulation engine for stories">
-        <Typography variant="h1" paragraph>
-          GEOF
-        </Typography>
         <Typography variant="body1">More information coming soon.</Typography>
       </Page>
     )

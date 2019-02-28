@@ -8,9 +8,9 @@ import colors from './colors'
 import typeScale from './typeScale'
 import borderRadii from './borderRadii'
 
-const breakpoints = createBreakpoints({})
+export const breakpoints = createBreakpoints({})
 
-const themedShadows = shadows.map(shadow =>
+export const themedShadows = shadows.map(shadow =>
   shadow.replace(/rgba\(0,0,0,/g, colors.darkShadow)
 )
 

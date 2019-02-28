@@ -3,6 +3,7 @@ import { compose } from 'redux'
 import { withRouter } from 'react-router'
 import Helmet from 'react-helmet'
 import logo from '../assets/social-logo.jpeg'
+import { pageWidth } from '../style/layouts'
 
 import { withStyles } from '@material-ui/core'
 
@@ -18,12 +19,14 @@ const defaultSep = ' | '
 
 const styles = ({ breakpoints }) => ({
   page: {
-    padding: '2rem 1rem 4rem 1rem',
-    maxWidth: '56rem',
-    margin: '0 auto',
-    overflowX: 'hidden',
+    ...pageWidth,
+    paddingTop: '4rem',
+    paddingBottom: '4rem',
+    marginTop: 0,
+    marginBottom: 0,
     [breakpoints.up('sm')]: {
-      padding: '3rem 2rem 5rem 2rem',
+      paddingTop: '4rem',
+      paddingBottom: '5rem',
     },
   },
 })

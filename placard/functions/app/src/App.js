@@ -11,6 +11,7 @@ import { isServer } from './store'
 // Components
 import Pages from './pages'
 import ScrollToTop from './components/ScrollToTop'
+import TopNav from './components/TopNav'
 
 // Global styles
 import './index.css'
@@ -25,6 +26,7 @@ class App extends Component {
     return (
       <ScrollToTop>
         <div id="app">
+          <TopNav />
           <div id="content">
             <Pages />
           </div>
