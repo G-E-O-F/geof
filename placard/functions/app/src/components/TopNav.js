@@ -25,24 +25,27 @@ const styles = {
     display: 'flex',
     flexFlow: 'row nowrap',
     alignItems: 'center',
-    paddingTop: '.6rem',
-    paddingBottom: '.6rem',
+    padding: '.6rem .6rem',
+    marginLeft: '-.8rem',
     color: colors.fore,
     textDecoration: 'none',
+    transition: 'color .1s linear',
+    '&:hover': {
+      color: colors.primary,
+    },
   },
   logoDevice: {
-    marginLeft: '-.2rem',
     display: 'block',
     height: '2rem',
     width: '2rem',
   },
   logoType: {
+    display: 'block',
     ...typeScale(4),
     ...fonts.display.bold,
     lineHeight: 1,
     transform: 'translateY(-1px)',
     marginLeft: '.4rem',
-    marginRight: '.8rem',
   },
 }
 
