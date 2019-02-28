@@ -13,3 +13,10 @@ mix deps.get --only test
 mix test
 mix coveralls
 cd ..
+
+echo "Testing DIALOGUE"
+cd dialogue
+mix deps.get --only test
+mix test
+mix coveralls
+cd ..

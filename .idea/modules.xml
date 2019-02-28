@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/dialogue/dialogue.iml" filepath="$PROJECT_DIR$/dialogue/dialogue.iml" />
       <module fileurl="file://$PROJECT_DIR$/placard/placard.iml" filepath="$PROJECT_DIR$/placard/placard.iml" />
       <module fileurl="file://$PROJECT_DIR$/planet/planet.iml" filepath="$PROJECT_DIR$/planet/planet.iml" />
       <module fileurl="file://$PROJECT_DIR$/shapes/shapes.iml" filepath="$PROJECT_DIR$/shapes/shapes.iml" />

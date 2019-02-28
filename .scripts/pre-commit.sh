@@ -16,6 +16,15 @@ fi
 cd ..
 git add shapes
 
+echo "[Lint & add]: DIALOGUE"
+cd dialogue
+mix format
+if ! mix test; then
+  exit 1
+fi
+cd ..
+git add dialogue
+
 echo "[Lint & add]: SIGHTGLASS"
 cd sightglass
 mix format

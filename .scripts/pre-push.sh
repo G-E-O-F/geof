@@ -11,3 +11,10 @@ if ! mix test; then
   exit 1
 fi
 cd ..
+
+echo "Testing DIALOGUE"
+cd dialogue
+if ! mix test; then
+  exit 1
+fi
+cd ..
