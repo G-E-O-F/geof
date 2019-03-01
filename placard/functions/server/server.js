@@ -10,6 +10,7 @@ import { establishReqUser } from './auth'
 
 // Our routers
 import auth from './auth'
+import docs from './docs'
 
 // Our loader - this basically acts as the entry point for each page load
 import loader from './loader'
@@ -29,6 +30,7 @@ app.use(establishReqUser)
 
 // Set up homepage, static assets, and capture everything else
 app.use('/auth', auth)
+app.use('/docs', docs)
 app.use(express.Router().get('/', loader))
 app.use(express.static(path.resolve(__dirname, '../app/build')))
 app.use(loader)
