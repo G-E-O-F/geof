@@ -34,6 +34,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "prebuild": "cd ../../.. && .scripts/docs.sh && cd placard/functions/app",
     "postbuild": "cd build && mv index.html basepage.html && cd ..",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

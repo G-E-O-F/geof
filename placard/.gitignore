@@ -4,3 +4,4 @@ config
 .firebase
 *-error.log
 *-debug.log
+functions/app/public/docs
