@@ -1,13 +1,13 @@
 MIX_ENV=test
 
-echo "Testing GEOF.Planet"
+echo "[Test] GEOF.Planet"
 cd planet
 mix deps.get --only test
 mix test
 mix coveralls
 cd ..
 
-echo "Testing GEOF.Shapes"
+echo "[Test] GEOF.Shapes"
 cd shapes
 mix deps.get --only test
 mix test
