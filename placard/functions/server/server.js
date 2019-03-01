@@ -6,11 +6,11 @@ import morgan from 'morgan'
 import path from 'path'
 import Loadable from 'react-loadable'
 import cookieParser from 'cookie-parser'
-import { establishReqUser } from './auth'
+import { establishReqUser } from './middleware/auth'
 
 // Our routers
-import auth from './auth'
-import docs from './docs'
+import auth from './middleware/auth'
+import docs from './middleware/docs'
 
 // Our loader - this basically acts as the entry point for each page load
 import loader from './loader'

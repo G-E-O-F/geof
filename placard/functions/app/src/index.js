@@ -35,8 +35,9 @@ const Application = (
 const root = document.querySelector('#root')
 
 const clearSsrStyles = () => {
-  const ssrStyles = document.getElementById('server-side-styles')
-  if (ssrStyles) ssrStyles.parentNode.removeChild(ssrStyles)
+  // Disabled clearing SSR styles for now.
+  // const ssrStyles = document.getElementById('server-side-styles')
+  // if (ssrStyles) ssrStyles.parentNode.removeChild(ssrStyles)
 }
 
 if (root.hasChildNodes() === true) {

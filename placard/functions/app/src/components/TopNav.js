@@ -14,9 +14,10 @@ const styles = {
     top: 0,
     left: 0,
     right: 0,
+    zIndex: 99,
   },
   navStage: {
-    ...layouts.pageWidth,
+    ...layouts.navWidth,
     display: 'flex',
     flexFlow: 'row nowrap',
   },

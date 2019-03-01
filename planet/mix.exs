@@ -3,7 +3,7 @@ defmodule PLANET.MixProject do
 
   def project do
     [
-      name: "GEOF Planet",
+      name: "Planet",
       app: :geof_planet,
       version: "0.1.0",
       elixir: "~> 1.8",
