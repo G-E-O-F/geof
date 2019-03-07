@@ -2,7 +2,7 @@ rm -rf placard/functions/app/public/docs
 mkdir placard/functions/app/public/docs
 mkdir -p placard/functions/app/config/docs
 
-echo "[Docs] GEOF.Planet"
+echo "〘Docs〙 GEOF.Planet"
 cd planet
 mix docs
 cd ..
@@ -12,7 +12,7 @@ mkdir -p config/docs/planet
 mv public/docs/planet/*.html config/docs/planet
 cd ../../..
 
-echo "[Docs] GEOF.Shapes"
+echo "〘Docs〙 GEOF.Shapes"
 cd shapes
 mix docs
 cd ..

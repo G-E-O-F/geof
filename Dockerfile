@@ -1,38 +1,22 @@
-FROM erlang:21
+FROM elixir:1.8.1
 
-# Dockerfile family tree:
-# ┌ debian:stretch
-# └┬ buildpack-deps:stretch
-#  ├┬ erlang:21 ← FROM
-#  │└─ elixir:1.8
-#  └─ node:8.14
+# thur3/geof:v0.3 family tree
+#
+# debian:stretch
+# ├┬ buildpack-deps:stretch
+# │├┬ erlang:21
+# ││└─ elixir:1.8 ← FROM
+# │└─ node:8.14.0
+# └─ google/cloud-sdk:237.0.0
 
-# elixir:1.8
-# https://github.com/c0b/docker-elixir/blob/5570afaa6de095a86e98457e1ad1351f92ccfe26/1.8/Dockerfile
-
-# elixir expects utf8.
-ENV ELIXIR_VERSION="v1.8.1" \
-	LANG=C.UTF-8
-
-RUN set -xe \
-	&& ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" \
-	&& ELIXIR_DOWNLOAD_SHA256="de8c636ea999392496ccd9a204ccccbc8cb7f417d948fd12692cda2bd02d9822" \
-	&& curl -fSL -o elixir-src.tar.gz $ELIXIR_DOWNLOAD_URL \
-	&& echo "$ELIXIR_DOWNLOAD_SHA256  elixir-src.tar.gz" | sha256sum -c - \
-	&& mkdir -p /usr/local/src/elixir \
-	&& tar -xzC /usr/local/src/elixir --strip-components=1 -f elixir-src.tar.gz \
-	&& rm elixir-src.tar.gz \
-	&& cd /usr/local/src/elixir \
-	&& make install clean
-
-# node:8.14
+# node:8.14.0
 # https://github.com/nodejs/docker-node/blob/6d595cd0d4e0be708a48f0fee63dd1e29dff3b67/8/stretch/Dockerfile
 # 8.14.x is used since this is apparently the version Google Cloud Functions runs
 
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-ENV NODE_VERSION 8.14.1
+ENV NODE_VERSION 8.14.0
 
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
@@ -89,6 +73,35 @@ RUN set -ex \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
 && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
+
+# Google Cloud Platform
+# https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/debian_slim/Dockerfile
+
+ARG CLOUD_SDK_VERSION=237.0.0
+ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
+
+ARG INSTALL_COMPONENTS
+RUN apt-get update -qqy && apt-get install -qqy \
+        curl \
+        gcc \
+        python-dev \
+        python-setuptools \
+        apt-transport-https \
+        lsb-release \
+        openssh-client \
+        git \
+        gnupg \
+    && easy_install -U pip && \
+    pip install -U crcmod && \
+    export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
+    echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+    apt-get update && apt-get install -y google-cloud-sdk=${CLOUD_SDK_VERSION}-0 $INSTALL_COMPONENTS && \
+    gcloud config set core/disable_usage_reporting true && \
+    gcloud config set component_manager/disable_update_check true && \
+    gcloud config set metrics/environment github_docker_image && \
+    gcloud --version
+VOLUME ["/root/.config"]
 
 # Firebase
 # https://github.com/w9jds/firebase-action/blob/ecc8ad74859971d7bfd4a1705c41b049a9078735/Dockerfile
