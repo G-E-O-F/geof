@@ -6,6 +6,7 @@ then
     exit 1
   else
     echo "〘Deploy〙 writing key file from environment"
+    mkdir -p placard/functions/config
     echo "$GCP_KEY" >> placard/functions/config/gcp-key.json
   fi
 else
@@ -13,7 +14,7 @@ else
 fi
 GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f placard/functions/config/gcp-key.json)
 
-./docs.sh
+./.scripts/docs.sh
 echo "〘Deploy〙 uploading docs to storage"
 gsutil rm -rf gs://geof-io.appspot.com/docs
 gsutil cp -r placard/functions/app/config/docs gs://geof-io.appspot.com/docs
