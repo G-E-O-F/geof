@@ -8,13 +8,16 @@ import colors from './colors'
 import typeScale from './typeScale'
 import borderRadii from './borderRadii'
 
-export const breakpoints = createBreakpoints({})
+const breakpoints = createBreakpoints({})
+breakpoints.values.sm = 768
+export { breakpoints }
 
 export const themedShadows = shadows.map(shadow =>
   shadow.replace(/rgba\(0,0,0,/g, colors.darkShadow)
 )
 
 export const theme = createMuiTheme({
+  breakpoints,
   palette: {
     type: 'light',
     primary: {

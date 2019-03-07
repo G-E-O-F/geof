@@ -26,7 +26,7 @@ class App extends Component {
     return (
       <ScrollToTop>
         <div id="app">
-          <TopNav />
+          <TopNav pathName={this.props.location.pathname} />
           <div id="content">
             <Pages />
           </div>

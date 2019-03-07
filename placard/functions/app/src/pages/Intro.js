@@ -2,8 +2,6 @@ import React from 'react'
 import injectSheet from 'react-jss'
 import Page from '../components/Page'
 
-import Typography from '@material-ui/core/Typography'
-
 const styles = {}
 
 class Intro extends React.Component {
@@ -21,11 +19,7 @@ class Intro extends React.Component {
   }
 
   render() {
-    return (
-      <Page id="intro" description="Simulation engine for stories">
-        <Typography variant="body1">More information coming soon.</Typography>
-      </Page>
-    )
+    return <Page id="intro" description="Simulation engine for stories" />
   }
 }
 

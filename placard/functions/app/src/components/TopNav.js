@@ -1,4 +1,5 @@
 import React from 'react'
+import cx from 'classnames'
 import { Link } from 'react-router-dom'
 
 import { Simple } from '../assets/logos'
@@ -6,7 +7,7 @@ import { colors, layouts, fonts, typeScale } from '../style'
 
 import { withStyles } from '@material-ui/core'
 
-const styles = {
+const styles = ({ breakpoints }) => ({
   nav: {
     background: colors.back,
     color: colors.fore,
@@ -17,11 +18,23 @@ const styles = {
     zIndex: 99,
   },
   navStage: {
-    ...layouts.navWidth,
     display: 'flex',
     flexFlow: 'row nowrap',
+    alignItems: 'stretch',
   },
-  navLink: {
+  logoStage: {
+    ...layouts.exDocSidebarWidth,
+    flex: '0 0 auto',
+  },
+  linksStage: {
+    flex: '1 0 auto',
+  },
+  links: {
+    ...layouts.exDocFocusWidth,
+    height: '100%',
+    justifyContent: 'flex-end',
+  },
+  logoLink: {
     flex: '0 0 auto',
     display: 'flex',
     flexFlow: 'row nowrap',
@@ -32,8 +45,23 @@ const styles = {
     textDecoration: 'none',
     transition: 'color .1s linear',
     '&:hover': {
-      color: colors.primary,
+      color: 'white',
     },
+  },
+  navLink: {
+    flex: '0 0 auto',
+    color: colors.fore,
+    textDecoration: 'none',
+    ...fonts.display.bold,
+    ...typeScale(1),
+    height: '100%',
+    padding: '0 .6rem',
+    display: 'flex',
+    flexFlow: 'row nowrap',
+    alignItems: 'center',
+  },
+  navLinkActive: {
+    borderBottom: `.2rem solid ${colors.primary}`,
   },
   logoDevice: {
     display: 'block',
@@ -48,15 +76,30 @@ const styles = {
     transform: 'translateY(-1px)',
     marginLeft: '.4rem',
   },
-}
+})
 
-const TopNav = ({ classes }) => (
+const TopNav = ({ classes, pathName }) => (
   <nav className={classes.nav}>
     <div className={classes.navStage}>
-      <Link to="/" className={classes.navLink}>
-        <Simple className={classes.logoDevice} />
-        <span className={classes.logoType}>GEOF</span>
-      </Link>
+      <div className={classes.logoStage}>
+        <Link to="/" className={classes.logoLink}>
+          <Simple className={classes.logoDevice} />
+          <span className={classes.logoType}>GEOF</span>
+        </Link>
+      </div>
+      <div className={classes.linksStage}>
+        <div className={cx(classes.navStage, classes.links)}>
+          <Link
+            to="/docs"
+            className={cx(
+              classes.navLink,
+              pathName.startsWith('/docs') && classes.navLinkActive
+            )}
+          >
+            <span>docs</span>
+          </Link>
+        </div>
+      </div>
     </div>
   </nav>
 )
