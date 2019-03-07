@@ -29,12 +29,12 @@ const Intro = Loadable({
 })
 
 const AllDocs = Loadable({
-  loader: () => import(/* webpackChunkName: "intro" */ './AllDocs'),
+  loader: () => import(/* webpackChunkName: "alldocs" */ './AllDocs'),
   loading: () => null,
 })
 
 const Docs = Loadable({
-  loader: () => import(/* webpackChunkName: "intro" */ './Docs'),
+  loader: () => import(/* webpackChunkName: "docs" */ './Docs'),
   loading: () => null,
 })
 
