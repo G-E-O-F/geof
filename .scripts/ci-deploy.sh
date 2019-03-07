@@ -13,6 +13,7 @@ else
   echo "〘Deploy〙 key file present"
 fi
 GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f placard/functions/config/gcp-key.json)
+gcloud auth activate-service-account --key-file placard/functions/config/gcp-key.json
 
 ./.scripts/docs.sh
 echo "〘Deploy〙 uploading docs to storage"
