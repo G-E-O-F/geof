@@ -2,7 +2,17 @@ import Helmet from 'react-helmet'
 import manifest from '../../app/build/asset-manifest.json'
 import injectHTML from './injectHTML'
 
-export default (baseHTML, { store, routeMarkup, sheets, context, modules }) => {
+const titleTransforms = {
+  docs: data =>
+    data
+      .match(/<title>(.*?)<\/title>/)[1]
+      .replace(/^(.*?) – (.*?) (.*?)$/, '<title>$1 | GEOF $2 $3 docs</title>'),
+}
+
+export default (
+  baseHTML,
+  { store, routeMarkup, sheets, context, modules, titleTransform }
+) => {
   // Let's give ourself a function to load all our page-specific JS assets for code splitting
   const extractAssets = (assets, chunks) =>
     Object.keys(assets)
@@ -21,7 +31,9 @@ export default (baseHTML, { store, routeMarkup, sheets, context, modules }) => {
   // Pass all this nonsense into our HTML formatting function above
   return injectHTML(baseHTML, {
     html: helmet.htmlAttributes.toString(),
-    title: helmet.title.toString(),
+    title: titleTransform
+      ? titleTransforms[titleTransform](baseHTML)
+      : helmet.title.toString(),
     meta: helmet.meta.toString(),
     ssrStyles: sheets.toString(),
     body: routeMarkup,

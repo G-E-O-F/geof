@@ -93,7 +93,7 @@ class Page extends Component {
   }
 
   render() {
-    const { children, id, className, classes, ...etc } = this.props
+    const { children, id, className, classes, empty, ...etc } = this.props
 
     return (
       <div id={id} className={className}>
@@ -114,7 +114,7 @@ class Page extends Component {
           ]}
           meta={this.getMetaTags(etc, this.props.location.pathname)}
         />
-        <main className={classes.page}>{children}</main>
+        {!empty && <main className={classes.page}>{children}</main>}
       </div>
     )
   }

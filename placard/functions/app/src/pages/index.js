@@ -28,6 +28,11 @@ const Intro = Loadable({
   loading: () => null,
 })
 
+const Docs = Loadable({
+  loader: () => import(/* webpackChunkName: "intro" */ './Docs'),
+  loading: () => null,
+})
+
 const NotFound = Loadable({
   loader: () => import(/* webpackChunkName: "notfound" */ './NotFound'),
   loading: () => null,
@@ -36,6 +41,7 @@ const NotFound = Loadable({
 export default () => (
   <Switch>
     <Route exact path="/" component={Intro} />
+    <Route path="/docs/*" component={Docs} />
     <Route component={NotFound} />
   </Switch>
 )

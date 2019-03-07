@@ -2,6 +2,9 @@
   <profile version="1.0">
     <option name="myName" value="Project Default" />
     <inspection_tool class="Credo" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="Duplicates" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <GlobalSettings restrictedDuplicateScope="SAME_FILE" excludeTestDuplicates="true" />
+    </inspection_tool>
     <inspection_tool class="Eslint" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="UnterminatedStatementJS" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreSemicolonAtEndOfBlock" value="true" />
