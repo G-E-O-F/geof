@@ -17,7 +17,7 @@ export const getDocsHTML = pathname => {
   return bucket
     .file(`/docs${pathname}`)
     .download()
-    .then(data => data[0])
+    .then(data => data[0].toString())
 }
 
 const topNavHeight = '3.2rem'
