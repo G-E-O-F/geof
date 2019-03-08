@@ -23,4 +23,7 @@ mkdir -p config/docs/shapes
 cd ../../..
 
 echo "〘Docs〙 transforming docs HTML"
-./placard/functions/scripts/transform-docs
+cd placard/functions
+yarn install
+./scripts/transform-docs
+cd ../..
