@@ -36,7 +36,7 @@ const styles = ({ breakpoints }) => ({
   },
   logoLink: {
     flex: '0 0 auto',
-    display: 'flex',
+    display: 'inline-flex',
     flexFlow: 'row nowrap',
     alignItems: 'center',
     padding: '.6rem .6rem',
@@ -54,14 +54,39 @@ const styles = ({ breakpoints }) => ({
     textDecoration: 'none',
     ...fonts.display.bold,
     ...typeScale(1),
+    cursor: 'pointer',
     height: '100%',
     padding: '0 .6rem',
     display: 'flex',
     flexFlow: 'row nowrap',
     alignItems: 'center',
+    [breakpoints.up('sm')]: {
+      padding: '0 1.2rem',
+    },
+  },
+  link: {
+    position: 'relative',
+    '&:before': {
+      content: '""',
+      display: 'block',
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: 0,
+      transition: 'height .1s ease-in-out',
+      background: colors.primary,
+    },
+    '&:hover,&:focus': {
+      '&:before': {
+        height: '.2rem',
+      },
+    },
   },
   navLinkActive: {
-    borderBottom: `.2rem solid ${colors.primary}`,
+    '&:before': {
+      height: '.2rem',
+    },
   },
   logoDevice: {
     display: 'block',
@@ -82,16 +107,23 @@ const TopNav = ({ classes, pathName }) => (
   <nav className={classes.nav}>
     <div className={classes.navStage}>
       <div className={classes.logoStage}>
-        <Link to="/" className={classes.logoLink}>
+        <Link to="/" className={cx(classes.link, classes.logoLink)}>
           <Simple className={classes.logoDevice} />
           <span className={classes.logoType}>GEOF</span>
         </Link>
       </div>
       <div className={classes.linksStage}>
         <div className={cx(classes.navStage, classes.links)}>
+          <a
+            href="https://gitlab.com/thure/geof"
+            className={cx(classes.link, classes.navLink)}
+          >
+            gitlab
+          </a>
           <Link
             to="/docs"
             className={cx(
+              classes.link,
               classes.navLink,
               pathName.startsWith('/docs') && classes.navLinkActive
             )}
