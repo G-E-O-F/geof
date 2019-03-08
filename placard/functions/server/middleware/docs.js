@@ -20,8 +20,6 @@ export const getDocsHTML = pathname => {
     .then(data => data[0].toString())
 }
 
-const topNavHeight = '3.2rem'
-
 export default (req, res, next) => {
   const { pathname } = parseURL(req.url)
   const { dir, base, ext } = parsePath(pathname)
@@ -40,26 +38,8 @@ export default (req, res, next) => {
 
   getDocsHTML(pathname)
     .then(basePageHTML => {
-      // TODO: migrate these transforms into docs.sh
-      req.basePage = basePageHTML.replace(
-        '</body>',
-        `
-          <div id="root"></div>
-          <link href="https://fonts.googleapis.com/css?family=Dosis:600|Maven+Pro" rel="stylesheet">
-          <style type="text/css">
-            .main, .sidebar { padding-top: ${topNavHeight} }
-            .sidebar-toggle { top: ${topNavHeight} }
-            .night-mode-toggle { top: calc(${topNavHeight} + 1.6em) }
-            .sidebar-closed .sidebar-button { left: 1rem }
-            @media(min-width: 600px){
-              .sidebar-closed .sidebar-button { left: 2rem }
-            }
-          </style>
-        </body>`
-      )
-
+      req.basePage = basePageHTML
       req.titleTransform = 'docs'
-
       return next()
     })
     .catch(err => {

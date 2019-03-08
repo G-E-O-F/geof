@@ -1,0 +1,55 @@
+#! /usr/local/bin/node
+
+const glob = require('glob')
+const path = require('path')
+const fs = require('fs')
+
+const exDocsPath = path.resolve(__dirname, '../app/public/docs')
+const exDocs = glob.sync(path.join(exDocsPath, '**/*.html'))
+
+const docsPath = path.resolve(__dirname, '../app/config/docs')
+
+const topNavHeight = '3.2rem'
+
+for(let i = 0; i < exDocs.length; i++){
+  let exDocPath = exDocs[i]
+  let relativeDocPath = path.relative(exDocsPath, exDocPath)
+  let doc = fs.readFileSync(exDocPath, 'utf8')
+
+  doc = doc.replace(
+    '</body>',
+    `
+      <div id="root"></div>
+      <link href="https://fonts.googleapis.com/css?family=Dosis:600|Maven+Pro" rel="stylesheet">
+      <style type="text/css">
+        .main, .sidebar { padding-top: ${topNavHeight} }
+        .sidebar-toggle { top: ${topNavHeight} }
+        .night-mode-toggle { top: calc(${topNavHeight} + 1.6em) }
+        .sidebar-closed .sidebar-button { left: 1rem }
+        @media(min-width: 600px){
+          .sidebar-closed .sidebar-button { left: 2rem }
+        }
+      </style>
+    </body>`
+  )
+
+  doc = doc.replace(
+    /<body(.*?)>/,
+    '<body$1 class="night-mode">'
+  )
+
+  doc = doc.replace(
+    /<script>try.+<\/script>/,
+    ''
+  )
+
+  doc = doc.replace(
+    /<button class="sidebar-button night-mode-toggle.+<\/button>/,
+    ''
+  )
+
+  fs.writeFileSync(path.join(docsPath, relativeDocPath), doc, 'utf8')
+
+  fs.unlinkSync(exDocPath)
+
+}

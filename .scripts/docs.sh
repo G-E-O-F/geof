@@ -10,7 +10,6 @@ cd ..
 cp -r planet/doc placard/functions/app/public/docs/planet
 cd placard/functions/app
 mkdir -p config/docs/planet
-mv public/docs/planet/*.html config/docs/planet
 cd ../../..
 
 echo "〘Docs〙 GEOF.Shapes"
@@ -21,5 +20,7 @@ cd ..
 cp -r shapes/doc placard/functions/app/public/docs/shapes
 cd placard/functions/app
 mkdir -p config/docs/shapes
-mv public/docs/shapes/*.html config/docs/shapes
 cd ../../..
+
+echo "〘Docs〙 transforming docs HTML"
+./placard/functions/scripts/transform-docs
