@@ -3,7 +3,12 @@ export default (
   { html, title, meta, ssrStyles, body, scripts, state }
 ) => {
   data = data.replace('<html>', `<html ${html}>`)
-  data = data.replace(/<title>.*?<\/title>/g, title)
+  data = data.replace(
+    /<title>.*?<\/title>/g,
+    `<title>${title}</title>` +
+      `<meta property="og:title" content="${title}">` +
+      `<meta name="twitter:title" content="${title}">`
+  )
   data = data.replace(
     '</head>',
     `${meta}<style type="text/css" id="server-side-styles">${ssrStyles}</style></head>`
