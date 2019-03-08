@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import { compose } from 'redux'
 import { withRouter } from 'react-router'
 import Helmet from 'react-helmet'
-import logo from '../assets/social-logo.jpeg'
 import { pageWidth } from '../style/layouts'
 
 import { withStyles } from '@material-ui/core'
+
+const logo = '/social-logo.jpeg'
 
 const SITE_URL =
   process.env.NODE_ENV === 'development'
