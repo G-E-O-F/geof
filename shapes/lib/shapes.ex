@@ -5,15 +5,16 @@ defmodule GEOF.Shapes do
 
   import :math
 
-  @type vector :: {number, number, number}
-  @type line :: {vector, vector}
-  @type triangle :: {vector, vector, vector}
+  @typedoc "A point in three dimensions."
+  @type vector3 :: {number, number, number}
+  @typedoc "A line in three dimensions represented by two points on the line."
+  @type line3 :: {vector3, vector3}
+  @typedoc "A triangle in three dimensions represented by its vertices."
+  @type triangle3 :: {vector3, vector3, vector3}
 
-  # @doc """
-  #  Given a `line` and a `triangle` in 3D space, determines whether the line intersects with the triangle.
-  # """
+  @doc "Given a `line` and a `triangle` in 3D space, determines whether the line intersects with the triangle."
 
-  @spec line_intersects_triangle?(line, triangle) :: boolean
+  @spec line_intersects_triangle?(line3, triangle3) :: boolean
 
   def line_intersects_triangle?({l_a, l_b}, {p_0, p_1, p_2}) do
     l_ab = Vector.subtract(l_a, l_b)
@@ -58,8 +59,6 @@ defmodule GEOF.Shapes do
     end
   end
 
-  @spec face_of_4_hedron(GEOF.Planet.Geometry.position()) :: integer
-
   @ir3 1 / sqrt(3)
 
   @tetrahedron_in_unit_sphere {
@@ -91,9 +90,7 @@ defmodule GEOF.Shapes do
                             end)
                           end).()
 
-  # @doc """
-  #  Given a `position` on a planetary sphere, determines which face of the unit tetrahedron the position lies within.
-  # """
+  @doc "Given a `position` on a planetary sphere, determines which face of the unit tetrahedron the position lies within."
 
   @spec face_of_4_hedron(GEOF.Planet.Geometry.position()) :: pos_integer
 
@@ -112,9 +109,7 @@ defmodule GEOF.Shapes do
     end)
   end
 
-  # @doc """
-  #  Given a `position` on a planetary sphere, determines which face of the unit octahedron the position lies within.
-  # """
+  @doc "Given a `position` on a planetary sphere, determines which face of the unit octahedron the position lies within."
 
   @spec face_of_8_hedron(GEOF.Planet.Geometry.position()) :: pos_integer
 

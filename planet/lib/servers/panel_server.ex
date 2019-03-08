@@ -1,4 +1,8 @@
 defmodule GEOF.Planet.PanelServer do
+  @moduledoc """
+    Hosts per-Field compute frames for a set of Fields in a Panel, a contiguous subset of a Sphere's Fields.
+  """
+
   use GenServer
 
   alias GEOF.Planet.{
@@ -27,12 +31,16 @@ defmodule GEOF.Planet.PanelServer do
     GenServer.call(Registry.panel_via_reg(sphere_id, panel_index), :get_state)
   end
 
+  @doc "Gets the data in each Field managed by this Panel"
+
   @spec get_all_field_data(SphereServer.sphere_id(), SphereServer.panel_index()) ::
           SphereServer.sphere_data()
 
   def get_all_field_data(sphere_id, panel_index) do
     GenServer.call(Registry.panel_via_reg(sphere_id, panel_index), :get_all_field_data)
   end
+
+  @doc "Starts a computation frame on this Panel. The PanelServer will send `__ready_to_commit_frame__` to its parent SphereServer when the frame is finished."
 
   @spec start_frame(SphereServer.sphere_id(), SphereServer.panel_index(), SphereServer.fn_ref()) ::
           :ok
@@ -103,10 +111,10 @@ defmodule GEOF.Planet.PanelServer do
   # Adjacent field computation
   ###
 
-  # @doc """
-  #  Creates a `fields_at_panels` mapping panel indexes to the fields belonging to those
-  #  panels which are adjacent to _this_ panel. Used to share relevant field data between processes.
-  # """
+  @doc """
+    Creates a `fields_at_panels` mapping panel indexes to the fields belonging to those
+    panels which are adjacent to _this_ panel. Used to share relevant field data between processes.
+  """
 
   @spec init_adjacent_fields(SphereServer.sphere(), SphereServer.panel_index()) ::
           SphereServer.fields_at_panels()

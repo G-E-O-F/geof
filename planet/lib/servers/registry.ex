@@ -1,4 +1,8 @@
 defmodule GEOF.Planet.Registry do
+  @moduledoc """
+    Registers `gproc` process identifiers for all the servers.
+  """
+
   defp via(term) do
     {:via, :gproc, {:n, :l, term}}
   end

@@ -1,4 +1,21 @@
 defmodule GEOF.Planet.SphereServer do
+  @moduledoc """
+    The main server for running computations over the Sphere.
+
+    ## Naming conventions:
+
+    In all servers for GEOF.Planet, the names `panel` and `field` are equivalent to `panel_index` and
+    `field_index` respectively for the sake of brevity. The data belonging to a field is always
+    `field_data`, and a group of such data is `sphere_data`, whether it’s data for just part of
+    the sphere or for the entire sphere.
+
+    In the servers’ APIs, `get` is always a call, and `send` and `receive` are always casts.
+
+    Atoms surrounded with double-underscores indicate messages and state keys that are intended
+    only to be used by methods internal to `SphereServer` and `PanelServer`. Once an iteration is
+    complete, no remaining messages or state keys should be present in the system.
+  """
+
   use GenServer
 
   alias GEOF.Shapes
@@ -13,39 +30,31 @@ defmodule GEOF.Planet.SphereServer do
     Field
   }
 
-  # ~~~
-  # Naming conventions:
-  #
-  # In `planet/lib/servers`, the names `panel` and `field` are equivalent to `panel_index` and
-  # `field_index` (respectively) for the sake of brevity. The data belonging to a field is always
-  # `field_data`, and a group of such data is `sphere_data`, whether it's data for just part of
-  # the sphere or for the entire sphere.
-  #
-  # In the servers' APIs, `get` is always a call, and `send` and `receive` are always casts.
-  #
-  # Atoms surrounded with double-underscores indicate messages and state keys that are intended
-  # only to be used by processes internal to `SphereServer` and `PanelServer`. Once an iteration is
-  # complete, no remaining messages or state keys should be present in the system.
-  # ~~~
-
   ###
   #
   # Types
   #
   ###
 
+  @typedoc "A Sphere reference. Any number of Spheres could be running, so this is a `reference`."
   @type sphere_id :: reference
 
+  @typedoc "A Panel index. Spheres will manage a limited number of Panels, so this is just a non-negative integer."
   @type panel_index :: non_neg_integer
 
+  @typedoc "A mapping for Field data belonging to each Field index in a Sphere."
   @type sphere_data :: %{Field.index() => any}
 
+  @typedoc "An arbitrary set of unique Field indices."
   @type fields :: MapSet.t(Field.index())
 
+  @typedoc "A mapping for Field indices belonging to each Panel index."
   @type fields_at_panels :: %{panel_index => fields}
 
+  @typedoc "A reference to a function to be called for each field during a compute frame."
   @type fn_ref :: {module(), function_name :: atom}
 
+  @typedoc "Information about a particular Sphere, including its geometry."
   @type sphere :: %{
           :id => reference,
           :divisions => Sphere.divisions(),
@@ -61,6 +70,8 @@ defmodule GEOF.Planet.SphereServer do
   #
   ###
 
+  @doc "Starts a SphereServer. This will automatically divide the Sphere into Panels (contiguous subsets of the Sphere’s Fields) based on the number of cores available and spawn the servers needed to run compute frames."
+
   @spec start_link(Sphere.divisions(), sphere_id) :: GenServer.on_start()
 
   def start_link(divisions, sphere_id) do
@@ -69,11 +80,15 @@ defmodule GEOF.Planet.SphereServer do
     )
   end
 
+  @doc "Gets the data for each Field in the Sphere."
+
   @spec get_all_field_data(sphere_id) :: sphere_data
 
   def get_all_field_data(sphere_id) do
     GenServer.call(Registry.sphere_via_reg(sphere_id), :get_all_field_data)
   end
+
+  @doc "Starts a compute frame. The SphereServer will send `frame_complete` when finished."
 
   @spec start_frame(sphere_id, fn_ref, pid) :: :ok
 

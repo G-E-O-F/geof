@@ -1,4 +1,8 @@
 defmodule GEOF.Planet.PanelSupervisor do
+  @moduledoc """
+    Supervises `one_for_all` the PanelServers belonging to a SphereServer.
+  """
+
   use Supervisor
 
   alias GEOF.Planet.Registry
