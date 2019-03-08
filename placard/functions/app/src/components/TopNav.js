@@ -2,7 +2,7 @@ import React from 'react'
 import cx from 'classnames'
 import { Link } from 'react-router-dom'
 
-import { Simple } from '../assets/logos'
+import { WithType } from '../assets/logos'
 import { colors, layouts, fonts, typeScale } from '../style'
 
 import { withStyles } from '@material-ui/core'
@@ -90,16 +90,13 @@ const styles = ({ breakpoints }) => ({
   },
   logoDevice: {
     display: 'block',
-    height: '2rem',
-    width: '2rem',
+    height: '2.1rem',
+    width: '5.6rem',
   },
   logoType: {
-    display: 'block',
-    ...typeScale(4),
-    ...fonts.display.bold,
-    lineHeight: 1,
-    transform: 'translateY(-1px)',
-    marginLeft: '.4rem',
+    position: 'absolute',
+    top: '-9999px',
+    left: '-9999px',
   },
 })
 
@@ -108,7 +105,7 @@ const TopNav = ({ classes, pathName }) => (
     <div className={classes.navStage}>
       <div className={classes.logoStage}>
         <Link to="/" className={cx(classes.link, classes.logoLink)}>
-          <Simple className={classes.logoDevice} />
+          <WithType className={classes.logoDevice} />
           <span className={classes.logoType}>GEOF</span>
         </Link>
       </div>

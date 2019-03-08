@@ -9,7 +9,7 @@ const exDocs = glob.sync(path.join(exDocsPath, '**/*.html'))
 
 const docsPath = path.resolve(__dirname, '../app/config/docs')
 
-const topNavHeight = '3.2rem'
+const topNavHeight = '3.3rem'
 
 for(let i = 0; i < exDocs.length; i++){
   let exDocPath = exDocs[i]
