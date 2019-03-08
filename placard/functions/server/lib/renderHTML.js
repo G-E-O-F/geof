@@ -4,10 +4,9 @@ import injectHTML from './injectHTML'
 
 const titleTransforms = {
   docs: data =>
-    data.replace(
-      /<title>(.*?) – (.*?) (.*?)<\/title>/g,
-      '$1 | GEOF $2 $3 docs'
-    ),
+    data
+      .match(/<title>(.*?)<\/title>/)[1]
+      .replace(/^(.*?) – (.*?) (.*?)$/, '$1 | GEOF $2 $3 docs'),
 }
 
 export default (
@@ -34,7 +33,7 @@ export default (
     html: helmet.htmlAttributes.toString(),
     title: titleTransform
       ? titleTransforms[titleTransform](baseHTML)
-      : helmet.title.toString().match(/<title>(.*?)<\/title>/)[1],
+      : helmet.title.toString().match(/<title.*?>(.*?)<\/title>/)[1],
     meta: helmet.meta.toString(),
     ssrStyles: sheets.toString(),
     body: routeMarkup,
