@@ -44,7 +44,7 @@ for(let i = 0; i < exDocs.length; i++){
   )
 
   doc = doc.replace(
-    /<button class="sidebar-button night-mode-toggle.+<\/button>/,
+    /<button class="sidebar-button night-mode-toggle[\s\S]+?<\/button>/g,
     ''
   )
 
