@@ -1,13 +1,17 @@
 defmodule GEOF.Planet.SphereServer do
   use GenServer
 
-  alias GEOF.Planet.Geometry.FieldCentroids
-  alias GEOF.Planet.Geometry.InterfieldCentroids
-  alias GEOF.Planet.PanelSupervisor
-  alias GEOF.Planet.PanelServer
-  alias GEOF.Planet.Registry
-  alias GEOF.Planet.Sphere
   alias GEOF.Shapes
+
+  alias GEOF.Planet.{
+    Geometry.FieldCentroids,
+    Geometry.InterfieldCentroids,
+    PanelSupervisor,
+    PanelServer,
+    Registry,
+    Sphere,
+    Field
+  }
 
   # ~~~
   # Naming conventions:
@@ -34,9 +38,9 @@ defmodule GEOF.Planet.SphereServer do
 
   @type panel_index :: non_neg_integer
 
-  @type sphere_data :: %{GEOF.Planet.Field.index() => any}
+  @type sphere_data :: %{Field.index() => any}
 
-  @type fields :: MapSet.t(GEOF.Planet.Field.index())
+  @type fields :: MapSet.t(Field.index())
 
   @type fields_at_panels :: %{panel_index => fields}
 

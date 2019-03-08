@@ -6,9 +6,11 @@ defmodule GEOF.Planet.Geometry.FieldCentroids do
 
   import :math
 
-  alias GEOF.Planet.Field
-  alias GEOF.Planet.Geometry
-  alias GEOF.Planet.Sphere
+  alias GEOF.Planet.{
+    Field,
+    Geometry,
+    Sphere
+  }
 
   ###
   #

@@ -1,6 +1,8 @@
 defmodule GEOF.Planet.Pattern do
-  alias GEOF.Planet.Sphere
-  alias GEOF.Planet.Geometry.FieldCentroids
+  alias GEOF.Planet.{
+    Sphere,
+    Geometry.FieldCentroids
+  }
 
   @moduledoc """
     Functions for producing colors across the sphere model.

@@ -1,9 +1,11 @@
 defmodule GEOF.Planet.PanelServer do
   use GenServer
 
-  alias GEOF.Planet.Field
-  alias GEOF.Planet.Registry
-  alias GEOF.Planet.SphereServer
+  alias GEOF.Planet.{
+    Field,
+    Registry,
+    SphereServer
+  }
 
   ###
   #

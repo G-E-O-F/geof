@@ -5,10 +5,12 @@ defmodule GEOF.Planet.Geometry.InterfieldCentroids do
     field's bounding polygon.
   """
 
-  alias GEOF.Planet.Geometry
-  alias GEOF.Planet.Sphere
-  alias GEOF.Planet.Field
-  alias GEOF.Planet.Geometry.FieldCentroids
+  alias GEOF.Planet.{
+    Sphere,
+    Field,
+    Geometry,
+    Geometry.FieldCentroids
+  }
 
   ###
   #

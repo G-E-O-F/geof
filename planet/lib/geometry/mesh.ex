@@ -6,10 +6,12 @@ defmodule GEOF.Planet.Geometry.Mesh do
 
   import :math
 
-  alias GEOF.Planet.Sphere
-  alias GEOF.Planet.Field
-  alias GEOF.Planet.Geometry.FieldCentroids
-  alias GEOF.Planet.Geometry.InterfieldCentroids
+  alias GEOF.Planet.{
+    Sphere,
+    Field,
+    Geometry.FieldCentroids,
+    Geometry.InterfieldCentroids
+  }
 
   # Constant lists of integers that break down vertices of hexagons and polygons into triangles.
 
