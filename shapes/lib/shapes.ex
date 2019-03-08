@@ -1,6 +1,6 @@
 defmodule GEOF.Shapes do
   @moduledoc """
-    Functions for working with shapes.
+    Shared utility functions for working with 3D geometry.
   """
 
   import :math
@@ -8,6 +8,10 @@ defmodule GEOF.Shapes do
   @type vector :: {number, number, number}
   @type line :: {vector, vector}
   @type triangle :: {vector, vector, vector}
+
+  # @doc """
+  #  Given a `line` and a `triangle` in 3D space, determines whether the line intersects with the triangle.
+  # """
 
   @spec line_intersects_triangle?(line, triangle) :: boolean
 
@@ -87,6 +91,12 @@ defmodule GEOF.Shapes do
                             end)
                           end).()
 
+  # @doc """
+  #  Given a `position` on a planetary sphere, determines which face of the unit tetrahedron the position lies within.
+  # """
+
+  @spec face_of_4_hedron(GEOF.Planet.Geometry.position()) :: pos_integer
+
   def face_of_4_hedron({:pos, lat, lon}) do
     x = cos(lat) * cos(lon)
     y = cos(lat) * sin(lon)
@@ -101,6 +111,12 @@ defmodule GEOF.Shapes do
       line_intersects_triangle?(line, triangle)
     end)
   end
+
+  # @doc """
+  #  Given a `position` on a planetary sphere, determines which face of the unit octahedron the position lies within.
+  # """
+
+  @spec face_of_8_hedron(GEOF.Planet.Geometry.position()) :: pos_integer
 
   def face_of_8_hedron({:pos, lat, lon}) do
     x_offset = if cos(lat) * cos(lon) > 0, do: 1, else: 0
