@@ -17,7 +17,7 @@
     "dev": "cd .. && run.env firebase serve",
     "logs": "firebase functions:log",
     "precommit": "lint-staged",
-    "postinstall": "cd ..; ln -s functions/node_modules node_modules; cd functions/node_modules/twitter-node-client; ln -s ../../config/twitter-key.json twitter_config"
+    "postinstall": "cd .. && ln -s functions/node_modules node_modules"
   },
   "workspaces": [
     "app",
