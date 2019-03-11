@@ -1,0 +1,27 @@
+#! /usr/local/bin/node
+
+const exec = require('child_process').exec;
+function execute(command, callback){
+  exec(command, function(error, stdout, stderr){ callback(stdout) })
+}
+
+const twitter = new (
+    require('twitter-node-client').Twitter
+  )(
+    require('../config/twitter-key.json')
+  )
+
+execute('git log -1 --pretty=%B', message =>
+  twitter.postTweet(
+    {
+      status: `New version released! ✨ “${message.trim()}”\n～ops`
+    },
+    function(error){
+      return console.log('〘Deploy〙 Error tweeting', error)
+    },
+    function(_success){
+      return console.log('〘Deploy〙 Tweeted about update')
+    }
+  )
+)
+
