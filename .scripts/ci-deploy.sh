@@ -23,7 +23,7 @@ then
   else
     echo "〘Deploy〙 writing Twitter key file from environment"
     mkdir -p placard/functions/config
-    echo "$GCP_KEY" >> placard/functions/config/twitter-key.json
+    echo "$TWITTER_KEY" >> placard/functions/config/twitter-key.json
   fi
 else
   echo "〘Deploy〙 Twitter key file present"
