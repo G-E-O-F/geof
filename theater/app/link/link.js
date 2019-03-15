@@ -1,6 +1,7 @@
 import ApolloClient from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
+import get from 'lodash/get'
 
 // see example 1
 import absintheSocketLink from './absinthe-ws-link'
@@ -10,27 +11,39 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
+const meshProps = ['position', 'normal', 'index', 'vertex_order']
+
 export function getPlanetMesh(divisions) {
-  return client.query({
-    query: gql`
+  return Promise.all(
+    meshProps.map(meshProp =>
+      client.query({
+        query: gql`
       {
         planet(divisions: ${divisions}) {
-          divisions
           mesh {
-            position
-            normal
-            index
-            vertex_order
+            ${meshProp}
           }
         }
-      }
-    `,
-  })
+      }`,
+      }),
+    ),
+  ).then(
+    results =>
+      meshProps.reduce(
+        (mesh, meshProp, mpi) =>
+          Object.assign(mesh, {
+            [meshProp]: get(results[mpi], `data.planet.mesh.${meshProp}`),
+          }),
+        {},
+      ),
+    err => console.log('[Frame query]', err),
+  )
 }
 
 export function getPlanetFrame(divisions, pattern) {
-  return client.mutate({
-    mutation: gql`
+  return client
+    .mutate({
+      mutation: gql`
       mutation {
         elapseFrame(divisions: ${divisions}, pattern: "${pattern}") {
           divisions
@@ -39,5 +52,6 @@ export function getPlanetFrame(divisions, pattern) {
         }
       }
     `,
-  })
+    })
+    .then(result => result, err => console.log('[Frame query]', err))
 }
