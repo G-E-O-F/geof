@@ -1,7 +1,7 @@
 import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import domLoaded from 'dom-loaded'
-import {createButton} from './lib/webvr'
+import { createButton } from './lib/webvr'
 
 import { getPlanetMesh, getPlanetFrame } from './link/link'
 import {
@@ -53,11 +53,10 @@ function onReceivePlanetFrame(result) {
 }
 
 function __main__() {
-
   document.body.appendChild(
     createButton(
-      setRenderer({ canvas: document.querySelector('main canvas') })
-    )
+      setRenderer({ canvas: document.querySelector('main canvas') }),
+    ),
   )
 
   window.addEventListener('resize', debounce(onResize, 1e3))

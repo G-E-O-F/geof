@@ -69,7 +69,7 @@
           - allowEmptyReject: true
         no-undef-init: error
         function-paren-newline: off # prettier
-        id-length: error
+        id-length: off
         new-cap:
           - error
           - capIsNew: false

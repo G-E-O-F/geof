@@ -7,16 +7,16 @@ const intersected = []
 
 const scene = new THREE.Scene()
 
-scene.add( new THREE.HemisphereLight( 0x808080, 0x606060 ) );
-const light = new THREE.DirectionalLight( 0xffffff );
-light.position.set( 0, 6, 0 );
-light.castShadow = true;
-light.shadow.camera.top = 12;
-light.shadow.camera.bottom = -12;
-light.shadow.camera.right = 12;
-light.shadow.camera.left = -12;
-light.shadow.mapSize.set( 4096, 4096 );
-scene.add( light );
+scene.add(new THREE.HemisphereLight(0x808080, 0x606060))
+const light = new THREE.DirectionalLight(0xffffff)
+light.position.set(0, 6, 0)
+light.castShadow = true
+light.shadow.camera.top = 12
+light.shadow.camera.bottom = -12
+light.shadow.camera.right = 12
+light.shadow.camera.left = -12
+light.shadow.mapSize.set(4096, 4096)
+scene.add(light)
 
 const camera = new THREE.PerspectiveCamera(33, 1, 0.1, 100)
 camera.position.set(0, 0, 9)
@@ -24,108 +24,98 @@ camera.lookAt(new THREE.Vector3(0, 0, 0))
 
 let renderer
 
-let controller1, controller2
+let controller1
+let controller2
 
-const onSelectStart = function(event){
-    const controller = event.target;
-    const intersections = getIntersections( controller );
+const onSelectStart = function(event) {
+  const controller = event.target
+  const intersections = getIntersections(controller)
 
-    if ( intersections.length > 0 ) {
+  if (intersections.length > 0) {
+    const intersection = intersections[0]
+    matrix.getInverse(controller.matrixWorld)
 
-      const intersection = intersections[ 0 ];
-      matrix.getInverse( controller.matrixWorld );
+    const object = intersection.object
+    object.matrix.premultiply(matrix)
+    object.matrix.decompose(object.position, object.quaternion, object.scale)
+    object.material.emissive.b = 0.1
 
-      const object = intersection.object;
-      object.matrix.premultiply( matrix );
-      object.matrix.decompose( object.position, object.quaternion, object.scale );
-      object.material.emissive.b = .1;
-
-      controller.add( object );
-      controller.userData.selected = object;
-
-    }
+    controller.add(object)
+    controller.userData.selected = object
+  }
 }
 
-const onSelectEnd = function(event){
+const onSelectEnd = function(event) {
+  const controller = event.target
 
-  const controller = event.target;
+  if (controller.userData.selected !== undefined) {
+    const object = controller.userData.selected
+    object.matrix.premultiply(controller.matrixWorld)
+    object.matrix.decompose(object.position, object.quaternion, object.scale)
+    object.material.emissive.b = 0
 
-  if ( controller.userData.selected !== undefined ) {
-
-    const object = controller.userData.selected;
-    object.matrix.premultiply( controller.matrixWorld );
-    object.matrix.decompose( object.position, object.quaternion, object.scale );
-    object.material.emissive.b = 0;
-
-    group.add( object );
-    controller.userData.selected = undefined;
-
+    group.add(object)
+    controller.userData.selected = undefined
   }
-
 }
 
 const getIntersections = function(controller) {
+  matrix.identity().extractRotation(controller.matrixWorld)
 
-  matrix.identity().extractRotation( controller.matrixWorld );
+  raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld)
+  raycaster.ray.direction.set(0, 0, -1).applyMatrix4(matrix)
 
-  raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
-  raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( matrix );
-
-  return raycaster.intersectObjects( group.children );
-
+  return raycaster.intersectObjects(group.children)
 }
 
-const intersectObjects = function( controller ) {
+const intersectObjects = function(controller) {
   // Do not highlight when already selected
-  if ( controller.userData.selected !== undefined ) return;
-  var line = controller.getObjectByName( 'line' );
-  var intersections = getIntersections( controller );
-  if ( intersections.length > 0 ) {
-    var intersection = intersections[ 0 ];
-    var object = intersection.object;
-    object.material.emissive.r = .1;
-    intersected.push( object );
-    line.scale.z = intersection.distance;
-  } else {
-    line.scale.z = 5;
-  }
+  if (controller.userData.selected !== undefined) return
+  const line = controller.getObjectByName('line')
+  const intersections = getIntersections(controller)
+  if (intersections.length > 0) {
+    const intersection = intersections[0]
+    const object = intersection.object
+    object.material.emissive.r = 0.1
+    intersected.push(object)
+    line.scale.z = intersection.distance
+  } else line.scale.z = 5
 }
 
 function cleanIntersected() {
-  while ( intersected.length ) {
-    var object = intersected.pop();
-    object.material.emissive.r = 0;
+  while (intersected.length) {
+    const object = intersected.pop()
+    object.material.emissive.r = 0
   }
 }
 
-const initVR = function(){
-
+const initVR = function() {
   renderer.vr.enabled = true
 
-  controller1 = renderer.vr.getController( 0 );
-  controller1.addEventListener( 'selectstart', onSelectStart );
-  controller1.addEventListener( 'selectend', onSelectEnd );
-  scene.add( controller1 );
+  controller1 = renderer.vr.getController(0)
+  controller1.addEventListener('selectstart', onSelectStart)
+  controller1.addEventListener('selectend', onSelectEnd)
+  scene.add(controller1)
 
-  controller2 = renderer.vr.getController( 1 );
-  controller2.addEventListener( 'selectstart', onSelectStart );
-  controller2.addEventListener( 'selectend', onSelectEnd );
-  scene.add( controller2 );
+  controller2 = renderer.vr.getController(1)
+  controller2.addEventListener('selectstart', onSelectStart)
+  controller2.addEventListener('selectend', onSelectEnd)
+  scene.add(controller2)
 
-  var line = new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(
-      [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ]
-    )
-  );
+  const line = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, -1),
+    ]),
+  )
 
-  line.name = 'line';
-  line.scale.z = 5;
+  line.name = 'line'
+  line.scale.z = 5
 
-  controller1.add( line.clone() );
-  controller2.add( line.clone() );
+  controller1.add(line.clone())
+  controller2.add(line.clone())
 
   scene.add(group)
-
 }
 
 export function setRenderer({ canvas }) {
@@ -177,8 +167,8 @@ export function setPlanet({ position, normal, index, vertex_order }) {
     new THREE.MeshStandardMaterial({
       vertexColors: THREE.VertexColors,
       color: 0xffffff,
-      roughness: .86,
-      metalness: 0
+      roughness: 0.86,
+      metalness: 0,
     }),
   )
 
@@ -222,15 +212,15 @@ export function setPlanetFrame(divisions, frame) {
 let playing = false
 
 function onRender() {
-  if (renderer && scene && camera && controller1 && controller2){
-    cleanIntersected();
-    intersectObjects( controller1 );
-    intersectObjects( controller2 );
+  if (renderer && scene && camera && controller1 && controller2) {
+    cleanIntersected()
+    intersectObjects(controller1)
+    intersectObjects(controller2)
     renderer.render(scene, camera)
   }
 }
 
 export function play() {
-  if(!playing) renderer.setAnimationLoop(onRender)
+  if (!playing) renderer.setAnimationLoop(onRender)
   playing = true
 }
