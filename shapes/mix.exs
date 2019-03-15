@@ -10,6 +10,8 @@ defmodule GEOF.Shapes.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
+      package: package(),
+      description: description(),
       test_coverage: test(),
       preferred_cli_env: cli_env()
     ]
@@ -42,6 +44,22 @@ defmodule GEOF.Shapes.MixProject do
     [
       extra_applications: [:logger]
     ]
+  end
+
+  defp package do
+    [
+      # This option is only needed when you don't want to use the OTP application name
+      # These are the default files included in the package
+      files: ~w(lib test config .formatter.exs mix.exs README* LICENSE* ),
+      licenses: ["BSD 3-Clause Clear License"],
+      links: %{"GitHub" => "https://github.com/g-e-o-f/geof"}
+    ]
+  end
+
+  defp description do
+    """
+      Shared utility functions for working with geometry.
+    """
   end
 
   defp deps do

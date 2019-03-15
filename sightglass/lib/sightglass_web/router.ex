@@ -5,6 +5,15 @@ defmodule GEOF.SightglassWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  pipeline :browser do
+    plug(:accepts, ["html"])
+  end
+
+  scope "/" do
+    pipe_through(:browser)
+    get("/", GEOF.SightglassWeb.PageController, :index)
+  end
+
   scope "/api" do
     pipe_through(:api)
 

@@ -33,7 +33,8 @@ defmodule GEOF.SightglassWeb.Endpoint do
   """
   def init(_key, config) do
     if config[:load_from_system_env] do
-      port = System.get_env("PORT") || raise "expected the PORT environment variable to be set"
+      env_port = System.get_env("PORT")
+      port = if env_port, do: env_port, else: 8080
       {:ok, Keyword.put(config, :http, [:inet6, port: port])}
     else
       {:ok, config}

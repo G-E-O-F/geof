@@ -22,7 +22,6 @@ defmodule GEOF.SightglassWeb do
       use Phoenix.Controller, namespace: GEOF.SightglassWeb
       import Plug.Conn
       import GEOF.SightglassWeb.Router.Helpers
-      import GEOF.SightglassWeb.Gettext
     end
   end
 
@@ -37,7 +36,6 @@ defmodule GEOF.SightglassWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import GEOF.SightglassWeb.Gettext
     end
   end
 
