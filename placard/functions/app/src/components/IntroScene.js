@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core'
 
 const styles = {
   animationRoot: {
+    opacity: 0.2,
     position: 'fixed',
     top: 0,
     bottom: 0,
@@ -18,14 +19,12 @@ const styles = {
   },
 }
 
-let renderer, scene, camera
+let renderer, scene, camera, planet
 
 const initScene = function() {
   scene = new THREE.Scene()
 
-  camera = new THREE.PerspectiveCamera(33, 1, 0.1, 100)
-  camera.position.set(0, 0, 4.5)
-  camera.lookAt(new THREE.Vector3(0, 0, 0))
+  camera = new THREE.PerspectiveCamera(100, 1, 0.1, 100)
 
   const planetGeometry = new THREE.BufferGeometry()
 
@@ -60,10 +59,11 @@ const initScene = function() {
     )
   )
 
-  const planet = new THREE.Mesh(
+  planet = new THREE.Mesh(
     planetGeometry,
     new THREE.MeshBasicMaterial({
       vertexColors: THREE.VertexColors,
+      wireframe: true,
     })
   )
 
@@ -88,7 +88,8 @@ export function onResize({ width, height }) {
 let playing = false
 
 function onRender() {
-  if (renderer && scene && camera) renderer.render(scene, camera)
+  planet.rotation.x += 2.5e-4
+  renderer.render(scene, camera)
 }
 
 function render() {
