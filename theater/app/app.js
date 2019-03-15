@@ -49,9 +49,7 @@ function onReceivePlanetFrame(result) {
   if (frameColors) {
     console.info('[Receive frame]', 'success')
     setPlanetFrame(divisions, frameColors)
-  } else
-    console.warn('[Receive frame]', 'unexpected payload')
-  
+  } else console.warn('[Receive frame]', 'unexpected payload')
 }
 
 function __main__() {
