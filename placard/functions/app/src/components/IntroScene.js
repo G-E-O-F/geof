@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core'
 
 const styles = {
   animationRoot: {
-    opacity: 0.2,
+    opacity: 0.3,
     position: 'fixed',
     top: 0,
     bottom: 0,
@@ -20,6 +20,8 @@ const styles = {
 }
 
 let renderer, scene, camera, planet
+const orientation = new THREE.Euler()
+const d2r = Math.PI / 180
 
 const initScene = function() {
   scene = new THREE.Scene()
@@ -89,6 +91,11 @@ let playing = false
 
 function onRender() {
   planet.rotation.x += 2.5e-4
+
+  camera.rotation.x = orientation.x
+  camera.rotation.y = orientation.y
+  camera.rotation.z = orientation.z
+
   renderer.render(scene, camera)
 }
 
@@ -110,11 +117,16 @@ class IntroScene extends React.Component {
   constructor(props) {
     super(props)
     this.animationRoot = React.createRef()
-    this.onResize = debounce(this._onResize, 500).bind(this)
+    this.onResize = debounce(this._onResize, 200).bind(this)
+    this.onOrient = this._onOrient.bind(this)
   }
 
   playIntroAnimation() {
     play()
+  }
+
+  _onOrient({ alpha, beta, gamma }) {
+    orientation.set(beta * d2r, gamma * d2r, alpha * d2r)
   }
 
   _onResize() {
@@ -129,6 +141,7 @@ class IntroScene extends React.Component {
     setRenderer({ canvas: this.animationRoot.current })
     initScene()
     window.addEventListener('resize', this.onResize)
+    window.addEventListener('deviceorientation', this.onOrient, true)
     this._onResize()
     this.playIntroAnimation()
   }
