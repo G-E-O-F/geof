@@ -22,7 +22,6 @@ export const theme = createMuiTheme({
     type: 'dark',
     background: {
       paper: colors.back,
-      // default: colors.back,
     },
     primary: {
       main: colors.back,
@@ -39,6 +38,7 @@ export const theme = createMuiTheme({
   shadows: themedShadows,
   typography: Object.assign({
     // global values
+    fontFamily: fonts.text.regular.fontFamily,
     useNextVariants: true,
     fontSize: 16,
     // specific type styles
