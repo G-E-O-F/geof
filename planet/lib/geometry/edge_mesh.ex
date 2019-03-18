@@ -14,7 +14,8 @@ defmodule GEOF.Planet.Geometry.EdgeMesh do
 
   # The order of Field adjacent directions to process.
 
-  @adj_order [:nw, :w, :sw, :se, :e, :ne]
+  @pent_adj_order [:sw, :se, :e, :nw, :w]
+  @hex_adj_order [:sw, :se, :e, :ne, :nw, :w]
 
   ###
   #
@@ -95,8 +96,14 @@ defmodule GEOF.Planet.Geometry.EdgeMesh do
           adj = Field.adjacents(field_index, d)
           sides = if Map.has_key?(adj, :ne), do: 6, else: 5
 
+          adj_order =
+            cond do
+              sides == 5 -> @pent_adj_order
+              sides == 6 -> @hex_adj_order
+            end
+
           Enum.reduce(
-            0..(sides - 1),
+            0..if(field_index == :north or field_index == :south, do: 4, else: sides - 4),
             acc,
             fn s, acc ->
               s_0 = rem(s + sides, sides)
@@ -108,8 +115,8 @@ defmodule GEOF.Planet.Geometry.EdgeMesh do
                   interfield_positions[:index_map],
                   MapSet.new([
                     field_index,
-                    Map.get(adj, Enum.at(@adj_order, s_0)),
-                    Map.get(adj, Enum.at(@adj_order, s_1))
+                    Map.get(adj, Enum.at(adj_order, s_0)),
+                    Map.get(adj, Enum.at(adj_order, s_1))
                   ])
                 )
 
@@ -118,8 +125,8 @@ defmodule GEOF.Planet.Geometry.EdgeMesh do
                   interfield_positions[:index_map],
                   MapSet.new([
                     field_index,
-                    Map.get(adj, Enum.at(@adj_order, s_1)),
-                    Map.get(adj, Enum.at(@adj_order, s_2))
+                    Map.get(adj, Enum.at(adj_order, s_1)),
+                    Map.get(adj, Enum.at(adj_order, s_2))
                   ])
                 )
 

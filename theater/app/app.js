@@ -12,7 +12,7 @@ import {
   setRenderer,
 } from './scene/scene'
 
-const DIVISIONS = 2
+const DIVISIONS = 5
 
 function onResize() {
   const main = document.querySelector('main')
