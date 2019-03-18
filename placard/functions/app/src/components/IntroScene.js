@@ -1,7 +1,8 @@
 import React from 'react'
 import THREE from 'three'
 import debounce from 'lodash/debounce'
-import sphereGeometry from '../assets/peels_d27.json'
+import DeviceOrientationController from '../modules/DeviceOrientationController'
+import sphereGeometry from '../assets/peels_d25.json'
 
 import { withStyles } from '@material-ui/core'
 
@@ -19,9 +20,8 @@ const styles = {
   },
 }
 
-let renderer, scene, camera, planet
-const orientation = new THREE.Euler()
-const d2r = Math.PI / 180
+let playing = false
+let renderer, scene, camera, planet, controls
 
 const initScene = function() {
   scene = new THREE.Scene()
@@ -45,31 +45,17 @@ const initScene = function() {
     )
   )
 
-  planetGeometry.addAttribute(
-    'normal',
-    new THREE.BufferAttribute(
-      Float32Array.from(sphereGeometry.data.attributes.normal.array),
-      3
-    )
-  )
-
-  planetGeometry.addAttribute(
-    'color',
-    new THREE.BufferAttribute(
-      Float32Array.from(sphereGeometry.data.attributes.color.array),
-      3
-    )
-  )
-
-  planet = new THREE.Mesh(
+  planet = new THREE.LineSegments(
     planetGeometry,
-    new THREE.MeshBasicMaterial({
-      vertexColors: THREE.VertexColors,
-      wireframe: true,
+    new THREE.LineBasicMaterial({
+      color: 0xffffff,
     })
   )
 
   scene.add(planet)
+
+  controls = new DeviceOrientationController(camera, renderer.domElement)
+  controls.connect()
 }
 
 export function setRenderer({ canvas }) {
@@ -87,15 +73,9 @@ export function onResize({ width, height }) {
   if (renderer) renderer.setSize(width, height)
 }
 
-let playing = false
-
 function onRender() {
   planet.rotation.x += 2.5e-4
-
-  camera.rotation.x = orientation.x
-  camera.rotation.y = orientation.y
-  camera.rotation.z = orientation.z
-
+  controls.update()
   renderer.render(scene, camera)
 }
 
@@ -118,15 +98,10 @@ class IntroScene extends React.Component {
     super(props)
     this.animationRoot = React.createRef()
     this.onResize = debounce(this._onResize, 200).bind(this)
-    this.onOrient = this._onOrient.bind(this)
   }
 
   playIntroAnimation() {
     play()
-  }
-
-  _onOrient({ alpha, beta, gamma }) {
-    orientation.set(beta * d2r, gamma * d2r, alpha * d2r)
   }
 
   _onResize() {
@@ -141,7 +116,6 @@ class IntroScene extends React.Component {
     setRenderer({ canvas: this.animationRoot.current })
     initScene()
     window.addEventListener('resize', this.onResize)
-    window.addEventListener('deviceorientation', this.onOrient, true)
     this._onResize()
     this.playIntroAnimation()
   }
