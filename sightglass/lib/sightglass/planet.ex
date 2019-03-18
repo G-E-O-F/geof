@@ -14,6 +14,19 @@ defmodule GEOF.Sightglass.Planet do
     }
   end
 
+  def get_planet_edges(divisions) do
+    edge_mesh = GEOF.Planet.Geometry.EdgeMesh.poly_per_field(divisions)
+
+    %{
+      id: divisions,
+      divisions: divisions,
+      wireframe: %{
+        position: edge_mesh[:position],
+        index: edge_mesh[:index]
+      }
+    }
+  end
+
   def get_planet_frame(divisions, pattern) do
     # This is just example stuff for now.
     frame_colors = GEOF.Planet.Pattern.tetrahedron(divisions)

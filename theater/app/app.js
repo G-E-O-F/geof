@@ -12,7 +12,7 @@ import {
   setRenderer,
 } from './scene/scene'
 
-const DIVISIONS = 27
+const DIVISIONS = 2
 
 function onResize() {
   const main = document.querySelector('main')
@@ -62,10 +62,7 @@ function __main__() {
 
   console.info('[Requesting planet geometry]')
   lastT = Date.now()
-  getPlanetMesh(DIVISIONS)
-    .then(onReceivePlanetMesh)
-    .then(() => getPlanetFrame(DIVISIONS, 'highlight_icosahedron'))
-    .then(onReceivePlanetFrame)
+  getPlanetMesh(DIVISIONS).then(onReceivePlanetMesh)
 }
 
 domLoaded.then(__main__)

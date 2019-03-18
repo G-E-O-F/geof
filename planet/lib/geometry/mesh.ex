@@ -1,7 +1,6 @@
 defmodule GEOF.Planet.Geometry.Mesh do
   @moduledoc """
-    Functions for translating a Planet's geometry into data that
-    can be used in 3D graphical environments.
+    Functions for translating a Planet's geometry into an ordinary 3D solid.
   """
 
   import :math

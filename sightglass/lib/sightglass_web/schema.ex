@@ -11,6 +11,12 @@ defmodule GEOF.SightglassWeb.Schema do
       arg(:divisions, :integer, description: "The resolution of the model.")
       resolve(&Resolvers.Planet.get_planet/3)
     end
+
+    @desc "Get a planet wireframe"
+    field :planet_edges, :planet_edges do
+      arg(:divisions, :integer, description: "The resolution of the model.")
+      resolve(&Resolvers.Planet.get_planet_edges/3)
+    end
   end
 
   mutation do

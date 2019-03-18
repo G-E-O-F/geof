@@ -30,7 +30,7 @@ export function onResize({ width, height }) {
 
 let planet
 
-export function setPlanet({ position, normal, index, vertex_order }) {
+export function setPlanet({ position, index }) {
   if (planet) {
     scene.remove(planet)
     planet = null
@@ -45,24 +45,13 @@ export function setPlanet({ position, normal, index, vertex_order }) {
     new THREE.BufferAttribute(new Float32Array(position), 3),
   )
 
-  planetGeometry.addAttribute(
-    'normal',
-    new THREE.BufferAttribute(new Float32Array(normal), 3),
-  )
-
-  planetGeometry.addAttribute(
-    'color',
-    new THREE.BufferAttribute(new Float32Array(position.length), 3),
-  )
-
-  planet = new THREE.Mesh(
+  planet = new THREE.LineSegments(
     planetGeometry,
-    new THREE.MeshBasicMaterial({
-      vertexColors: THREE.VertexColors,
+    new THREE.LineBasicMaterial({
+      color: 0x000000,
+      linewidth: 8,
     }),
   )
-
-  planet.userData.vertex_order = vertex_order
 
   scene.add(planet)
 }

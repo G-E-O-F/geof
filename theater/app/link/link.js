@@ -11,7 +11,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-const meshProps = ['position', 'normal', 'index', 'vertex_order']
+const meshProps = ['position', 'index']
 
 export function getPlanetMesh(divisions) {
   return Promise.all(
@@ -19,8 +19,8 @@ export function getPlanetMesh(divisions) {
       client.query({
         query: gql`
       {
-        planet(divisions: ${divisions}) {
-          mesh {
+        planet_edges(divisions: ${divisions}) {
+          wireframe {
             ${meshProp}
           }
         }
@@ -32,11 +32,14 @@ export function getPlanetMesh(divisions) {
       meshProps.reduce(
         (mesh, meshProp, mpi) =>
           Object.assign(mesh, {
-            [meshProp]: get(results[mpi], `data.planet.mesh.${meshProp}`),
+            [meshProp]: get(
+              results[mpi],
+              `data.planet_edges.wireframe.${meshProp}`,
+            ),
           }),
         {},
       ),
-    err => console.log('[Frame query]', err),
+    err => console.log('[Mesh query]', err),
   )
 }
 
