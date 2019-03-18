@@ -14,7 +14,7 @@ const styles = {
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 0,
+    zIndex: -1,
     height: [['100%'], '!important'],
     width: [['100%'], '!important'],
   },
@@ -26,7 +26,7 @@ let renderer, scene, camera, planet, controls
 const initScene = function() {
   scene = new THREE.Scene()
 
-  camera = new THREE.PerspectiveCamera(100, 1, 0.1, 100)
+  camera = new THREE.PerspectiveCamera(111, 1, 0.1, 100)
 
   const planetGeometry = new THREE.BufferGeometry()
 
@@ -48,14 +48,14 @@ const initScene = function() {
   planet = new THREE.LineSegments(
     planetGeometry,
     new THREE.LineBasicMaterial({
-      color: 0xffffff,
+      color: 0xa9d6ce,
     })
   )
 
   scene.add(planet)
 
   controls = new DeviceOrientationController(camera, renderer.domElement)
-  controls.connect()
+  controls.connect({ pan: false })
 }
 
 export function setRenderer({ canvas }) {

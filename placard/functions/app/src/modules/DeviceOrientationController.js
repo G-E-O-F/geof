@@ -469,7 +469,7 @@ var DeviceOrientationController = function(object, domElement) {
     }
   }
 
-  this.connect = function() {
+  this.connect = function({ pan = true }) {
     window.addEventListener('resize', this.constrainObjectFOV, false)
 
     window.addEventListener(
@@ -489,12 +489,18 @@ var DeviceOrientationController = function(object, domElement) {
       false
     )
 
-    this.element.addEventListener('mousedown', this.onDocumentMouseDown, false)
-    this.element.addEventListener(
-      'touchstart',
-      this.onDocumentTouchStart,
-      false
-    )
+    if (pan)
+      this.element.addEventListener(
+        'mousedown',
+        this.onDocumentMouseDown,
+        false
+      )
+    if (pan)
+      this.element.addEventListener(
+        'touchstart',
+        this.onDocumentTouchStart,
+        false
+      )
 
     this.freeze = false
   }

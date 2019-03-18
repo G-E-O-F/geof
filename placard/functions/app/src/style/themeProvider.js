@@ -19,7 +19,11 @@ export const themedShadows = shadows.map(shadow =>
 export const theme = createMuiTheme({
   breakpoints,
   palette: {
-    type: 'light',
+    type: 'dark',
+    background: {
+      paper: colors.back,
+      // default: colors.back,
+    },
     primary: {
       main: colors.back,
       contrastText: colors.fore,
