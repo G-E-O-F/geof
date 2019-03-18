@@ -9,7 +9,7 @@
     "last 2 versions"
   ],
   "engines": {
-    "node": "8.10.0",
+    "node": "^8.14.0",
     "yarn": ">=1.9.2"
   },
   "devDependencies": {
@@ -20,7 +20,7 @@
     "prettier": "^1.14.2",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.8"
+    "webpack-dev-server": "^3.1.11"
   },
   "dependencies": {
     "@absinthe/socket-apollo-link": "^0.1.11",
@@ -30,7 +30,7 @@
     "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
     "imports-loader": "^0.8.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "three": "^0.96.0"
   },
   "scripts": {
