@@ -35,10 +35,15 @@ gsutil rm -rf gs://geof-io.appspot.com/docs
 gsutil cp -r placard/functions/app/config/docs gs://geof-io.appspot.com/docs
 
 echo "〘Deploy〙 GEOF.Placard"
+
 cd placard/functions
-yarn install
+yarn cache clean
+yarn install --no-lockfile --non-interactive
+
 cd ..
 firebase deploy
+
 cd functions
 ./scripts/tweet-on-deploy
+
 cd ../..
