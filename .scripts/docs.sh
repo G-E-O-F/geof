@@ -4,7 +4,6 @@ mkdir -p placard/functions/app/config/docs
 
 echo "〘Docs〙 GEOF.Planet"
 cd planet
-mix deps.get
 mix docs
 cd ..
 cp -r planet/doc placard/functions/app/public/docs/planet
@@ -14,7 +13,6 @@ cd ../../..
 
 echo "〘Docs〙 GEOF.Shapes"
 cd shapes
-mix deps.get
 mix docs
 cd ..
 cp -r shapes/doc placard/functions/app/public/docs/shapes
@@ -24,6 +22,5 @@ cd ../../..
 
 echo "〘Docs〙 transforming docs HTML"
 cd placard/functions
-yarn install
 ./scripts/transform-docs
 cd ../..

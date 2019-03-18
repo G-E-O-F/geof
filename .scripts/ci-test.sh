@@ -1,3 +1,5 @@
+#! /bin/sh
+
 MIX_ENV=test
 
 echo "〘Test & Coverage〙 GEOF.Planet"

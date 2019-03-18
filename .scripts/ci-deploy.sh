@@ -1,3 +1,5 @@
+#! /bin/sh
+
 if [ ! -f placard/functions/config/gcp-key.json ]
 then
   if [ -z ${GCP_KEY+x} ]
@@ -29,18 +31,18 @@ else
   echo "〘Deploy〙 Twitter key file present"
 fi
 
+
+./.scripts/ci-prepare.sh
+
 ./.scripts/docs.sh
+
 echo "〘Deploy〙 uploading docs to storage"
 gsutil rm -rf gs://geof-io.appspot.com/docs
 gsutil cp -r placard/functions/app/config/docs gs://geof-io.appspot.com/docs
 
 echo "〘Deploy〙 GEOF.Placard"
 
-cd placard/functions
-yarn cache clean
-yarn install --no-lockfile --non-interactive
-
-cd ..
+cd placard
 firebase deploy
 
 cd functions
