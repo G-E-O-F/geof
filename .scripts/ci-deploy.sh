@@ -2,6 +2,10 @@
 
 ./.scripts/ci-prepare.sh
 
+apt-get install -y kubectl
+gcloud config set project geof-io
+gcloud info --run-diagnostics
+
 echo "〘Deploy〙 GEOF.Sightglass"
 SIGHTGLASS_VERSION=$(git log --pretty=format:'%h' -n 1)
 

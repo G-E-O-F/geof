@@ -1,7 +1,5 @@
 #! /bin/sh
 
-apt-get install -y kubectl
-
 GCP_KEY_FILE=placard/functions/config/gcp-key.json
 
 if [ ! -f $GCP_KEY_FILE ]
@@ -50,8 +48,6 @@ fi
 
 export GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f $GCP_KEY_FILE)
 gcloud auth activate-service-account --key-file=$GCP_KEY_FILE
-gcloud config set project geof-io
-gcloud info --run-diagnostics
 
 cd placard/functions
 yarn install --non-interactive
