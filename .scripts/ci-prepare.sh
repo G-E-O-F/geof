@@ -1,5 +1,7 @@
 #! /bin/sh
 
+apt-get install -y kubectl
+
 GCP_KEY_FILE=placard/functions/config/gcp-key.json
 
 if [ ! -f $GCP_KEY_FILE ]
@@ -15,11 +17,6 @@ then
   fi
 else
   echo "〘Deploy〙 GCP key file present"
-fi
-
-if [ ! -f $GCP_KEY_FILE ]
-then
-  echo "〘Deploy〙 failed to write GCP key file."
 fi
 
 TWITTER_KEY_FILE=placard/functions/config/twitter-key.json
@@ -51,9 +48,10 @@ else
   echo "〘Deploy〙 GEOF.Sightglass prod config present"
 fi
 
-GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f $GCP_KEY_FILE)
+export GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f $GCP_KEY_FILE)
 gcloud auth activate-service-account --key-file=$GCP_KEY_FILE
 gcloud config set project geof-io
+gcloud info --run-diagnostics
 
 cd placard/functions
 yarn install --non-interactive
