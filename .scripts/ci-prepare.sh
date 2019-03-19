@@ -1,6 +1,8 @@
 #! /bin/sh
 
-if [ ! -f placard/functions/config/gcp-key.json ]
+GCP_KEY_FILE=placard/functions/config/gcp-key.json
+
+if [ ! -f $GCP_KEY_FILE ]
 then
   if [ -z ${GCP_KEY+x} ]
   then
@@ -9,13 +11,20 @@ then
   else
     echo "〘Deploy〙 writing GCP key file from environment"
     mkdir -p placard/functions/config
-    printf '%s' $GCP_KEY > placard/functions/config/gcp-key.json
+    printf '%s' $GCP_KEY > $GCP_KEY_FILE
   fi
 else
   echo "〘Deploy〙 GCP key file present"
 fi
 
-if [ ! -f placard/functions/config/twitter-key.json ]
+if [ ! -f $GCP_KEY_FILE ]
+then
+  echo "〘Deploy〙 failed to write GCP key file."
+fi
+
+TWITTER_KEY_FILE=placard/functions/config/twitter-key.json
+
+if [ ! -f $TWITTER_KEY_FILE ]
 then
   if [ -z ${TWITTER_KEY+x} ]
   then
@@ -23,7 +32,7 @@ then
   else
     echo "〘Deploy〙 writing Twitter key file from environment"
     mkdir -p placard/functions/config
-    printf '%s' $TWITTER_KEY > placard/functions/config/twitter-key.json
+    printf '%s' $TWITTER_KEY > $TWITTER_KEY_FILE
   fi
 else
   echo "〘Deploy〙 Twitter key file present"
@@ -42,8 +51,9 @@ else
   echo "〘Deploy〙 GEOF.Sightglass prod config present"
 fi
 
-GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f placard/functions/config/gcp-key.json)
-gcloud auth activate-service-account --key-file placard/functions/config/gcp-key.json
+GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f $GCP_KEY_FILE)
+gcloud auth activate-service-account --key-file=$GCP_KEY_FILE
+gcloud config set project geof-io
 
 cd placard/functions
 yarn install --non-interactive
