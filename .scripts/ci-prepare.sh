@@ -11,8 +11,9 @@ then
   else
     echo "〘Deploy〙 writing GCP key file from environment"
     mkdir -p placard/functions/config
-    echo $GCP_KEY
+    printf '%s' $GCP_KEY
     printf '%s' $GCP_KEY > $GCP_KEY_FILE
+    echo $(cat $GCP_KEY_FILE)
   fi
 else
   echo "〘Deploy〙 GCP key file present"
