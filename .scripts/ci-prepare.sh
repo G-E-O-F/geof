@@ -44,7 +44,6 @@ fi
 
 GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f placard/functions/config/gcp-key.json)
 gcloud auth activate-service-account --key-file placard/functions/config/gcp-key.json
-gcloud config set project geof-io
 
 cd placard/functions
 yarn install --non-interactive

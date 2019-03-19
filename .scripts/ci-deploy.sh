@@ -7,6 +7,7 @@ SIGHTGLASS_VERSION=$(git log --pretty=format:'%h' -n 1)
 
 cd sightglass
 MIX_ENV=prod mix release --env=prod
+gcloud config set project geof-io
 gcloud builds submit --substitutions=_TAG=$SIGHTGLASS_VERSION .
 kubectl set image deployment/sightglass sightglass=gcr.io/geof-io/sightglass:$SIGHTGLASS_VERSION
 cd ..
