@@ -28,11 +28,11 @@ const styles = ({ breakpoints }) => ({
 
 const IntroSceneLoading = props => {
   if (props.error) {
-    return <div>Error!</div>
+    return null
   } else if (props.timedOut) {
-    return <div>Taking a long time…</div>
+    return null
   } else if (props.pastDelay) {
-    return <div>Loading…</div>
+    return null
   } else {
     return null
   }

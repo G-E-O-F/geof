@@ -13,7 +13,11 @@ export default ({ store, req, Component }) => {
   const context = {}
   const modules = []
   const sheets = new SheetsRegistry()
-  const generateClassName = createGenerateClassName()
+  const generateClassName = createGenerateClassName({
+    productionPrefix: '✨',
+    seed: 's',
+  })
+  console.log('[generateClassName]', process.env.NODE_ENV)
   const sheetsManager = new Map()
 
   /*

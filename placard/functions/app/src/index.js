@@ -14,7 +14,11 @@ import App from './App'
 // Create a store and get back itself and its history object
 const { store, history } = createStore()
 
-const generateClassName = createGenerateClassName()
+const generateClassName = createGenerateClassName({
+  productionPrefix: '✨',
+  seed: 'c',
+})
+console.log('[generateClassName]', process.env.NODE_ENV)
 
 // Running locally, we should run on a <ConnectedRouter /> rather than on a <StaticRouter /> like on the server
 // Let's also let React Frontload explicitly know we're not rendering on the server here
