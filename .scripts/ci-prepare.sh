@@ -12,11 +12,7 @@ then
     echo "〘Deploy〙 writing GCP key file from environment"
     mkdir -p placard/functions/config
     echo "〘Deploy〙"
-    printf %s $GCP_KEY
-    echo "〘Deploy〙"
-    printf %q $GCP_KEY
-    echo "〘Deploy〙"
-    printf %s $GCP_KEY > $GCP_KEY_FILE
+    echo $GCP_KEY > $GCP_KEY_FILE
     echo "〘Deploy〙"
     echo $(cat $GCP_KEY_FILE)
     echo "〘Deploy〙"
