@@ -1,4 +1,4 @@
-image: thur3/geof:0.3
+image: thur3/geof:0.4
 
 stages:
   - test

@@ -1,6 +1,6 @@
 FROM elixir:1.8.1
 
-# thur3/geof:v0.3 family tree
+# thur3/geof:v0.4 family tree
 #
 # debian:stretch
 # ├┬ buildpack-deps:stretch
@@ -102,6 +102,10 @@ RUN apt-get update -qqy && apt-get install -qqy \
     gcloud config set metrics/environment github_docker_image && \
     gcloud --version
 VOLUME ["/root/.config"]
+
+# Kubernetes CLI
+
+RUN apt-get install -y kubectl
 
 # Firebase
 # https://github.com/w9jds/firebase-action/blob/ecc8ad74859971d7bfd4a1705c41b049a9078735/Dockerfile

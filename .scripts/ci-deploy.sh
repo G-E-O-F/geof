@@ -34,6 +34,15 @@ fi
 
 ./.scripts/ci-prepare.sh
 
+echo "〘Deploy〙 GEOF.Sightglass"
+SIGHTGLASS_VERSION=$(git log --pretty=format:'%h' -n 1)
+
+cd sightglass
+MIX_ENV=prod mix release --env=prod
+gcloud builds submit --substitutions=_TAG=$SIGHTGLASS_VERSION .
+kubectl set image deployment/sightglass sightglass=gcr.io/geof-io/sightglass:$SIGHTGLASS_VERSION
+cd ..
+
 ./.scripts/docs.sh
 
 echo "〘Deploy〙 uploading docs to storage"
