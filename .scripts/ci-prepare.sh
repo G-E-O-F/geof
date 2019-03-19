@@ -1,5 +1,7 @@
 #! /bin/sh
 
+gcloud config set project geof-io
+
 if [ ! -f placard/functions/config/gcp-key.json ]
 then
   if [ -z ${GCP_KEY+x} ]
@@ -9,7 +11,7 @@ then
   else
     echo "〘Deploy〙 writing GCP key file from environment"
     mkdir -p placard/functions/config
-    echo "$GCP_KEY" >> placard/functions/config/gcp-key.json
+    printf '%s' $GCP_KEY > placard/functions/config/gcp-key.json
   fi
 else
   echo "〘Deploy〙 GCP key file present"
@@ -25,7 +27,7 @@ then
   else
     echo "〘Deploy〙 writing Twitter key file from environment"
     mkdir -p placard/functions/config
-    echo "$TWITTER_KEY" >> placard/functions/config/twitter-key.json
+    printf '%s' $TWITTER_KEY > placard/functions/config/twitter-key.json
   fi
 else
   echo "〘Deploy〙 Twitter key file present"
@@ -38,7 +40,7 @@ then
     echo "〘Deploy〙 no GEOF.Sightglass prod config found"
   else
     echo "〘Deploy〙 writing GEOF.Sightglass prod config from environment"
-    echo "SIGHTGLASS_PROD_CONFIG" >> sightglass/config/prod.secret.exs
+    printf '%s' $SIGHTGLASS_PROD_CONFIG > sightglass/config/prod.secret.exs
   fi
 else
   echo "〘Deploy〙 GEOF.Sightglass prod config present"
