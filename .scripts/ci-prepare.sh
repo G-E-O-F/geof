@@ -1,7 +1,5 @@
 #! /bin/sh
 
-gcloud config set project geof-io
-
 if [ ! -f placard/functions/config/gcp-key.json ]
 then
   if [ -z ${GCP_KEY+x} ]
@@ -16,8 +14,6 @@ then
 else
   echo "〘Deploy〙 GCP key file present"
 fi
-GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f placard/functions/config/gcp-key.json)
-gcloud auth activate-service-account --key-file placard/functions/config/gcp-key.json
 
 if [ ! -f placard/functions/config/twitter-key.json ]
 then
@@ -46,6 +42,9 @@ else
   echo "〘Deploy〙 GEOF.Sightglass prod config present"
 fi
 
+GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f placard/functions/config/gcp-key.json)
+gcloud auth activate-service-account --key-file placard/functions/config/gcp-key.json
+gcloud config set project geof-io
 
 cd placard/functions
 yarn install --non-interactive
