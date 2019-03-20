@@ -2,7 +2,6 @@
 
 ./.scripts/ci-prepare.sh
 
-apt-get install -y kubectl
 gcloud config set project geof-io
 gcloud info --run-diagnostics
 
