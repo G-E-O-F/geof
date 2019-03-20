@@ -2,6 +2,8 @@ import React from 'react'
 import Page from '../components/Page'
 import Loadable from 'react-loadable'
 
+import { fonts } from '../style'
+
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import List from '@material-ui/core/List'
@@ -12,6 +14,7 @@ import { withStyles } from '@material-ui/core'
 
 const styles = ({ breakpoints }) => ({
   hero: {
+    ...fonts.display.light,
     textAlign: 'center',
     minHeight: 'calc(90vh - 4rem)',
     boxSizing: 'border-box',

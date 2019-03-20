@@ -10,6 +10,11 @@ export default {
     },
   },
   display: {
+    light: {
+      ...displayFamily,
+      fontWeight: 200,
+      fontStyle: 'normal',
+    },
     bold: {
       ...displayFamily,
       fontWeight: 600,

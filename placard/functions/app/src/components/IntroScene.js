@@ -1,4 +1,5 @@
 import React from 'react'
+import cx from 'classnames'
 import THREE from 'three'
 import debounce from 'lodash/debounce'
 import DeviceOrientationController from '../modules/DeviceOrientationController'
@@ -8,7 +9,7 @@ import { withStyles } from '@material-ui/core'
 
 const styles = {
   animationRoot: {
-    opacity: 0.3,
+    opacity: 0,
     position: 'fixed',
     top: 0,
     bottom: 0,
@@ -17,6 +18,10 @@ const styles = {
     zIndex: -1,
     height: [['100%'], '!important'],
     width: [['100%'], '!important'],
+    transition: 'opacity 2s ease-out',
+  },
+  animationRootPlaying: {
+    opacity: 0.32,
   },
 }
 
@@ -98,9 +103,13 @@ class IntroScene extends React.Component {
     super(props)
     this.animationRoot = React.createRef()
     this.onResize = debounce(this._onResize, 200).bind(this)
+    this.state = {
+      playing: false,
+    }
   }
 
   playIntroAnimation() {
+    this.setState({ playing: true })
     play()
   }
 
@@ -122,8 +131,17 @@ class IntroScene extends React.Component {
 
   render() {
     const { classes } = this.props
+    const { playing } = this.state
 
-    return <canvas ref={this.animationRoot} className={classes.animationRoot} />
+    return (
+      <canvas
+        ref={this.animationRoot}
+        className={cx(
+          classes.animationRoot,
+          playing && classes.animationRootPlaying
+        )}
+      />
+    )
   }
 }
 
