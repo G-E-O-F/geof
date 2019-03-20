@@ -10,6 +10,7 @@ gcloud config set project ${GCP_PROJECT_NAME}
 
 # Submit build
 
+MIX_ENV=prod mix release --env=prod
 gcloud builds submit --substitutions=_TAG=start .
 
 # Create cluster
@@ -22,3 +23,6 @@ gcloud config set container/cluster ${GCP_CLUSTER_NAME}
 
 kubectl run ${GCP_SERVICE_NAME} --image=gcr.io/${GCP_PROJECT_NAME}/${GCP_SERVICE_NAME}:start --port 8080
 kubectl expose deployment ${GCP_SERVICE_NAME} --type=LoadBalancer --port 80 --target-port 8080
+
+echo "〘Ops〙 GEOF.Sightglass started"
+echo "〘Ops〙 Don’t forget to assign `sightglass.geof.io` to the load balancer’s IP, which you can find by running `kubectl get service`"
