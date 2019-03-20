@@ -11,11 +11,7 @@ then
   else
     echo "〘Deploy〙 writing GCP key file from environment"
     mkdir -p placard/functions/config
-    echo "〘Deploy〙"
-    echo $GCP_KEY > $GCP_KEY_FILE
-    echo "〘Deploy〙"
-    echo $(cat $GCP_KEY_FILE)
-    echo "〘Deploy〙"
+    echo $GCP_KEY | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/\\n/g' > $GCP_KEY_FILE
   fi
 else
   echo "〘Deploy〙 GCP key file present"

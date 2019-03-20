@@ -8,7 +8,7 @@
   "decimal": {:hex, :decimal, "1.5.0", "b0433a36d0e2430e3d50291b1c65f53c37d56f83665b43d79963684865beab68", [:mix], [], "hexpm"},
   "distillery": {:hex, :distillery, "2.0.12", "6e78fe042df82610ac3fa50bd7d2d8190ad287d120d3cd1682d83a44e8b34dfb", [:mix], [{:artificery, "~> 0.2", [hex: :artificery, repo: "hexpm", optional: false]}], "hexpm"},
   "file_system": {:hex, :file_system, "0.2.6", "fd4dc3af89b9ab1dc8ccbcc214a0e60c41f34be251d9307920748a14bf41f1d3", [:mix], [], "hexpm"},
-  "geof_planet": {:hex, :geof_planet, "0.1.0", "5fb20b3d97c21c5051133e881090526e38bd83728513e2ef7590093a1951c9a2", [:mix], [{:geof_shapes, "~> 0.1.0", [hex: :geof_shapes, repo: "hexpm", optional: false]}, {:gproc, "~> 0.8", [hex: :gproc, repo: "hexpm", optional: false]}], "hexpm"},
+  "geof_planet": {:hex, :geof_planet, "0.1.1", "2bf5e679fcafb3c900e9a06602a4fee8d9720dd5a93dd80bae62cbec610f1994", [:mix], [{:geof_shapes, "~> 0.1.0", [hex: :geof_shapes, repo: "hexpm", optional: false]}, {:gproc, "~> 0.8", [hex: :gproc, repo: "hexpm", optional: false]}], "hexpm"},
   "geof_shapes": {:hex, :geof_shapes, "0.1.0", "29dd93c23be92a4e065f1142bfa3d51bbfb1db30f46a310eea2150f00c5f1102", [:mix], [{:vector, "~> 1.0", [hex: :vector, repo: "hexpm", optional: false]}], "hexpm"},
   "gettext": {:hex, :gettext, "0.16.0", "4a7e90408cef5f1bf57c5a39e2db8c372a906031cc9b1466e963101cb927dafc", [:mix], [], "hexpm"},
   "gproc": {:hex, :gproc, "0.8.0", "cea02c578589c61e5341fce149ea36ccef236cc2ecac8691fba408e7ea77ec2f", [:rebar3], [], "hexpm"},
