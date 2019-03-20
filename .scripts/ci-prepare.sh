@@ -27,7 +27,7 @@ then
   else
     echo "〘Deploy〙 writing Twitter key file from environment"
     mkdir -p placard/functions/config
-    printf '%s' $TWITTER_KEY > $TWITTER_KEY_FILE
+    echo $TWITTER_KEY > $TWITTER_KEY_FILE
   fi
 else
   echo "〘Deploy〙 Twitter key file present"
@@ -40,7 +40,7 @@ then
     echo "〘Deploy〙 no GEOF.Sightglass prod config found"
   else
     echo "〘Deploy〙 writing GEOF.Sightglass prod config from environment"
-    printf '%s' $SIGHTGLASS_PROD_CONFIG > sightglass/config/prod.secret.exs
+    echo $SIGHTGLASS_PROD_CONFIG > sightglass/config/prod.secret.exs
   fi
 else
   echo "〘Deploy〙 GEOF.Sightglass prod config present"
