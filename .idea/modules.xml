@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/climate/climate.iml" filepath="$PROJECT_DIR$/climate/climate.iml" />
       <module fileurl="file://$PROJECT_DIR$/placard/placard.iml" filepath="$PROJECT_DIR$/placard/placard.iml" />
       <module fileurl="file://$PROJECT_DIR$/planet/planet.iml" filepath="$PROJECT_DIR$/planet/planet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.scripts/scripts.iml" filepath="$PROJECT_DIR$/.scripts/scripts.iml" />
       <module fileurl="file://$PROJECT_DIR$/shapes/shapes.iml" filepath="$PROJECT_DIR$/shapes/shapes.iml" />
       <module fileurl="file://$PROJECT_DIR$/sightglass/sightglass.iml" filepath="$PROJECT_DIR$/sightglass/sightglass.iml" />
       <module fileurl="file://$PROJECT_DIR$/theater/theater.iml" filepath="$PROJECT_DIR$/theater/theater.iml" />

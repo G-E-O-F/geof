@@ -10,6 +10,12 @@ mix format
 cd ..
 git add shapes
 
+echo "〘Lint & Add〙 GEOF.Climate"
+cd climate
+mix format
+cd ..
+git add climate
+
 echo "〘Lint & Add〙 GEOF.Sightglass"
 cd sightglass
 mix format
