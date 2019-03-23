@@ -34,7 +34,7 @@ defmodule GEOF.Planet.PanelServer do
   @doc "Gets the data in each Field managed by this Panel"
 
   @spec get_all_field_data(SphereServer.sphere_id(), SphereServer.panel_index()) ::
-          SphereServer.sphere_data()
+          SphereServer.fields_data()
 
   def get_all_field_data(sphere_id, panel_index) do
     GenServer.call(Registry.panel_via_reg(sphere_id, panel_index), :get_all_field_data)
@@ -42,13 +42,17 @@ defmodule GEOF.Planet.PanelServer do
 
   @doc "Starts a computation frame on this Panel. The PanelServer will send `__ready_to_commit_frame__` to its parent SphereServer when the frame is finished."
 
-  @spec start_frame(SphereServer.sphere_id(), SphereServer.panel_index(), SphereServer.fn_ref()) ::
-          :ok
+  @spec start_frame(
+          SphereServer.sphere_id(),
+          SphereServer.panel_index(),
+          SphereServer.fn_ref(),
+          any
+        ) :: :ok
 
-  def start_frame(sphere_id, panel_index, per_field) do
+  def start_frame(sphere_id, panel_index, per_field, sphere_data) do
     GenServer.cast(
       Registry.panel_via_reg(sphere_id, panel_index),
-      {:start_frame, per_field}
+      {:start_frame, per_field, sphere_data}
     )
   end
 
@@ -75,11 +79,12 @@ defmodule GEOF.Planet.PanelServer do
        field_data: init_field_data(fields),
        adjacent_fields: adjacent_fields,
        n_adjacent_fields: n_adjacent_fields(adjacent_fields),
+       sphere_data: nil,
        frame_fun: nil
      }}
   end
 
-  @spec init_field_data(MapSet.t(Field.index())) :: SphereServer.sphere_data()
+  @spec init_field_data(MapSet.t(Field.index())) :: SphereServer.fields_data()
 
   defp init_field_data(field_set) do
     Enum.reduce(field_set, %{}, &Map.put(&2, &1, nil))
@@ -173,10 +178,11 @@ defmodule GEOF.Planet.PanelServer do
   ###
 
   @impl true
-  def handle_cast({:start_frame, per_field}, state) do
+  def handle_cast({:start_frame, per_field, sphere_data}, state) do
     {sphere_id, panel_index} = state.id
 
     state = Map.put(state, :frame_fun, per_field)
+    state = Map.put(state, :sphere_data, sphere_data)
     state = Map.put(state, :adjacent_field_data, Map.new())
 
     Enum.each(state.adjacent_fields, fn {adjacent_panel_index, fields} ->
@@ -242,7 +248,8 @@ defmodule GEOF.Planet.PanelServer do
               function_name,
               [
                 {field_index, Map.get(state.field_data, field_index)},
-                get_adjacents_for_apply(state, field_index)
+                get_adjacents_for_apply(state, field_index),
+                state.sphere_data
               ]
             )
           )

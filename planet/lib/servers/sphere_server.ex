@@ -6,7 +6,7 @@ defmodule GEOF.Planet.SphereServer do
 
     In all servers for GEOF.Planet, the names `panel` and `field` are equivalent to `panel_index` and
     `field_index` respectively for the sake of brevity. The data belonging to a field is always
-    `field_data`, and a group of such data is `sphere_data`, whether it’s data for just part of
+    `field_data`, and a group of such data is `fields_data`, whether it’s data for just part of
     the sphere or for the entire sphere.
 
     In the servers’ APIs, `get` is always a call, and `send` and `receive` are always casts.
@@ -43,7 +43,7 @@ defmodule GEOF.Planet.SphereServer do
   @type panel_index :: non_neg_integer
 
   @typedoc "A mapping for Field data belonging to each Field index in a Sphere."
-  @type sphere_data :: %{Field.index() => any}
+  @type fields_data :: %{Field.index() => any}
 
   @typedoc "An arbitrary set of unique Field indices."
   @type fields :: MapSet.t(Field.index())
@@ -82,7 +82,7 @@ defmodule GEOF.Planet.SphereServer do
 
   @doc "Gets the data for each Field in the Sphere."
 
-  @spec get_all_field_data(sphere_id) :: sphere_data
+  @spec get_all_field_data(sphere_id) :: fields_data
 
   def get_all_field_data(sphere_id) do
     GenServer.call(Registry.sphere_via_reg(sphere_id), :get_all_field_data)
@@ -90,15 +90,18 @@ defmodule GEOF.Planet.SphereServer do
 
   @doc "Starts a compute frame. The SphereServer will send `frame_complete` when finished."
 
-  @spec start_frame(sphere_id, fn_ref, pid) :: :ok
+  @spec start_frame(sphere_id, fn_ref, any, pid) :: :ok
 
-  def start_frame(sphere_id, {module_name, function_name}, from) do
+  def start_frame(sphere_id, {module_name, function_name}, sphere_data, from) do
     per_field = {
       String.to_existing_atom("Elixir.#{module_name}"),
       String.to_existing_atom(function_name)
     }
 
-    GenServer.cast(Registry.sphere_via_reg(sphere_id), {:start_frame, per_field, from})
+    GenServer.cast(
+      Registry.sphere_via_reg(sphere_id),
+      {:start_frame, per_field, sphere_data, from}
+    )
   end
 
   ###
@@ -213,12 +216,13 @@ defmodule GEOF.Planet.SphereServer do
   ###
 
   @impl true
-  def handle_cast({:start_frame, per_field, from}, state) do
+  def handle_cast({:start_frame, per_field, sphere_data, from}, state) do
     Enum.each(Map.keys(state.sphere.fields_at_panels), fn panel_index ->
       PanelServer.start_frame(
         state.sphere.id,
         panel_index,
-        per_field
+        per_field,
+        sphere_data
       )
     end)
 

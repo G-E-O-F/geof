@@ -1,7 +1,7 @@
 defmodule GEOF.Planet.SphereServerTestBattery do
   alias GEOF.Planet.Field
 
-  def add_one_to_field({_field_index, field_data}, _adjacent_fields_with_data) do
+  def add_one_to_field({_field_index, field_data}, _adjacent_fields_with_data, _sphere_data) do
     if field_data == nil do
       1
     else
@@ -9,7 +9,7 @@ defmodule GEOF.Planet.SphereServerTestBattery do
     end
   end
 
-  def confirm_link({field_index, _field_data}, adjacent_fields_with_data) do
+  def confirm_link({field_index, _field_data}, adjacent_fields_with_data, _sphere_data) do
     # Assumes divisions is 8!
     adj = Field.adjacents(field_index, 8)
 
@@ -17,6 +17,10 @@ defmodule GEOF.Planet.SphereServerTestBattery do
       Map.new(adjacent_fields_with_data, fn {dir, {adj_field_index, nil}} ->
         {dir, adj_field_index}
       end)
+  end
+
+  def confirm_sphere_data(_field_data, _adjacent_fields_with_data, sphere_data) do
+    sphere_data + 2
   end
 end
 
@@ -57,6 +61,28 @@ defmodule GEOF.Planet.SphereServerTest do
     assert :ok = GenServer.stop(sspid)
   end
 
+  test "fields have access to global sphere data" do
+    d = 8
+    id = make_ref()
+
+    assert {:ok, sspid} = SphereServer.start_link(d, id)
+
+    all_fields_with_three = Sphere.for_all_fields(Map.new(), d, &Map.put(&1, &2, 3))
+
+    SphereServer.start_frame(
+      id,
+      {"GEOF.Planet.SphereServerTestBattery", "confirm_sphere_data"},
+      1,
+      self()
+    )
+
+    assert_receive :frame_complete, 5000
+
+    assert SphereServer.get_all_field_data(id) == all_fields_with_three
+
+    assert :ok = GenServer.stop(sspid)
+  end
+
   test "iterates twice" do
     d = 8
     id = make_ref()
@@ -69,6 +95,7 @@ defmodule GEOF.Planet.SphereServerTest do
     SphereServer.start_frame(
       id,
       {"GEOF.Planet.SphereServerTestBattery", "add_one_to_field"},
+      nil,
       self()
     )
 
@@ -79,6 +106,7 @@ defmodule GEOF.Planet.SphereServerTest do
     SphereServer.start_frame(
       id,
       {"GEOF.Planet.SphereServerTestBattery", "add_one_to_field"},
+      nil,
       self()
     )
 
@@ -100,6 +128,7 @@ defmodule GEOF.Planet.SphereServerTest do
     SphereServer.start_frame(
       id,
       {"GEOF.Planet.SphereServerTestBattery", "confirm_link"},
+      nil,
       self()
     )
 
