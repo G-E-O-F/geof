@@ -31,14 +31,15 @@ defmodule GEOF.Sightglass.Mixfile do
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
       {:absinthe_phoenix, "~> 1.4"},
+      {:cowboy, "~> 1.0"},
       {:distillery, "~> 2.0"},
       {:geof_planet, "0.1.1"},
+      {:gettext, "~> 0.11"},
       {:phoenix, "~> 1.3.4"},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
-      {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"}
+      {:uuid, "~> 1.1"}
     ]
   end
 end

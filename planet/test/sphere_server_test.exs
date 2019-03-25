@@ -43,6 +43,17 @@ defmodule GEOF.Planet.SphereServerTest do
     assert :ok = GenServer.stop(sspid)
   end
 
+  test "times out" do
+    d = 11
+    id = make_ref()
+
+    assert {:ok, sspid} = SphereServer.start_link(d, id, 100, self())
+
+    assert_receive :timeout, 200
+
+    assert :ok = GenServer.stop(sspid)
+  end
+
   test "gets field data from panel children" do
     d = 17
     id = make_ref()

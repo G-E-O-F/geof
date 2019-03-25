@@ -12,8 +12,8 @@ defmodule GEOF.Sightglass.Application do
       supervisor(GEOF.SightglassWeb.Endpoint, []),
       # Start the subscription service
       supervisor(Absinthe.Subscription, [GEOF.SightglassWeb.Endpoint])
-      # Start your own worker by calling: GEOF.Sightglass.Worker.start_link(arg1, arg2, arg3)
-      # worker(GEOF.Sightglass.Worker, [arg1, arg2, arg3]),
+      # Start GEOF model services
+      # todo: (create and) start a supervisor that keeps planetServers cached and alive.
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

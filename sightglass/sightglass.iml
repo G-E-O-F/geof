@@ -19,5 +19,6 @@
     <orderEntry type="library" name="gettext" level="project" />
     <orderEntry type="library" name="cowboy" level="project" />
     <orderEntry type="library" name="distillery" level="project" />
+    <orderEntry type="library" name="uuid" level="project" />
   </component>
 </module>

@@ -75,7 +75,15 @@ defmodule GEOF.Planet.SphereServer do
   @spec start_link(Sphere.divisions(), sphere_id) :: GenServer.on_start()
 
   def start_link(divisions, sphere_id) do
-    GenServer.start_link(__MODULE__, [divisions, sphere_id],
+    start_link(divisions, sphere_id, :infinity, nil)
+  end
+
+  @doc "Stars a SphereServer as above with an additional timeout and a parent which the server will send messages to on timeout, etc. On timeout, a SphereServer will hibernate."
+
+  @spec start_link(Sphere.divisions(), sphere_id, timeout, pid) :: GenServer.on_start()
+
+  def start_link(divisions, sphere_id, timeout_duration, parent_pid) do
+    GenServer.start_link(__MODULE__, [divisions, sphere_id, timeout_duration, parent_pid],
       name: Registry.sphere_via_reg(sphere_id)
     )
   end
@@ -115,17 +123,21 @@ defmodule GEOF.Planet.SphereServer do
   ###
 
   @impl true
-  def init([divisions, sphere_id]) do
+  def init([divisions, sphere_id, timeout_duration, parent_pid]) do
     sphere = init_sphere(divisions, sphere_id)
 
     {:ok, panel_supervisor} = PanelSupervisor.start_link(sphere)
 
-    {:ok,
-     %{
-       sphere: sphere,
-       panel_supervisor: panel_supervisor,
-       in_frame: false
-     }}
+    {
+      :ok,
+      %{
+        sphere: sphere,
+        panel_supervisor: panel_supervisor,
+        in_frame: false,
+        parent_process: parent_pid
+      },
+      timeout_duration
+    }
   end
 
   @spec init_sphere(Sphere.divisions(), sphere_id) :: sphere
@@ -264,5 +276,17 @@ defmodule GEOF.Planet.SphereServer do
 
   defp ready_to_commit_frame?(state) do
     MapSet.size(state.__panels_ready_to_commit__) == state.sphere.n_panels
+  end
+
+  @impl true
+  def handle_info(:timeout, state) do
+    # Hibernates and lets the parent decide what to do.
+    if is_pid(state.parent_process), do: send(state.parent_process, :timeout)
+
+    {
+      :noreply,
+      state,
+      :hibernate
+    }
   end
 end
