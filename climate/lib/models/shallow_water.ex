@@ -20,6 +20,7 @@ defmodule GEOF.Climate.ShallowWaterModel do
     u_0: 40.0,
     # todo: what's this?
     p_0: 2.94e4,
+    # todo: what's this?
     alpha: 60 * @deg_to_rad,
     # time step in seconds
     dt: 300.0
