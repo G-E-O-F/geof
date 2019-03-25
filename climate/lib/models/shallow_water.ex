@@ -15,7 +15,7 @@ defmodule GEOF.Climate.ShallowWaterModel do
     # rate of rotation = earth's
     omega: 7.292e-5,
     # todo: what's this?
-    f_0: 2.0 * omega,
+    f_0: 2.0 * 7.292e-5,
     # todo: what's this?
     u_0: 40.0,
     # todo: what's this?
