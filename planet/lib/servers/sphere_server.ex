@@ -281,7 +281,7 @@ defmodule GEOF.Planet.SphereServer do
   @impl true
   def handle_info(:timeout, state) do
     # Hibernates and lets the parent decide what to do.
-    if is_pid(state.parent_process), do: send(state.parent_process, {:timeout, self()})
+    if is_pid(state.parent_process), do: send(state.parent_process, {:timeout, state.sphere.id})
 
     {
       :noreply,

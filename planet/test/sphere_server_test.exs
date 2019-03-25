@@ -49,9 +49,9 @@ defmodule GEOF.Planet.SphereServerTest do
 
     assert {:ok, sspid} = SphereServer.start_link(d, id, 100, self())
 
-    assert_receive {:timeout, child_pid}, 200
+    assert_receive {:timeout, sphere_id}, 200
 
-    assert child_pid == sspid
+    assert sphere_id == id
 
     assert :ok = GenServer.stop(sspid)
   end
