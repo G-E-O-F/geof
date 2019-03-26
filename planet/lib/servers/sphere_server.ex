@@ -96,7 +96,22 @@ defmodule GEOF.Planet.SphereServer do
     GenServer.call(Registry.sphere_via_reg(sphere_id), :get_all_field_data)
   end
 
-  @doc "Starts a compute frame. The SphereServer will send `frame_complete` when finished."
+  @doc "Starts a compute frame. The SphereServer will send `frame_complete` when finished. Global data for the sphere, `sphere_data`, can be supplied either directly or by a function reference in the form `{module_name, function_name}`, as is always the case with the per-field callback."
+
+  @spec start_frame(sphere_id, fn_ref, fn_ref, pid) :: :ok
+
+  def start_frame(sphere_id, fn_ref, {module_name, function_name}, from) do
+    start_frame(
+      sphere_id,
+      fn_ref,
+      apply(
+        String.to_existing_atom("Elixir.#{module_name}"),
+        String.to_existing_atom(function_name),
+        [sphere_id]
+      ),
+      from
+    )
+  end
 
   @spec start_frame(sphere_id, fn_ref, any, pid) :: :ok
 
@@ -110,6 +125,10 @@ defmodule GEOF.Planet.SphereServer do
       Registry.sphere_via_reg(sphere_id),
       {:start_frame, per_field, sphere_data, from}
     )
+  end
+
+  def in_frame?(sphere_id) do
+    GenServer.call(Registry.sphere_via_reg(sphere_id), :get_in_frame)
   end
 
   ###
@@ -174,6 +193,16 @@ defmodule GEOF.Planet.SphereServer do
           panel_data
         )
       end),
+      state,
+      state.inactivity_timeout
+    }
+  end
+
+  @impl true
+  def handle_call(:get_in_frame, _from, state) do
+    {
+      :reply,
+      state.in_frame,
       state,
       state.inactivity_timeout
     }
@@ -272,7 +301,8 @@ defmodule GEOF.Planet.SphereServer do
       GenServer.call(Registry.panel_via_reg(state.sphere.id, panel_index), :__commit_frame__)
     end)
 
-    if is_pid(state.__reply_to__), do: send(state.__reply_to__, :frame_complete)
+    if is_pid(state.__reply_to__),
+      do: send(state.__reply_to__, {:frame_complete, state.sphere.id})
 
     {
       :noreply,

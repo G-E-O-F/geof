@@ -26,6 +26,10 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
     GenServer.call(__MODULE__, {:get_planet_field_data, sphere_id})
   end
 
+  def run_frame(sphere_id, field_fn_ref, sphere_data \\ nil) do
+    GenServer.cast(__MODULE__, {:run_frame, sphere_id, field_fn_ref, sphere_data})
+  end
+
   def end_planet(sphere_id) do
     GenServer.call(__MODULE__, {:end_planet, sphere_id})
   end
@@ -65,7 +69,7 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
     {
       :reply,
       sphere_id,
-      Map.put_new(state, sphere_id, pid: sspid, reporter_process: opts[:reporter_process])
+      Map.put_new(state, sphere_id, pid: sspid, requester: opts[:requester])
     }
   end
 
@@ -82,6 +86,22 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
       true ->
         {:reply, :not_found, state}
     end
+  end
+
+  @impl true
+  def handle_cast({:run_frame, sphere_id, field_fn_ref, sphere_data}, state) do
+    if Map.has_key?(state, sphere_id) do
+      if SphereServer.in_frame?(sphere_id) do
+        send(state[sphere_id][:requester], :busy)
+      else
+        SphereServer.start_frame(sphere_id, field_fn_ref, sphere_data, self())
+        # send nothing
+      end
+    else
+      IO.puts('〘PlanetCache〙〘run_frame〙no sphereServer monitored for id #{sphere_id}')
+    end
+
+    {:noreply, state}
   end
 
   @impl true
@@ -103,12 +123,28 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
   def handle_info({:inactive, sphere_id}, state) do
     :ok = GenServer.stop(state[sphere_id][:pid])
 
-    if is_pid(state[sphere_id][:reporter_process]),
-      do: send(state[sphere_id][:reporter_process], {:terminated, sphere_id})
+    send(state[sphere_id][:requester], {:terminated, sphere_id})
 
     {
       :noreply,
       Map.delete(state, sphere_id)
     }
+  end
+
+  @impl true
+  def handle_info({:frame_complete, sphere_id}, state) do
+    if Map.has_key?(state, sphere_id) do
+      send(
+        state[sphere_id][:requester],
+        {
+          :frame_complete,
+          SphereServer.get_all_field_data(sphere_id)
+        }
+      )
+    else
+      IO.puts('〘PlanetCache〙〘frame_complete〙no sphereServer monitored for id #{sphere_id}')
+    end
+
+    {:noreply, state}
   end
 end

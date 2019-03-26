@@ -91,7 +91,9 @@ defmodule GEOF.Planet.SphereServerTest do
       self()
     )
 
-    assert_receive :frame_complete, 5000
+    assert_receive {:frame_complete, sphere_id}, 5000
+
+    assert sphere_id == id
 
     assert SphereServer.get_all_field_data(id) == all_fields_with_three
 
@@ -114,7 +116,9 @@ defmodule GEOF.Planet.SphereServerTest do
       self()
     )
 
-    assert_receive :frame_complete, 5000
+    assert_receive {:frame_complete, sphere_id}, 5000
+
+    assert sphere_id == id
 
     assert SphereServer.get_all_field_data(id) == all_fields_with_one
 
@@ -125,7 +129,9 @@ defmodule GEOF.Planet.SphereServerTest do
       self()
     )
 
-    assert_receive :frame_complete, 5000
+    assert_receive {:frame_complete, sphere_id}, 5000
+
+    assert sphere_id == id
 
     assert SphereServer.get_all_field_data(id) == all_fields_with_two
 
@@ -147,7 +153,9 @@ defmodule GEOF.Planet.SphereServerTest do
       self()
     )
 
-    assert_receive :frame_complete, 5000
+    assert_receive {:frame_complete, sphere_id}, 5000
+
+    assert sphere_id == id
 
     assert SphereServer.get_all_field_data(id) == all_fields_with_true
 
