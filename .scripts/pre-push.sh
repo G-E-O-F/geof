@@ -18,3 +18,10 @@ if ! mix test; then
   exit 1
 fi
 cd ..
+
+echo "〘Test〙 GEOF.Sightglass"
+cd sightglass
+if ! mix test; then
+  exit 1
+fi
+cd ..

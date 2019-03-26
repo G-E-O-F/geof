@@ -9,7 +9,25 @@ defmodule GEOF.Sightglass.Mixfile do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      test_coverage: test(),
+      preferred_cli_env: cli_env()
+    ]
+  end
+
+  def test do
+    [
+      tool: ExCoveralls,
+      output: "_cover"
+    ]
+  end
+
+  def cli_env do
+    [
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test
     ]
   end
 
@@ -33,6 +51,7 @@ defmodule GEOF.Sightglass.Mixfile do
       {:absinthe_phoenix, "~> 1.4"},
       {:cowboy, "~> 1.0"},
       {:distillery, "~> 2.0"},
+      {:excoveralls, "~> 0.10.5", only: :test, runtime: false},
       {:geof_planet, [path: "../planet"]},
       {:gettext, "~> 0.11"},
       {:phoenix, "~> 1.3.4"},

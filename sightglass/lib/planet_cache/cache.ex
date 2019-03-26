@@ -89,6 +89,21 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
   end
 
   @impl true
+  def handle_call({:end_planet, sphere_id}, _from, state) do
+    cond do
+      Map.has_key?(state, sphere_id) ->
+        {
+          :reply,
+          GenServer.stop(state[sphere_id][:pid]),
+          Map.delete(state, sphere_id)
+        }
+
+      true ->
+        {:reply, :not_found, state}
+    end
+  end
+
+  @impl true
   def handle_cast({:run_frame, sphere_id, field_fn_ref, sphere_data}, state) do
     if Map.has_key?(state, sphere_id) do
       if SphereServer.in_frame?(sphere_id) do
@@ -102,21 +117,6 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
     end
 
     {:noreply, state}
-  end
-
-  @impl true
-  def handle_call({:end_planet, sphere_id}, _from, state) do
-    cond do
-      Map.has_key?(state, sphere_id) ->
-        {
-          :reply,
-          GenServer.stop(state[sphere_id][:pid]),
-          Map.delete(state, sphere_id)
-        }
-
-      true ->
-        {:reply, :not_found, state}
-    end
   end
 
   @impl true
