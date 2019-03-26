@@ -127,6 +127,8 @@ defmodule GEOF.Planet.SphereServer do
     sphere = init_sphere(divisions, sphere_id)
 
     {:ok, panel_supervisor} = PanelSupervisor.start_link(sphere)
+    IO.puts('Timeout of #{timeout_duration} set for')
+    IO.inspect(sphere_id)
 
     {
       :ok,
@@ -281,6 +283,8 @@ defmodule GEOF.Planet.SphereServer do
   @impl true
   def handle_info(:timeout, state) do
     # Hibernates and lets the parent decide what to do.
+    IO.puts('Sending timeout for')
+    IO.inspect(state.sphere.id)
     if is_pid(state.parent_process), do: send(state.parent_process, {:inactive, state.sphere.id})
 
     {
