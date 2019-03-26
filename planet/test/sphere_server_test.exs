@@ -49,6 +49,8 @@ defmodule GEOF.Planet.SphereServerTest do
 
     assert {:ok, sspid} = SphereServer.start_link(d, id, 100, self())
 
+    assert field_data = SphereServer.get_all_field_data(id)
+
     assert_receive {:inactive, sphere_id}, 200
 
     assert sphere_id == id

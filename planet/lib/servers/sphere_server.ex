@@ -82,8 +82,8 @@ defmodule GEOF.Planet.SphereServer do
 
   @spec start_link(Sphere.divisions(), sphere_id, timeout, pid) :: GenServer.on_start()
 
-  def start_link(divisions, sphere_id, timeout_duration, parent_pid) do
-    GenServer.start_link(__MODULE__, [divisions, sphere_id, timeout_duration, parent_pid],
+  def start_link(divisions, sphere_id, inactivity_timeout, parent_pid) do
+    GenServer.start_link(__MODULE__, [divisions, sphere_id, inactivity_timeout, parent_pid],
       name: Registry.sphere_via_reg(sphere_id)
     )
   end
@@ -123,12 +123,10 @@ defmodule GEOF.Planet.SphereServer do
   ###
 
   @impl true
-  def init([divisions, sphere_id, timeout_duration, parent_pid]) do
+  def init([divisions, sphere_id, inactivity_timeout, parent_pid]) do
     sphere = init_sphere(divisions, sphere_id)
 
     {:ok, panel_supervisor} = PanelSupervisor.start_link(sphere)
-    IO.puts('Timeout of #{timeout_duration} set for')
-    IO.inspect(sphere_id)
 
     {
       :ok,
@@ -136,9 +134,10 @@ defmodule GEOF.Planet.SphereServer do
         sphere: sphere,
         panel_supervisor: panel_supervisor,
         in_frame: false,
-        parent_process: parent_pid
+        parent_process: parent_pid,
+        inactivity_timeout: inactivity_timeout
       },
-      timeout_duration
+      inactivity_timeout
     }
   end
 
@@ -165,15 +164,19 @@ defmodule GEOF.Planet.SphereServer do
 
   @impl true
   def handle_call(:get_all_field_data, _from, state) do
-    {:reply,
-     Enum.reduce(Map.keys(state.sphere.fields_at_panels), %{}, fn panel_index, all_data ->
-       panel_data = PanelServer.get_all_field_data(state.sphere.id, panel_index)
+    {
+      :reply,
+      Enum.reduce(Map.keys(state.sphere.fields_at_panels), %{}, fn panel_index, all_data ->
+        panel_data = PanelServer.get_all_field_data(state.sphere.id, panel_index)
 
-       Map.merge(
-         all_data,
-         panel_data
-       )
-     end), state}
+        Map.merge(
+          all_data,
+          panel_data
+        )
+      end),
+      state,
+      state.inactivity_timeout
+    }
   end
 
   ###
@@ -240,12 +243,15 @@ defmodule GEOF.Planet.SphereServer do
       )
     end)
 
-    {:noreply,
-     Map.merge(state, %{
-       __reply_to__: from,
-       __panels_ready_to_commit__: MapSet.new(),
-       in_frame: true
-     })}
+    {
+      :noreply,
+      Map.merge(state, %{
+        __reply_to__: from,
+        __panels_ready_to_commit__: MapSet.new(),
+        in_frame: true
+      }),
+      state.inactivity_timeout
+    }
   end
 
   @impl true
@@ -257,7 +263,7 @@ defmodule GEOF.Planet.SphereServer do
       )
 
     if ready_to_commit_frame?(state), do: GenServer.cast(self(), :__commit_frame__)
-    {:noreply, state}
+    {:noreply, state, state.inactivity_timeout}
   end
 
   @impl true
@@ -268,12 +274,15 @@ defmodule GEOF.Planet.SphereServer do
 
     if is_pid(state.__reply_to__), do: send(state.__reply_to__, :frame_complete)
 
-    {:noreply,
-     Map.drop(state, [
-       :__reply_to__,
-       :__panels_ready_to_commit__
-     ])
-     |> Map.put(:in_frame, false)}
+    {
+      :noreply,
+      Map.drop(state, [
+        :__reply_to__,
+        :__panels_ready_to_commit__
+      ])
+      |> Map.put(:in_frame, false),
+      state.inactivity_timeout
+    }
   end
 
   defp ready_to_commit_frame?(state) do
@@ -283,8 +292,6 @@ defmodule GEOF.Planet.SphereServer do
   @impl true
   def handle_info(:timeout, state) do
     # Hibernates and lets the parent decide what to do.
-    IO.puts('Sending timeout for')
-    IO.inspect(state.sphere.id)
     if is_pid(state.parent_process), do: send(state.parent_process, {:inactive, state.sphere.id})
 
     {
