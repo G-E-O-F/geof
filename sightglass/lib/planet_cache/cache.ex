@@ -101,7 +101,6 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
 
   @impl true
   def handle_info({:inactive, sphere_id}, state) do
-    IO.puts('Closing sphereServer due to inactivity: #{sphere_id}}')
     :ok = GenServer.stop(state[sphere_id][:pid])
 
     if is_pid(state[sphere_id][:reporter_process]),

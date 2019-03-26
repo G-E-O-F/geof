@@ -27,9 +27,17 @@ defmodule GEOF.Sightglass.PlanetCacheTest do
     d = 3
 
     assert sphere_id =
-             Cache.start_planet(divisions: d, timeout_duration: 500, reporter_process: self())
+             Cache.start_planet(
+               divisions: d,
+               timeout_duration: 500,
+               reporter_process: self()
+             )
+
+    assert field_data = Cache.get_planet_field_data(sphere_id)
 
     assert_receive {:terminated, sphere_id}, 10000
+
+    assert :not_found = Cache.get_planet_field_data(sphere_id)
 
     assert :ok = GenServer.stop(pcpid)
   end
