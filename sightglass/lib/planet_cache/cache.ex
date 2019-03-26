@@ -3,8 +3,8 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
 
   alias GEOF.Planet.SphereServer
 
-  # 40 seconds
-  @planet_timeout 40 * 1000
+  @planet_timeout 30 * 1000
+  @planet_timeout_max 120 * 1000
 
   # based on boilerplate retrieved from https://thoughtbot.com/blog/make-phoenix-even-faster-with-a-genserver-backed-key-value-store
 
@@ -22,6 +22,10 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
     GenServer.call(__MODULE__, {:start_planet, divisions})
   end
 
+  def get_planet_field_data(sphere_id) do
+    GenServer.call(__MODULE__, {:get_planet_field_data, sphere_id})
+  end
+
   def end_planet(sphere_id) do
     GenServer.call(__MODULE__, {:end_planet, sphere_id})
   end
@@ -33,7 +37,7 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
   ###
 
   @impl true
-  def init() do
+  def init(_args) do
     {
       :ok,
       %{}
@@ -41,14 +45,20 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
   end
 
   @impl true
-  def handle_call({:start_planet, divisions}, _from, state) do
-    sphere_id = UUID.uuid5(:dns, "sightglass.geof.io")
+  def handle_call({:start_planet, opts}, _from, state) do
+    sphere_id = UUID.uuid1()
 
-    sspid =
+    timeout_duration =
+      cond do
+        opts[:timeout_duration] < @planet_timeout_max -> opts[:timeout_duration]
+        true -> @planet_timeout
+      end
+
+    {:ok, sspid} =
       SphereServer.start_link(
-        divisions,
+        opts[:divisions],
         sphere_id,
-        @planet_timeout,
+        timeout_duration,
         self()
       )
 
@@ -60,17 +70,39 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
   end
 
   @impl true
-  def handle_call({:end_planet, sphere_id}, _from, state) do
-    {
-      :reply,
-      GenServer.stop(state[sphere_id], :ended),
-      Map.delete(state, sphere_id)
-    }
+  def handle_call({:get_planet_field_data, sphere_id}, _from, state) do
+    cond do
+      is_pid(state[sphere_id]) ->
+        {
+          :reply,
+          SphereServer.get_all_field_data(sphere_id),
+          state
+        }
+
+      true ->
+        {:reply, :not_found, state}
+    end
   end
 
   @impl true
-  def handle_info({:timeout, sphere_id}, state) do
-    GenServer.stop(state[sphere_id], :inactivity)
+  def handle_call({:end_planet, sphere_id}, _from, state) do
+    cond do
+      is_pid(state[sphere_id]) ->
+        {
+          :reply,
+          GenServer.stop(state[sphere_id]),
+          Map.delete(state, sphere_id)
+        }
+
+      true ->
+        {:reply, :not_found, state}
+    end
+  end
+
+  @impl true
+  def handle_info({:inactive, sphere_id}, state) do
+    IO.puts('Closing sphereServer due to inactivity: #{sphere_id}}')
+    :ok = GenServer.stop(state[sphere_id])
 
     {
       :noreply,

@@ -33,7 +33,7 @@ defmodule GEOF.Sightglass.Mixfile do
       {:absinthe_phoenix, "~> 1.4"},
       {:cowboy, "~> 1.0"},
       {:distillery, "~> 2.0"},
-      {:geof_planet, "0.1.1"},
+      {:geof_planet, [path: "../planet"]},
       {:gettext, "~> 0.11"},
       {:phoenix, "~> 1.3.4"},
       {:phoenix_pubsub, "~> 1.0"},
