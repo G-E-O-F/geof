@@ -76,6 +76,20 @@ defmodule GEOF.Planet.SphereServerTest do
     assert :ok = GenServer.stop(sspid)
   end
 
+  test "gets basic geometry" do
+    d = 9
+    id = make_ref()
+
+    assert {:ok, sspid} = SphereServer.start_link(d, id)
+
+    assert %{:divisions => div, :field_centroids => f_c, :interfield_centroids => if_c} =
+             SphereServer.get_basic_geometry(id)
+
+    assert div == d
+
+    assert :ok = GenServer.stop(sspid)
+  end
+
   test "fields have access to global sphere data" do
     d = 8
     id = make_ref()

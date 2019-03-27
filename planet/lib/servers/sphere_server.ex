@@ -90,15 +90,19 @@ defmodule GEOF.Planet.SphereServer do
 
   @doc "Gets the data for each Field in the Sphere."
 
-  @spec get_all_field_data(sphere_id) :: fields_data
+  @spec get_all_field_data(sphere_id) :: fields_data | :busy
 
   def get_all_field_data(sphere_id) do
-    GenServer.call(Registry.sphere_via_reg(sphere_id), :get_all_field_data)
+    if in_frame?(sphere_id) do
+      :busy
+    else
+      GenServer.call(Registry.sphere_via_reg(sphere_id), :get_all_field_data)
+    end
   end
 
-  @doc "Starts a compute frame. The SphereServer will send `frame_complete` when finished. Global data for the sphere, `sphere_data`, can be supplied either directly or by a function reference in the form `{module_name, function_name}`, as is always the case with the per-field callback."
+  @doc "Starts a compute frame. The SphereServer will send `frame_complete` when finished. Global data for the sphere, `sphere_data`, can be supplied either directly or by a function reference in the form `{module_name, function_name}`. This is always the case with the per-field callback."
 
-  @spec start_frame(sphere_id, fn_ref, fn_ref, pid) :: :ok
+  @spec start_frame(sphere_id, fn_ref, fn_ref, pid) :: :ok | :busy
 
   def start_frame(sphere_id, fn_ref, {module_name, function_name}, from) do
     start_frame(
@@ -113,19 +117,42 @@ defmodule GEOF.Planet.SphereServer do
     )
   end
 
-  @spec start_frame(sphere_id, fn_ref, any, pid) :: :ok
+  @spec start_frame(sphere_id, fn_ref, any, pid) :: :ok | :busy
 
   def start_frame(sphere_id, {module_name, function_name}, sphere_data, from) do
-    per_field = {
-      String.to_existing_atom("Elixir.#{module_name}"),
-      String.to_existing_atom(function_name)
-    }
-
-    GenServer.cast(
-      Registry.sphere_via_reg(sphere_id),
-      {:start_frame, per_field, sphere_data, from}
-    )
+    if in_frame?(sphere_id) do
+      :busy
+    else
+      GenServer.cast(
+        Registry.sphere_via_reg(sphere_id),
+        {
+          :start_frame,
+          {
+            String.to_existing_atom("Elixir.#{module_name}"),
+            String.to_existing_atom(function_name)
+          },
+          sphere_data,
+          from
+        }
+      )
+    end
   end
+
+  @doc "Returns the field centroids and interfield centroids."
+
+  @spec get_basic_geometry(sphere_id) :: %{
+          :divisions => Sphere.divisions(),
+          :field_centroids => FieldCentroids.centroid_sphere(),
+          :interfield_centroids => InterfieldCentroids.interfield_centroid_sphere()
+        }
+
+  def get_basic_geometry(sphere_id) do
+    GenServer.call(Registry.sphere_via_reg(sphere_id), :get_basic_geometry)
+  end
+
+  @doc "Returns whether this Sphere is in the middle of computing a frame."
+
+  @spec in_frame?(sphere_id) :: boolean
 
   def in_frame?(sphere_id) do
     GenServer.call(Registry.sphere_via_reg(sphere_id), :get_in_frame)
@@ -193,6 +220,16 @@ defmodule GEOF.Planet.SphereServer do
           panel_data
         )
       end),
+      state,
+      state.inactivity_timeout
+    }
+  end
+
+  @impl true
+  def handle_call(:get_basic_geometry, _from, state) do
+    {
+      :reply,
+      Map.take(state.sphere, [:divisions, :field_centroids, :interfield_centroids]),
       state,
       state.inactivity_timeout
     }
