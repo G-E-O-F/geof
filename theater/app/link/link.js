@@ -11,17 +11,19 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-const meshProps = ['position', 'index']
+const meshProps = ['position', 'index', 'normal', 'vertex_order']
+const meshQuery = 'planetMesh'
+const meshType = 'mesh'
 
 export function getPlanetMesh(id) {
   return Promise.all(
-    meshProps.map(meshProp =>
+    meshProps.map(prop =>
       client.query({
         query: gql`
       {
-        planetWireframe(id: "${id}") {
-          wireframe {
-            ${meshProp}
+        ${meshQuery}(id: "${id}") {
+          ${meshType} {
+            ${prop}
           }
         }
       }`,
@@ -30,16 +32,47 @@ export function getPlanetMesh(id) {
   ).then(
     results =>
       meshProps.reduce(
-        (mesh, meshProp, mpi) =>
+        (mesh, prop, mpi) =>
           Object.assign(mesh, {
-            [meshProp]: get(
-              results[mpi],
-              `data.planetWireframe.wireframe.${meshProp}`,
-            ),
+            [prop]: get(results[mpi], `data.${meshQuery}.${meshType}.${prop}`),
           }),
         {},
       ),
     err => console.log('[Mesh query]', err),
+  )
+}
+
+const wireframeProps = ['position', 'index']
+const wireframeQuery = 'planetWireframe'
+const wireframeType = 'wireframe'
+
+export function getPlanetWireframe(id) {
+  return Promise.all(
+    wireframeProps.map(prop =>
+      client.query({
+        query: gql`
+      {
+        ${wireframeQuery}(id: "${id}") {
+          ${wireframeType} {
+            ${prop}
+          }
+        }
+      }`,
+      }),
+    ),
+  ).then(
+    results =>
+      wireframeProps.reduce(
+        (mesh, prop, mpi) =>
+          Object.assign(mesh, {
+            [prop]: get(
+              results[mpi],
+              `data.${wireframeQuery}.${wireframeType}.${prop}`,
+            ),
+          }),
+        {},
+      ),
+    err => console.log('[Wireframe query]', err),
   )
 }
 

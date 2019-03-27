@@ -2,12 +2,17 @@ import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import domLoaded from 'dom-loaded'
 
-import { getPlanetMesh, requisitionPlanet } from './link/link'
+import {
+  getPlanetMesh,
+  getPlanetWireframe,
+  requisitionPlanet,
+} from './link/link'
 
 import {
   play,
   onResize as resizeRenderer,
-  setPlanet,
+  setPlanetMesh,
+  setPlanetWireframe,
   setPlanetFrame,
   setRenderer,
 } from './scene/scene'
@@ -27,21 +32,6 @@ function onResize() {
 }
 
 let lastT = Date.now()
-
-function onReceivePlanetMesh(mesh) {
-  if (mesh) {
-    console.info(
-      '[Receive mesh]',
-      'success',
-      mesh.position.length,
-      'f',
-      mesh.index.length,
-      'i',
-    )
-    console.info('[Latency]', Date.now() - lastT, 'ms')
-    setPlanet(mesh)
-  } else console.warn('[Receive mesh]', 'unexpected payload')
-}
 
 function onReceivePlanetFrame(result) {
   const frameColors = get(result, 'data.elapseFrame.colors', null)
@@ -64,8 +54,14 @@ function __main__() {
   lastT = Date.now()
 
   requisitionPlanet(DIVISIONS)
-    .then(getPlanetMesh)
-    .then(onReceivePlanetMesh)
+    .then(id => Promise.all([getPlanetMesh(id), getPlanetWireframe(id)]))
+    .then(([mesh, wireframe]) => {
+      setPlanetMesh(mesh)
+      setPlanetWireframe(wireframe)
+    })
+    .then(() => {
+      console.log('[Latency]', `${Date.now() - lastT}ms`)
+    })
 }
 
 domLoaded.then(__main__)

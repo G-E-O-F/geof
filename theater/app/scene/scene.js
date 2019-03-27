@@ -28,12 +28,15 @@ export function onResize({ width, height }) {
   if (renderer) renderer.setSize(width, height)
 }
 
-let planet
+const planet = new THREE.Group()
+scene.add(planet)
 
-export function setPlanet({ position, index }) {
-  if (planet) {
-    scene.remove(planet)
-    planet = null
+let planetMesh; let planetWireframe
+
+export function setPlanetMesh({ position, normal, index, vertex_order }) {
+  if (planetMesh) {
+    planet.remove(planetMesh)
+    planetMesh = null
   }
 
   const planetGeometry = new THREE.BufferGeometry()
@@ -45,19 +48,52 @@ export function setPlanet({ position, index }) {
     new THREE.BufferAttribute(new Float32Array(position), 3),
   )
 
-  planet = new THREE.LineSegments(
+  planetGeometry.addAttribute(
+    'normal',
+    new THREE.BufferAttribute(new Float32Array(normal), 3),
+  )
+
+  planetGeometry.addAttribute(
+    'color',
+    new THREE.BufferAttribute(new Float32Array(position.length), 3),
+  )
+
+  planetMesh = new THREE.Mesh(
+    planetGeometry,
+    new THREE.MeshBasicMaterial({
+      vertexColors: THREE.VertexColors,
+    }),
+  )
+
+  planetMesh.userData.vertex_order = vertex_order
+
+  planet.add(planetMesh)
+}
+
+export function setPlanetWireframe({ position, index }) {
+  if (planetWireframe) {
+    planet.remove(planetWireframe)
+    planetWireframe = null
+  }
+
+  const planetGeometry = new THREE.BufferGeometry()
+
+  planetGeometry.setIndex(new THREE.BufferAttribute(new Uint32Array(index), 1))
+
+  planetGeometry.addAttribute(
+    'position',
+    new THREE.BufferAttribute(new Float32Array(position), 3),
+  )
+
+  planetWireframe = new THREE.LineSegments(
     planetGeometry,
     new THREE.LineBasicMaterial({
-      color: 0x000000,
+      color: 0xffffff,
       linewidth: 8,
     }),
   )
 
-  // const script = document.createElement('script')
-  // script.innerHTML = JSON.stringify(planetGeometry.toJSON())
-  // document.body.appendChild(script)
-
-  scene.add(planet)
+  planet.add(planetWireframe)
 }
 
 function isPentagon(fi, div) {
