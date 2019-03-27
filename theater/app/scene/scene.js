@@ -31,7 +31,8 @@ export function onResize({ width, height }) {
 const planet = new THREE.Group()
 scene.add(planet)
 
-let planetMesh; let planetWireframe
+let planetMesh
+let planetWireframe
 
 export function setPlanetMesh({ position, normal, index, vertex_order }) {
   if (planetMesh) {
@@ -89,9 +90,13 @@ export function setPlanetWireframe({ position, index }) {
     planetGeometry,
     new THREE.LineBasicMaterial({
       color: 0xffffff,
+      transparent: true,
+      opacity: 0.5,
       linewidth: 8,
     }),
   )
+
+  planetWireframe.scale.set(1.0001, 1.0001, 1.0001)
 
   planet.add(planetWireframe)
 }

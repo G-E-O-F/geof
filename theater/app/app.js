@@ -13,7 +13,6 @@ import {
   onResize as resizeRenderer,
   setPlanetMesh,
   setPlanetWireframe,
-  setPlanetFrame,
   setRenderer,
 } from './scene/scene'
 
@@ -33,14 +32,7 @@ function onResize() {
 
 let lastT = Date.now()
 
-function onReceivePlanetFrame(result) {
-  const frameColors = get(result, 'data.elapseFrame.colors', null)
-  const divisions = get(result, 'data.elapseFrame.divisions', null)
-  if (frameColors) {
-    console.info('[Receive frame]', 'success')
-    setPlanetFrame(divisions, frameColors)
-  } else console.warn('[Receive frame]', 'unexpected payload')
-}
+let sphere_id
 
 function __main__() {
   setRenderer({ canvas: document.querySelector('main canvas') })
@@ -54,13 +46,21 @@ function __main__() {
   lastT = Date.now()
 
   requisitionPlanet(DIVISIONS)
-    .then(id => Promise.all([getPlanetMesh(id), getPlanetWireframe(id)]))
+    .then(id => {
+      sphere_id = id
+      return Promise.all([
+        getPlanetMesh(sphere_id),
+        getPlanetWireframe(sphere_id),
+      ])
+    })
     .then(([mesh, wireframe]) => {
       setPlanetMesh(mesh)
       setPlanetWireframe(wireframe)
     })
     .then(() => {
-      console.log('[Latency]', `${Date.now() - lastT}ms`)
+      const currentT = Date.now()
+      console.log('[Geometry]', `latency: ${currentT - lastT}ms`)
+      lastT = currentT
     })
 }
 
