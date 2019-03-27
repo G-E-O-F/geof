@@ -26,6 +26,10 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
     GenServer.call(__MODULE__, {:get_planet_field_data, sphere_id})
   end
 
+  def get_planet_basic_geometry(sphere_id) do
+    GenServer.call(__MODULE__, {:get_planet_basic_geometry, sphere_id})
+  end
+
   def run_frame(sphere_id, field_fn_ref, sphere_data \\ nil) do
     GenServer.cast(__MODULE__, {:run_frame, sphere_id, field_fn_ref, sphere_data})
   end
@@ -50,7 +54,7 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
 
   @impl true
   def handle_call({:start_planet, opts}, _from, state) do
-    sphere_id = UUID.uuid1()
+    sphere_id = UUID.uuid1(:hex)
 
     timeout_duration =
       cond do
@@ -80,6 +84,21 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
         {
           :reply,
           SphereServer.get_all_field_data(sphere_id),
+          state
+        }
+
+      true ->
+        {:reply, :not_found, state}
+    end
+  end
+
+  @impl true
+  def handle_call({:get_planet_basic_geometry, sphere_id}, _from, state) do
+    cond do
+      Map.has_key?(state, sphere_id) ->
+        {
+          :reply,
+          SphereServer.get_basic_geometry(sphere_id),
           state
         }
 
@@ -123,7 +142,8 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
   def handle_info({:inactive, sphere_id}, state) do
     :ok = GenServer.stop(state[sphere_id][:pid])
 
-    send(state[sphere_id][:requester], {:terminated, sphere_id})
+    if is_pid(state[sphere_id][:requester]),
+      do: send(state[sphere_id][:requester], {:terminated, sphere_id})
 
     {
       :noreply,

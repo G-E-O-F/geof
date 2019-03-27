@@ -1,10 +1,24 @@
 defmodule GEOF.Sightglass.Planet do
-  def get_planet(divisions) do
-    mesh = GEOF.Planet.Geometry.Mesh.poly_per_field(divisions)
+  alias GEOF.Sightglass.PlanetCache.Cache
+
+  def create_planet(divisions) do
+    sphere_id = Cache.start_planet(divisions: divisions)
 
     %{
-      id: divisions,
-      divisions: divisions,
+      id: sphere_id,
+      divisions: divisions
+    }
+  end
+
+  def get_planet_mesh(sphere_id) do
+    %{:divisions => div, :field_centroids => f_c, :interfield_centroids => if_c} =
+      Cache.get_planet_basic_geometry(sphere_id)
+
+    mesh = GEOF.Planet.Geometry.Mesh.poly_per_field(div, f_c, if_c)
+
+    %{
+      id: sphere_id,
+      divisions: div,
       mesh: %{
         position: mesh[:position],
         normal: mesh[:normal],
@@ -14,31 +28,19 @@ defmodule GEOF.Sightglass.Planet do
     }
   end
 
-  def get_planet_edges(divisions) do
-    edge_mesh = GEOF.Planet.Geometry.EdgeMesh.poly_per_field(divisions)
+  def get_planet_wireframe(sphere_id) do
+    %{:divisions => div, :field_centroids => f_c, :interfield_centroids => if_c} =
+      Cache.get_planet_basic_geometry(sphere_id)
+
+    edge_mesh = GEOF.Planet.Geometry.EdgeMesh.poly_per_field(div, f_c, if_c)
 
     %{
-      id: divisions,
-      divisions: divisions,
+      id: sphere_id,
+      divisions: div,
       wireframe: %{
         position: edge_mesh[:position],
         index: edge_mesh[:index]
       }
-    }
-  end
-
-  def get_planet_frame(divisions, pattern) do
-    # This is just example stuff for now.
-    frame_colors = GEOF.Planet.Pattern.tetrahedron(divisions)
-
-    %{
-      id: "#{divisions}:#{pattern}",
-      divisions: divisions,
-      pattern: pattern,
-      colors:
-        Enum.reduce(frame_colors, %{}, fn {index, {:rgb, r, g, b}}, acc ->
-          Map.put(acc, GEOF.Planet.Field.flatten_index(index, divisions), [r, g, b])
-        end)
     }
   end
 end

@@ -53,9 +53,9 @@ export function setPlanet({ position, index }) {
     }),
   )
 
-  const script = document.createElement('script')
-  script.innerHTML = JSON.stringify(planetGeometry.toJSON())
-  document.body.appendChild(script)
+  // const script = document.createElement('script')
+  // script.innerHTML = JSON.stringify(planetGeometry.toJSON())
+  // document.body.appendChild(script)
 
   scene.add(planet)
 }

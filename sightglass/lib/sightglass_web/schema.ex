@@ -6,26 +6,24 @@ defmodule GEOF.SightglassWeb.Schema do
   alias GEOF.SightglassWeb.Resolvers
 
   query do
-    @desc "Get a planet"
-    field :planet, :planet do
-      arg(:divisions, :integer, description: "The resolution of the model.")
-      resolve(&Resolvers.Planet.get_planet/3)
+    @desc "Get a planet mesh"
+    field :planet_mesh, :planet_mesh do
+      arg(:id, :string, description: "The sphere ID returned after requisitioning a new planet.")
+      resolve(&Resolvers.Planet.get_planet_mesh/3)
     end
 
     @desc "Get a planet wireframe"
-    field :planet_edges, :planet_edges do
-      arg(:divisions, :integer, description: "The resolution of the model.")
-      resolve(&Resolvers.Planet.get_planet_edges/3)
+    field :planet_wireframe, :planet_wireframe do
+      arg(:id, :string, description: "The sphere ID returned after requisitioning a new planet.")
+      resolve(&Resolvers.Planet.get_planet_wireframe/3)
     end
   end
 
   mutation do
-    @desc "Request a new frame from the model"
-    field :elapse_frame, :frame do
+    @desc "Requisition a new planet"
+    field :create_planet, :planet do
       arg(:divisions, :integer)
-      arg(:pattern, :string)
-
-      resolve(&Resolvers.Planet.get_planet_frame/3)
+      resolve(&Resolvers.Planet.create_planet/3)
     end
   end
 end

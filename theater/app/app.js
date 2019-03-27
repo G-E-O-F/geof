@@ -2,7 +2,7 @@ import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import domLoaded from 'dom-loaded'
 
-import { getPlanetMesh, getPlanetFrame } from './link/link'
+import { getPlanetMesh, requisitionPlanet } from './link/link'
 
 import {
   play,
@@ -62,7 +62,10 @@ function __main__() {
 
   console.info('[Requesting planet geometry]')
   lastT = Date.now()
-  getPlanetMesh(DIVISIONS).then(onReceivePlanetMesh)
+
+  requisitionPlanet(DIVISIONS)
+    .then(getPlanetMesh)
+    .then(onReceivePlanetMesh)
 }
 
 domLoaded.then(__main__)

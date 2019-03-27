@@ -13,13 +13,13 @@ const client = new ApolloClient({
 
 const meshProps = ['position', 'index']
 
-export function getPlanetMesh(divisions) {
+export function getPlanetMesh(id) {
   return Promise.all(
     meshProps.map(meshProp =>
       client.query({
         query: gql`
       {
-        planet_edges(divisions: ${divisions}) {
+        planetWireframe(id: "${id}") {
           wireframe {
             ${meshProp}
           }
@@ -34,7 +34,7 @@ export function getPlanetMesh(divisions) {
           Object.assign(mesh, {
             [meshProp]: get(
               results[mpi],
-              `data.planet_edges.wireframe.${meshProp}`,
+              `data.planetWireframe.wireframe.${meshProp}`,
             ),
           }),
         {},
@@ -56,5 +56,23 @@ export function getPlanetFrame(divisions, pattern) {
       }
     `,
     })
-    .then(result => result, err => console.log('[Frame query]', err))
+    .then(result => result, err => console.log('[Frame mutation]', err))
+}
+
+export function requisitionPlanet(divisions) {
+  return client
+    .mutate({
+      mutation: gql`
+      mutation {
+        createPlanet(divisions: ${divisions}) {
+          id
+          divisions
+        }
+      }
+    `,
+    })
+    .then(
+      result => get(result, 'data.createPlanet.id'),
+      err => console.log('[Create mutation]', err),
+    )
 }
