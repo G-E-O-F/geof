@@ -36,6 +36,9 @@ scene.add(planet)
 let planetMesh
 let planetWireframe
 
+let readyForNewFrame = true
+let requestFrame = null
+
 export function setPlanetMesh({ position, normal, index, vertex_order }) {
   if (planetMesh) {
     planet.remove(planetMesh)
@@ -128,20 +131,26 @@ export function displayFrame(frame) {
       for (let si = 0; si < sides; si += 1) {
         const cc = offset + si * 3
         planetMesh.geometry.attributes.color.array[cc + 0] =
-          (colorInt >> 0) & 255
+          ((colorInt >> 0) & 255) / 256
         planetMesh.geometry.attributes.color.array[cc + 1] =
-          (colorInt >> 8) & 255
+          ((colorInt >> 8) & 255) / 256
         planetMesh.geometry.attributes.color.array[cc + 2] =
-          (colorInt >> 16) & 255
+          ((colorInt >> 16) & 255) / 256
       }
     }
     planetMesh.geometry.attributes.color.needsUpdate = true
+    planetMesh.geometry.colorsNeedUpdate = true
+    readyForNewFrame = true
   }
 }
 
 let rendering = false
 
 function onRender() {
+  if (requestFrame && readyForNewFrame) {
+    readyForNewFrame = false
+    requestFrame()
+  }
   if (renderer && scene && camera) renderer.render(scene, camera)
 }
 
@@ -153,6 +162,10 @@ function render() {
 export function play() {
   rendering = true
   render()
+}
+
+export function setRequestFrame(requestFrameCallback) {
+  requestFrame = requestFrameCallback
 }
 
 export function pause() {

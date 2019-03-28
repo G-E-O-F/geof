@@ -15,6 +15,7 @@ import {
   setPlanetWireframe,
   setRenderer,
   displayFrame,
+  setRequestFrame,
 } from './scene/scene'
 
 const DIVISIONS = 25
@@ -36,7 +37,7 @@ let lastT = Date.now()
 let sphere_id
 
 function requestSimulationFrame() {
-  return computeFrame(sphere_id).then(displayFrame)
+  computeFrame(sphere_id).then(displayFrame)
 }
 
 function __main__() {
@@ -66,12 +67,7 @@ function __main__() {
       const currentT = Date.now()
       console.log('[Geometry]', `latency: ${currentT - lastT}ms`)
       lastT = currentT
-      return requestSimulationFrame()
-    })
-    .then(() => {
-      const currentT = Date.now()
-      console.log('[Frame]', `latency: ${currentT - lastT}ms`)
-      lastT = currentT
+      setRequestFrame(requestSimulationFrame)
     })
 }
 
