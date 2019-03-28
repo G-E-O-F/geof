@@ -26,6 +26,13 @@
         width: 100% !important;
         height: 100% !important;
       }
+      nav {
+        position: fixed;
+        bottom: 1rem;
+        left: 1rem;
+        display: flex;
+        flex-flow: row nowrap;
+      }
     </style>
     <script async src="./main.js"></script>
   </head>
@@ -33,5 +40,9 @@
     <main>
       <canvas/>
     </main>
+    <nav>
+      <button data-action="step" disabled="disabled">Step</button>
+      <button data-action="run-pause" disabled="disabled">Run</button>
+    </nav>
   </body>
 </html>

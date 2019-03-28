@@ -33,11 +33,38 @@ function onResize() {
 }
 
 let lastT = Date.now()
-
 let sphere_id
 
+let running = false
+let stepping = false
+let $stepButton
+let $runButton
+
 function requestSimulationFrame() {
-  computeFrame(sphere_id).then(displayFrame)
+  return computeFrame(sphere_id).then(displayFrame)
+}
+
+function onStepClick() {
+  if (!stepping) {
+    stepping = true
+    requestSimulationFrame().then(() => {
+      stepping = false
+    })
+  }
+}
+
+function onRunPauseClick() {
+  if (running) {
+    setRequestFrame(null)
+    running = false
+    $stepButton.disabled = false
+    $runButton.innerHTML = 'Run'
+  } else {
+    $stepButton.disabled = true
+    $runButton.innerHTML = 'Pause'
+    setRequestFrame(requestSimulationFrame)
+    running = true
+  }
 }
 
 function __main__() {
@@ -46,10 +73,16 @@ function __main__() {
   window.addEventListener('resize', debounce(onResize, 1e3))
   onResize()
 
-  play()
+  $stepButton = document.querySelector('button[data-action="step"]')
+  $stepButton.addEventListener('click', onStepClick)
+
+  $runButton = document.querySelector('button[data-action="run-pause"]')
+  $runButton.addEventListener('click', onRunPauseClick)
 
   console.info('[Requesting planet geometry]')
   lastT = Date.now()
+
+  play()
 
   requisitionPlanet(DIVISIONS)
     .then(id => {
@@ -67,7 +100,8 @@ function __main__() {
       const currentT = Date.now()
       console.log('[Geometry]', `latency: ${currentT - lastT}ms`)
       lastT = currentT
-      setRequestFrame(requestSimulationFrame)
+      $stepButton.disabled = false
+      $runButton.disabled = false
     })
 }
 
