@@ -25,5 +25,12 @@ defmodule GEOF.SightglassWeb.Schema do
       arg(:divisions, :integer)
       resolve(&Resolvers.Planet.create_planet/3)
     end
+
+    @desc "Compute a frame of the simulation"
+    field :compute_frame, :frame do
+      arg(:id, :string, description: "The sphere ID returned after requisitioning a new planet.")
+      arg(:iterator, :string, description: "The iterator function to run for each field.")
+      resolve(&Resolvers.Planet.compute_frame/3)
+    end
   end
 end

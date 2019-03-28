@@ -12,4 +12,9 @@ defmodule GEOF.SightglassWeb.Resolvers.Planet do
     # todo: return :not_found if not found in cache, presumably
     {:ok, GEOF.Sightglass.Planet.get_planet_mesh(sphere_id)}
   end
+
+  def compute_frame(_parent, %{id: sphere_id, iterator: fn_ref_fn}, _resolution) do
+    # todo: return :not_found if not found in cache, presumably
+    {:ok, GEOF.Sightglass.Planet.compute_frame(sphere_id, fn_ref_fn)}
+  end
 end

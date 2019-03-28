@@ -30,8 +30,12 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
     GenServer.call(__MODULE__, {:get_planet_basic_geometry, sphere_id})
   end
 
-  def run_frame(sphere_id, field_fn_ref, sphere_data \\ nil) do
-    GenServer.cast(__MODULE__, {:run_frame, sphere_id, field_fn_ref, sphere_data})
+  def get_planet_divisions(sphere_id) do
+    GenServer.call(__MODULE__, {:get_planet_divisions, sphere_id})
+  end
+
+  def compute_frame(sphere_id, from, field_fn_ref, sphere_data \\ nil) do
+    GenServer.cast(__MODULE__, {:compute_frame, sphere_id, from, field_fn_ref, sphere_data})
   end
 
   def end_planet(sphere_id) do
@@ -73,7 +77,11 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
     {
       :reply,
       sphere_id,
-      Map.put_new(state, sphere_id, pid: sspid, requester: opts[:requester])
+      Map.put_new(state, sphere_id,
+        pid: sspid,
+        divisions: opts[:divisions],
+        requester: opts[:requester]
+      )
     }
   end
 
@@ -108,6 +116,21 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
   end
 
   @impl true
+  def handle_call({:get_planet_divisions, sphere_id}, _from, state) do
+    cond do
+      Map.has_key?(state, sphere_id) ->
+        {
+          :reply,
+          state[sphere_id][:divisions],
+          state
+        }
+
+      true ->
+        {:reply, :not_found, state}
+    end
+  end
+
+  @impl true
   def handle_call({:end_planet, sphere_id}, _from, state) do
     cond do
       Map.has_key?(state, sphere_id) ->
@@ -123,19 +146,25 @@ defmodule GEOF.Sightglass.PlanetCache.Cache do
   end
 
   @impl true
-  def handle_cast({:run_frame, sphere_id, field_fn_ref, sphere_data}, state) do
+  def handle_cast({:compute_frame, sphere_id, from, field_fn_ref, sphere_data}, state) do
     if Map.has_key?(state, sphere_id) do
       if SphereServer.in_frame?(sphere_id) do
-        send(state[sphere_id][:requester], :busy)
+        send(from, :busy)
       else
         SphereServer.start_frame(sphere_id, field_fn_ref, sphere_data, self())
         # send nothing
       end
     else
-      IO.puts('〘PlanetCache〙〘run_frame〙no sphereServer monitored for id #{sphere_id}')
+      IO.puts('〘PlanetCache〙〘compute_frame〙no sphereServer monitored for id #{sphere_id}')
     end
 
-    {:noreply, state}
+    {
+      :noreply,
+      update_in(
+        state[sphere_id],
+        &Keyword.put(&1, :requester, from)
+      )
+    }
   end
 
   @impl true

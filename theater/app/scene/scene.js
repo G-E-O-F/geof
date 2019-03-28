@@ -1,6 +1,8 @@
 const THREE = require('three')
 require('imports-loader?THREE=three!three/examples/js/controls/OrbitControls')
 
+const divisions = 25
+
 const scene = new THREE.Scene({
   fog: new THREE.Fog(0x000000, 0.1, 1000),
 })
@@ -117,23 +119,27 @@ function isPentagon(fi, div) {
   }
 }
 
-export function setPlanetFrame(divisions, frame) {
+export function displayFrame(frame) {
   if (planet) {
     for (let fi = 0; fi < 10 * divisions * divisions + 2; fi += 1) {
       const sides = (isPentagon(fi, divisions) && 5) || 6
-      const offset = planet.userData.vertex_order[fi]
+      const offset = planetMesh.userData.vertex_order[fi]
+      const colorInt = frame[fi]
       for (let si = 0; si < sides; si += 1) {
         const cc = offset + si * 3
-        planet.geometry.attributes.color.array[cc + 0] = frame[fi][0] / 255
-        planet.geometry.attributes.color.array[cc + 1] = frame[fi][1] / 255
-        planet.geometry.attributes.color.array[cc + 2] = frame[fi][2] / 255
+        planetMesh.geometry.attributes.color.array[cc + 0] =
+          (colorInt >> 0) & 255
+        planetMesh.geometry.attributes.color.array[cc + 1] =
+          (colorInt >> 8) & 255
+        planetMesh.geometry.attributes.color.array[cc + 2] =
+          (colorInt >> 16) & 255
       }
     }
-    planet.geometry.attributes.color.needsUpdate = true
+    planetMesh.geometry.attributes.color.needsUpdate = true
   }
 }
 
-let playing = false
+let rendering = false
 
 function onRender() {
   if (renderer && scene && camera) renderer.render(scene, camera)
@@ -141,14 +147,14 @@ function onRender() {
 
 function render() {
   onRender()
-  if (playing) requestAnimationFrame(render)
+  if (rendering) requestAnimationFrame(render)
 }
 
 export function play() {
-  playing = true
+  rendering = true
   render()
 }
 
 export function pause() {
-  playing = false
+  rendering = false
 }

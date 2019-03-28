@@ -1,11 +1,11 @@
 import debounce from 'lodash/debounce'
-import get from 'lodash/get'
 import domLoaded from 'dom-loaded'
 
 import {
   getPlanetMesh,
   getPlanetWireframe,
   requisitionPlanet,
+  computeFrame,
 } from './link/link'
 
 import {
@@ -14,6 +14,7 @@ import {
   setPlanetMesh,
   setPlanetWireframe,
   setRenderer,
+  displayFrame,
 } from './scene/scene'
 
 const DIVISIONS = 25
@@ -33,6 +34,10 @@ function onResize() {
 let lastT = Date.now()
 
 let sphere_id
+
+function requestSimulationFrame() {
+  return computeFrame(sphere_id).then(displayFrame)
+}
 
 function __main__() {
   setRenderer({ canvas: document.querySelector('main canvas') })
@@ -60,6 +65,12 @@ function __main__() {
     .then(() => {
       const currentT = Date.now()
       console.log('[Geometry]', `latency: ${currentT - lastT}ms`)
+      lastT = currentT
+      return requestSimulationFrame()
+    })
+    .then(() => {
+      const currentT = Date.now()
+      console.log('[Frame]', `latency: ${currentT - lastT}ms`)
       lastT = currentT
     })
 }

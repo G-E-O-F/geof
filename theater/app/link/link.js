@@ -76,22 +76,6 @@ export function getPlanetWireframe(id) {
   )
 }
 
-export function getPlanetFrame(divisions, pattern) {
-  return client
-    .mutate({
-      mutation: gql`
-      mutation {
-        elapseFrame(divisions: ${divisions}, pattern: "${pattern}") {
-          divisions
-          pattern
-          colors
-        }
-      }
-    `,
-    })
-    .then(result => result, err => console.log('[Frame mutation]', err))
-}
-
 export function requisitionPlanet(divisions) {
   return client
     .mutate({
@@ -107,5 +91,24 @@ export function requisitionPlanet(divisions) {
     .then(
       result => get(result, 'data.createPlanet.id'),
       err => console.log('[Create mutation]', err),
+    )
+}
+
+const per_field = 'add_one'
+
+export function computeFrame(id) {
+  return client
+    .mutate({
+      mutation: gql`
+      mutation {
+        computeFrame(id: "${id}", iterator: "${per_field}") {
+          colors
+        }
+      }
+    `,
+    })
+    .then(
+      result => get(result, 'data.computeFrame.colors'),
+      err => console.log('[Compute frame]', err),
     )
 }

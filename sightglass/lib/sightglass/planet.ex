@@ -1,3 +1,13 @@
+defmodule GEOF.Sightglass.Planet.Battery do
+  def add_one_to_field({_field_index, field_data}, _adjacent_fields_with_data, _sphere_data) do
+    if field_data == nil do
+      128
+    else
+      field_data + 1
+    end
+  end
+end
+
 defmodule GEOF.Sightglass.Planet do
   alias GEOF.Sightglass.PlanetCache.Cache
 
@@ -41,6 +51,38 @@ defmodule GEOF.Sightglass.Planet do
         position: edge_mesh[:position],
         index: edge_mesh[:index]
       }
+    }
+  end
+
+  def compute_frame(sphere_id, _fn_ref_fn) do
+    divisions = Cache.get_planet_divisions(sphere_id)
+    Cache.compute_frame(sphere_id, self(), {"GEOF.Sightglass.Planet.Battery", "add_one_to_field"})
+
+    frame_colors =
+      receive do
+        {:frame_complete, fields_data} ->
+          IO.puts("[frame_complete]")
+
+          Enum.reduce(fields_data, %{}, fn {field_index, field_data}, frame ->
+            Map.put(
+              frame,
+              GEOF.Planet.Field.flatten_index(field_index, divisions),
+              GEOF.Planet.Patterns.int_to_color(field_data)
+            )
+          end)
+
+        error ->
+          IO.puts('[error on receive]')
+          IO.inspect(error)
+          error
+      end
+
+    IO.puts('[frame_colors]')
+    IO.inspect(frame_colors)
+
+    %{
+      id: sphere_id,
+      colors: frame_colors
     }
   end
 end
