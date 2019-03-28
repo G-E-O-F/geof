@@ -51,7 +51,11 @@ defmodule GEOF.Sightglass.PlanetCacheTest do
 
     all_fields_with_one = Sphere.for_all_fields(Map.new(), d, &Map.put(&1, &2, 1))
 
-    Cache.run_frame(sphere_id, {"GEOF.Sightglass.PlanetCacheTestBattery", "add_one_to_field"})
+    Cache.compute_frame(
+      sphere_id,
+      self(),
+      {"GEOF.Sightglass.PlanetCacheTestBattery", "add_one_to_field"}
+    )
 
     assert_receive {:frame_complete, fields_data}, 5000
 
