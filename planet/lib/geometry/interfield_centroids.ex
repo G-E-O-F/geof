@@ -53,9 +53,7 @@ defmodule GEOF.Planet.Geometry.InterfieldCentroids do
   end
 
   ##
-  #
-  # Centroid sphere computation
-  #
+  # Interfield-centroid sphere computation
   ##
 
   # Convenience function without need for a `centroid_sphere`
