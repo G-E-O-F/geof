@@ -4,6 +4,7 @@ import domLoaded from 'dom-loaded'
 import {
   getPlanetFieldMesh,
   getPlanetFieldWireframe,
+  getPlanetInterfieldWireframe,
   requisitionPlanet,
   computeFrame,
 } from './link/link'
@@ -13,12 +14,13 @@ import {
   onResize as resizeRenderer,
   setPlanetFieldMesh,
   setPlanetFieldWireframe,
+  setPlanetInterfieldWireframe,
   setRenderer,
   displayFrame,
   setRequestFrame,
 } from './scene/scene'
 
-const DIVISIONS = 16
+const DIVISIONS = 32
 
 function onResize() {
   const main = document.querySelector('main')
@@ -90,11 +92,13 @@ function __main__() {
       return Promise.all([
         getPlanetFieldMesh(sphere_id),
         getPlanetFieldWireframe(sphere_id),
+        getPlanetInterfieldWireframe(sphere_id),
       ])
     })
-    .then(([fieldMesh, fieldWireframe]) => {
+    .then(([fieldMesh, fieldWireframe, interfieldWireframe]) => {
       setPlanetFieldMesh(fieldMesh)
       setPlanetFieldWireframe(fieldWireframe)
+      setPlanetInterfieldWireframe(interfieldWireframe)
     })
     .then(() => {
       const currentT = Date.now()

@@ -31,7 +31,7 @@ defmodule GEOF.Planet.Geometry.FieldEdgeMesh do
 
   # Convenience function
 
-  @doc "Produces an `edge_mesh` with two line segments for each non-polar field. Convenience function."
+  @doc "Produces an `edge_mesh` for the primal sphere. Convenience function."
 
   @spec field_edge_mesh(Sphere.divisions()) :: edge_mesh
 
@@ -46,7 +46,7 @@ defmodule GEOF.Planet.Geometry.FieldEdgeMesh do
 
   # Main function
 
-  @doc "Produces an `edge_mesh` with two line segments for each non-polar field."
+  @doc "Produces an `edge_mesh` for the primal sphere."
 
   @spec field_edge_mesh(
           InterfieldCentroids.interfield_centroid_sphere(),

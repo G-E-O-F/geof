@@ -75,7 +75,41 @@ export function getPlanetFieldWireframe(id) {
           }),
         {},
       ),
-    err => console.log('[Wireframe query]', err),
+    err => console.log('[Field wireframe query]', err),
+  )
+}
+
+const interfieldWireframeProps = ['position', 'index']
+const interfieldWireframeQuery = 'planetInterfieldWireframe'
+const interfieldWireframeType = 'wireframe'
+
+export function getPlanetInterfieldWireframe(id) {
+  return Promise.all(
+    interfieldWireframeProps.map(prop =>
+      client.query({
+        query: gql`
+      {
+        ${interfieldWireframeQuery}(id: "${id}") {
+          ${interfieldWireframeType} {
+            ${prop}
+          }
+        }
+      }`,
+      }),
+    ),
+  ).then(
+    results =>
+      interfieldWireframeProps.reduce(
+        (geometry, prop, mpi) =>
+          Object.assign(geometry, {
+            [prop]: get(
+              results[mpi],
+              `data.${interfieldWireframeQuery}.${interfieldWireframeType}.${prop}`,
+            ),
+          }),
+        {},
+      ),
+    err => console.log('[Interfield wireframe query]', err),
   )
 }
 

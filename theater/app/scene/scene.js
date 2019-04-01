@@ -1,7 +1,7 @@
 const THREE = require('three')
 require('imports-loader?THREE=three!three/examples/js/controls/OrbitControls')
 
-const divisions = 16
+const divisions = 32
 
 const scene = new THREE.Scene({
   fog: new THREE.Fog(0x000000, 0.1, 1000),
@@ -95,9 +95,9 @@ export function setPlanetFieldWireframe({ position, index }) {
   planetFieldWireframe = new THREE.LineSegments(
     planetGeometry,
     new THREE.LineBasicMaterial({
-      color: 0xffffff,
+      color: 0xe68364,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.7,
       linewidth: 8,
     }),
   )
@@ -105,6 +105,36 @@ export function setPlanetFieldWireframe({ position, index }) {
   planetFieldWireframe.scale.set(1.0001, 1.0001, 1.0001)
 
   planet.add(planetFieldWireframe)
+}
+
+export function setPlanetInterfieldWireframe({ position, index }) {
+  if (planetInterfieldWireframe) {
+    planet.remove(planetInterfieldWireframe)
+    planetInterfieldWireframe = null
+  }
+
+  const planetGeometry = new THREE.BufferGeometry()
+
+  planetGeometry.setIndex(new THREE.BufferAttribute(new Uint32Array(index), 1))
+
+  planetGeometry.addAttribute(
+    'position',
+    new THREE.BufferAttribute(new Float32Array(position), 3),
+  )
+
+  planetInterfieldWireframe = new THREE.LineSegments(
+    planetGeometry,
+    new THREE.LineBasicMaterial({
+      color: 0xa5ba93,
+      transparent: true,
+      opacity: 0.5,
+      linewidth: 8,
+    }),
+  )
+
+  planetInterfieldWireframe.scale.set(1.001, 1.001, 1.001)
+
+  planet.add(planetInterfieldWireframe)
 }
 
 function isPentagon(fi, div) {

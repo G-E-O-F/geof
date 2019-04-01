@@ -54,6 +54,22 @@ defmodule GEOF.Sightglass.Planet do
     }
   end
 
+  def get_planet_interfield_wireframe(sphere_id) do
+    %{:divisions => div, :field_centroids => f_c, :interfield_edges => if_e} =
+      Cache.get_planet_basic_geometry(sphere_id)
+
+    edge_mesh = GEOF.Planet.Geometry.InterfieldEdgeMesh.interfield_edge_mesh(f_c, if_e)
+
+    %{
+      id: sphere_id,
+      divisions: div,
+      wireframe: %{
+        position: edge_mesh[:position],
+        index: edge_mesh[:index]
+      }
+    }
+  end
+
   def compute_frame(sphere_id, _fn_ref_fn) do
     divisions = Cache.get_planet_divisions(sphere_id)
     Cache.compute_frame(sphere_id, self(), {"GEOF.Sightglass.Planet.Battery", "add_one_to_field"})
