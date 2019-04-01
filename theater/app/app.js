@@ -2,8 +2,8 @@ import debounce from 'lodash/debounce'
 import domLoaded from 'dom-loaded'
 
 import {
-  getPlanetMesh,
-  getPlanetWireframe,
+  getPlanetFieldMesh,
+  getPlanetFieldWireframe,
   requisitionPlanet,
   computeFrame,
 } from './link/link'
@@ -11,14 +11,14 @@ import {
 import {
   play,
   onResize as resizeRenderer,
-  setPlanetMesh,
-  setPlanetWireframe,
+  setPlanetFieldMesh,
+  setPlanetFieldWireframe,
   setRenderer,
   displayFrame,
   setRequestFrame,
 } from './scene/scene'
 
-const DIVISIONS = 25
+const DIVISIONS = 16
 
 function onResize() {
   const main = document.querySelector('main')
@@ -88,13 +88,13 @@ function __main__() {
     .then(id => {
       sphere_id = id
       return Promise.all([
-        getPlanetMesh(sphere_id),
-        getPlanetWireframe(sphere_id),
+        getPlanetFieldMesh(sphere_id),
+        getPlanetFieldWireframe(sphere_id),
       ])
     })
-    .then(([mesh, wireframe]) => {
-      setPlanetMesh(mesh)
-      setPlanetWireframe(wireframe)
+    .then(([fieldMesh, fieldWireframe]) => {
+      setPlanetFieldMesh(fieldMesh)
+      setPlanetFieldWireframe(fieldWireframe)
     })
     .then(() => {
       const currentT = Date.now()

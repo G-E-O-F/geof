@@ -11,18 +11,18 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-const meshProps = ['position', 'index', 'normal', 'vertex_order']
-const meshQuery = 'planetMesh'
-const meshType = 'mesh'
+const fieldMeshProps = ['position', 'index', 'normal', 'vertex_order']
+const fieldMeshQuery = 'planetFieldMesh'
+const fieldMeshType = 'mesh'
 
-export function getPlanetMesh(id) {
+export function getPlanetFieldMesh(id) {
   return Promise.all(
-    meshProps.map(prop =>
+    fieldMeshProps.map(prop =>
       client.query({
         query: gql`
       {
-        ${meshQuery}(id: "${id}") {
-          ${meshType} {
+        ${fieldMeshQuery}(id: "${id}") {
+          ${fieldMeshType} {
             ${prop}
           }
         }
@@ -31,10 +31,13 @@ export function getPlanetMesh(id) {
     ),
   ).then(
     results =>
-      meshProps.reduce(
-        (mesh, prop, mpi) =>
-          Object.assign(mesh, {
-            [prop]: get(results[mpi], `data.${meshQuery}.${meshType}.${prop}`),
+      fieldMeshProps.reduce(
+        (geometry, prop, mpi) =>
+          Object.assign(geometry, {
+            [prop]: get(
+              results[mpi],
+              `data.${fieldMeshQuery}.${fieldMeshType}.${prop}`,
+            ),
           }),
         {},
       ),
@@ -42,18 +45,18 @@ export function getPlanetMesh(id) {
   )
 }
 
-const wireframeProps = ['position', 'index']
-const wireframeQuery = 'planetWireframe'
-const wireframeType = 'wireframe'
+const fieldWireframeProps = ['position', 'index']
+const fieldWireframeQuery = 'planetFieldWireframe'
+const fieldWireframeType = 'wireframe'
 
-export function getPlanetWireframe(id) {
+export function getPlanetFieldWireframe(id) {
   return Promise.all(
-    wireframeProps.map(prop =>
+    fieldWireframeProps.map(prop =>
       client.query({
         query: gql`
       {
-        ${wireframeQuery}(id: "${id}") {
-          ${wireframeType} {
+        ${fieldWireframeQuery}(id: "${id}") {
+          ${fieldWireframeType} {
             ${prop}
           }
         }
@@ -62,12 +65,12 @@ export function getPlanetWireframe(id) {
     ),
   ).then(
     results =>
-      wireframeProps.reduce(
-        (mesh, prop, mpi) =>
-          Object.assign(mesh, {
+      fieldWireframeProps.reduce(
+        (geometry, prop, mpi) =>
+          Object.assign(geometry, {
             [prop]: get(
               results[mpi],
-              `data.${wireframeQuery}.${wireframeType}.${prop}`,
+              `data.${fieldWireframeQuery}.${fieldWireframeType}.${prop}`,
             ),
           }),
         {},

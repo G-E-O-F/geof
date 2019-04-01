@@ -1,7 +1,7 @@
 const THREE = require('three')
 require('imports-loader?THREE=three!three/examples/js/controls/OrbitControls')
 
-const divisions = 25
+const divisions = 16
 
 const scene = new THREE.Scene({
   fog: new THREE.Fog(0x000000, 0.1, 1000),
@@ -33,16 +33,17 @@ export function onResize({ width, height }) {
 const planet = new THREE.Group()
 scene.add(planet)
 
-let planetMesh
-let planetWireframe
+let planetFieldMesh
+let planetFieldWireframe
+let planetInterfieldWireframe
 
 let readyForNewFrame = true
 let requestFrame = null
 
-export function setPlanetMesh({ position, normal, index, vertex_order }) {
-  if (planetMesh) {
-    planet.remove(planetMesh)
-    planetMesh = null
+export function setPlanetFieldMesh({ position, normal, index, vertex_order }) {
+  if (planetFieldMesh) {
+    planet.remove(planetFieldMesh)
+    planetFieldMesh = null
   }
 
   const planetGeometry = new THREE.BufferGeometry()
@@ -64,22 +65,22 @@ export function setPlanetMesh({ position, normal, index, vertex_order }) {
     new THREE.BufferAttribute(new Float32Array(position.length), 3),
   )
 
-  planetMesh = new THREE.Mesh(
+  planetFieldMesh = new THREE.Mesh(
     planetGeometry,
     new THREE.MeshBasicMaterial({
       vertexColors: THREE.VertexColors,
     }),
   )
 
-  planetMesh.userData.vertex_order = vertex_order
+  planetFieldMesh.userData.vertex_order = vertex_order
 
-  planet.add(planetMesh)
+  planet.add(planetFieldMesh)
 }
 
-export function setPlanetWireframe({ position, index }) {
-  if (planetWireframe) {
-    planet.remove(planetWireframe)
-    planetWireframe = null
+export function setPlanetFieldWireframe({ position, index }) {
+  if (planetFieldWireframe) {
+    planet.remove(planetFieldWireframe)
+    planetFieldWireframe = null
   }
 
   const planetGeometry = new THREE.BufferGeometry()
@@ -91,7 +92,7 @@ export function setPlanetWireframe({ position, index }) {
     new THREE.BufferAttribute(new Float32Array(position), 3),
   )
 
-  planetWireframe = new THREE.LineSegments(
+  planetFieldWireframe = new THREE.LineSegments(
     planetGeometry,
     new THREE.LineBasicMaterial({
       color: 0xffffff,
@@ -101,9 +102,9 @@ export function setPlanetWireframe({ position, index }) {
     }),
   )
 
-  planetWireframe.scale.set(1.0001, 1.0001, 1.0001)
+  planetFieldWireframe.scale.set(1.0001, 1.0001, 1.0001)
 
-  planet.add(planetWireframe)
+  planet.add(planetFieldWireframe)
 }
 
 function isPentagon(fi, div) {
@@ -126,20 +127,20 @@ export function displayFrame(frame) {
   if (planet) {
     for (let fi = 0; fi < 10 * divisions * divisions + 2; fi += 1) {
       const sides = (isPentagon(fi, divisions) && 5) || 6
-      const offset = planetMesh.userData.vertex_order[fi]
+      const offset = planetFieldMesh.userData.vertex_order[fi]
       const colorInt = frame[fi]
       for (let si = 0; si < sides; si += 1) {
         const cc = offset + si * 3
-        planetMesh.geometry.attributes.color.array[cc + 0] =
+        planetFieldMesh.geometry.attributes.color.array[cc + 0] =
           ((colorInt >> 0) & 255) / 256
-        planetMesh.geometry.attributes.color.array[cc + 1] =
+        planetFieldMesh.geometry.attributes.color.array[cc + 1] =
           ((colorInt >> 8) & 255) / 256
-        planetMesh.geometry.attributes.color.array[cc + 2] =
+        planetFieldMesh.geometry.attributes.color.array[cc + 2] =
           ((colorInt >> 16) & 255) / 256
       }
     }
-    planetMesh.geometry.attributes.color.needsUpdate = true
-    planetMesh.geometry.colorsNeedUpdate = true
+    planetFieldMesh.geometry.attributes.color.needsUpdate = true
+    planetFieldMesh.geometry.colorsNeedUpdate = true
     readyForNewFrame = true
   }
 }

@@ -20,7 +20,7 @@ defmodule GEOF.Sightglass.Planet do
     }
   end
 
-  def get_planet_mesh(sphere_id) do
+  def get_planet_field_mesh(sphere_id) do
     %{:divisions => div, :field_centroids => f_c, :interfield_centroids => if_c} =
       Cache.get_planet_basic_geometry(sphere_id)
 
@@ -38,7 +38,7 @@ defmodule GEOF.Sightglass.Planet do
     }
   end
 
-  def get_planet_wireframe(sphere_id) do
+  def get_planet_field_wireframe(sphere_id) do
     %{:divisions => div, :field_edges => f_e, :interfield_centroids => if_c} =
       Cache.get_planet_basic_geometry(sphere_id)
 

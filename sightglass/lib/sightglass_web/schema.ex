@@ -7,15 +7,15 @@ defmodule GEOF.SightglassWeb.Schema do
 
   query do
     @desc "Get a planet mesh"
-    field :planet_mesh, :planet_mesh do
+    field :planet_field_mesh, :planet_mesh do
       arg(:id, :string, description: "The sphere ID returned after requisitioning a new planet.")
-      resolve(&Resolvers.Planet.get_planet_mesh/3)
+      resolve(&Resolvers.Planet.get_planet_field_mesh/3)
     end
 
     @desc "Get a planet wireframe"
-    field :planet_wireframe, :planet_wireframe do
+    field :planet_field_wireframe, :planet_wireframe do
       arg(:id, :string, description: "The sphere ID returned after requisitioning a new planet.")
-      resolve(&Resolvers.Planet.get_planet_wireframe/3)
+      resolve(&Resolvers.Planet.get_planet_field_wireframe/3)
     end
   end
 
