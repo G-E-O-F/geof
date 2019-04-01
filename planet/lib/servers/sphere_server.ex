@@ -23,6 +23,8 @@ defmodule GEOF.Planet.SphereServer do
   alias GEOF.Planet.{
     Geometry.FieldCentroids,
     Geometry.InterfieldCentroids,
+    Geometry.InterfieldEdges,
+    Geometry.FieldEdges,
     PanelSupervisor,
     PanelServer,
     Registry,
@@ -60,6 +62,8 @@ defmodule GEOF.Planet.SphereServer do
           :divisions => Sphere.divisions(),
           :field_centroids => FieldCentroids.centroid_sphere(),
           :interfield_centroids => InterfieldCentroids.interfield_centroid_sphere(),
+          :interfield_edges => InterfieldEdges.interfield_edge_sphere(),
+          :field_edges => FieldEdges.field_edge_sphere(),
           :fields_at_panels => fields_at_panels,
           :n_panels => non_neg_integer
         }
@@ -143,7 +147,9 @@ defmodule GEOF.Planet.SphereServer do
   @spec get_basic_geometry(sphere_id) :: %{
           :divisions => Sphere.divisions(),
           :field_centroids => FieldCentroids.centroid_sphere(),
-          :interfield_centroids => InterfieldCentroids.interfield_centroid_sphere()
+          :interfield_centroids => InterfieldCentroids.interfield_centroid_sphere(),
+          :interfield_edges => InterfieldEdges.interfield_edge_sphere(),
+          :field_edges => FieldEdges.field_edge_sphere()
         }
 
   def get_basic_geometry(sphere_id) do
@@ -192,12 +198,16 @@ defmodule GEOF.Planet.SphereServer do
   def init_sphere(divisions, sphere_id) do
     field_centroids = FieldCentroids.field_centroids(divisions)
     interfield_centroids = InterfieldCentroids.interfield_centroids(field_centroids, divisions)
+    interfield_edges = InterfieldEdges.interfield_edges(field_centroids, divisions)
+    field_edges = FieldEdges.field_edges(interfield_centroids, divisions)
 
     sphere = %{
       id: sphere_id,
       divisions: divisions,
       field_centroids: field_centroids,
-      interfield_centroids: interfield_centroids
+      interfield_centroids: interfield_centroids,
+      interfield_edges: interfield_edges,
+      field_edges: field_edges
     }
 
     fields_at_panels = init_fields_at_panels(sphere)
@@ -229,7 +239,13 @@ defmodule GEOF.Planet.SphereServer do
   def handle_call(:get_basic_geometry, _from, state) do
     {
       :reply,
-      Map.take(state.sphere, [:divisions, :field_centroids, :interfield_centroids]),
+      Map.take(state.sphere, [
+        :divisions,
+        :field_centroids,
+        :interfield_centroids,
+        :interfield_edges,
+        :field_edges
+      ]),
       state,
       state.inactivity_timeout
     }

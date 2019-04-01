@@ -1,6 +1,6 @@
-defmodule GEOF.Planet.Geometry.Mesh do
+defmodule GEOF.Planet.Geometry.FieldMesh do
   @moduledoc """
-    Functions for translating a Planet's geometry into an ordinary 3D solid.
+    Functions for translating a Planet's geometry into an ordinary 3D solid. Each Field is separated from the other fields, i.e. position data is repeated for each field that shares a given vertex.
   """
 
   import :math
@@ -51,12 +51,12 @@ defmodule GEOF.Planet.Geometry.Mesh do
 
   @doc "Produces a `mesh` with a polygon for each field. Deprecated outside of testing and examples."
 
-  @spec poly_per_field(Sphere.divisions()) :: mesh
+  @spec field_mesh(Sphere.divisions()) :: mesh
 
-  def poly_per_field(divisions) do
+  def field_mesh(divisions) do
     field_centroids = FieldCentroids.field_centroids(divisions)
 
-    poly_per_field(
+    field_mesh(
       divisions,
       field_centroids,
       InterfieldCentroids.interfield_centroids(field_centroids, divisions)
@@ -67,13 +67,13 @@ defmodule GEOF.Planet.Geometry.Mesh do
 
   @doc "Produces a `mesh` with a polygon for each field. Vertices are copied for each polygon."
 
-  @spec poly_per_field(
+  @spec field_mesh(
           Sphere.divisions(),
           FieldCentroids.centroid_sphere(),
           InterfieldCentroids.interfield_centroid_sphere()
         ) :: mesh
 
-  def poly_per_field(divisions, field_centroids, interfield_centroids) do
+  def field_mesh(divisions, field_centroids, interfield_centroids) do
     d = divisions
 
     interfield_cartesian_points =

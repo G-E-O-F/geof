@@ -15,4 +15,6 @@ defmodule GEOF.Planet.Geometry.InterfieldEdgesTest do
     # Each of the edges should equal L
     assert_in_delta icosahedron_edges[MapSet.new([:north, {:sxy, 0, 0, 0}])], l(), tolerance()
   end
+
+  # todo: test the general case, once you figure it out.
 end

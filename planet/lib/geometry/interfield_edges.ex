@@ -1,8 +1,11 @@
 defmodule GEOF.Planet.Geometry.InterfieldEdges do
   @moduledoc """
-    Functions for computing the positions of the centroids between each
-    Field on a Sphere. This is used to determine the vertices of a
-    field's bounding polygon.
+    Functions for computing the arclengths of the edges between the centroid of each
+    Field on a Sphere. This is effectively a set of vertex pairs that could be used to construct a
+    wireframe of the so called "dual" sphere, a Delaunay triangulation of the "primal" sphere.
+
+    Unless some form of centroid correction has been applied (e.g. the planned Heikes-Randall
+    smoothing), these arclengths should all equal `L / divisions` within a certain tiny delta.
   """
 
   alias GEOF.Planet.{

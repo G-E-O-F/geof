@@ -24,7 +24,7 @@ defmodule GEOF.Sightglass.Planet do
     %{:divisions => div, :field_centroids => f_c, :interfield_centroids => if_c} =
       Cache.get_planet_basic_geometry(sphere_id)
 
-    mesh = GEOF.Planet.Geometry.Mesh.poly_per_field(div, f_c, if_c)
+    mesh = GEOF.Planet.Geometry.FieldMesh.field_mesh(div, f_c, if_c)
 
     %{
       id: sphere_id,
@@ -39,10 +39,10 @@ defmodule GEOF.Sightglass.Planet do
   end
 
   def get_planet_wireframe(sphere_id) do
-    %{:divisions => div, :field_centroids => f_c, :interfield_centroids => if_c} =
+    %{:divisions => div, :field_edges => f_e, :interfield_centroids => if_c} =
       Cache.get_planet_basic_geometry(sphere_id)
 
-    edge_mesh = GEOF.Planet.Geometry.EdgeMesh.poly_per_field(div, f_c, if_c)
+    edge_mesh = GEOF.Planet.Geometry.FieldEdgeMesh.field_edge_mesh(if_c, f_e)
 
     %{
       id: sphere_id,
