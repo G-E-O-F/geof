@@ -6,7 +6,7 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="JSX" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" default="false" project-jdk-name="Erlang for Elixir 21" project-jdk-type="Erlang SDK for Elixir SDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" default="false" project-jdk-name="Elixir 1.9.2" project-jdk-type="Elixir SDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
